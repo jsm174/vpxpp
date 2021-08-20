@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.16)
+
+project(vpxpp VERSION 0.0.1)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_STANDARD 99)
+
+add_compile_definitions(
+)
+
+include_directories(
+   ext/pole
+)
+
+add_executable(vpxpp
+
+   ext/pole/pole.cpp
+
+   src/ILoadable.h
+   src/BiffReader.h
+   src/BiffReader.cpp
+   src/PinTable.h
+   src/PinTable.cpp
+   src/main.cpp
+)

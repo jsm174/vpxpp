@@ -1,0 +1,35 @@
+name: vpxpp
+on:
+  push:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Build vpxpp-${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            platform: osx-x64
+            exe: vpxpp
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build vpxpp-${{ matrix.platform }}
+        run: |
+          cp cmake/CMakeLists_${{ matrix.platform }}.txt CMakeLists.txt
+          cmake -DCMAKE_BUILD_TYPE=Release -B build/Release
+          cmake --build build/Release
+      - run: |
+          build/Release/${{ matrix.exe }} tables/exampleTable.vpx
+      - run: |
+          mkdir tmp
+          cp build/Release/${{ matrix.exe }} tmp
+      - uses: actions/upload-artifact@v2
+        with:
+          name: vpxpp-${{ matrix.platform }}
+          path: tmp

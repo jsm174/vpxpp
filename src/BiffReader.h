@@ -1,0 +1,36 @@
+#if !defined(_BIFFREADER_H__)
+#define _BIFFREADER_H__
+
+#include "misc.h"
+#include "pole.h"
+#include "ILoadable.h"
+
+#define FID(A) (int)((unsigned int)(#A[0])|((unsigned int)(#A[1])<<8)|((unsigned int)(#A[2])<<16)|((unsigned int)(#A[3])<<24))
+
+class BiffReader {
+    public:
+        BiffReader(POLE::Stream* pStream, ILoadable* pLoadable, void* pData, const int version);
+        virtual ~BiffReader();
+
+        HRESULT ReadBytes(void* pValue, const unsigned long count);
+        
+        HRESULT GetInt(int& value);
+        HRESULT GetIntNoHash(int& value);
+        HRESULT GetString(std::string& szvalue);
+        HRESULT GetBool(bool& value);
+        HRESULT GetStruct(void* pValue, const int size);
+
+        HRESULT Load();
+
+    public:
+
+        POLE::Stream* m_pStream;
+        void* m_pData;
+        int m_version;
+
+    private:
+        int m_bytesInRecordRemaining;
+        ILoadable* m_pLoadable; 
+};
+
+#endif
