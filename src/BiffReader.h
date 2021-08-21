@@ -14,9 +14,11 @@ class BiffReader {
 
         HRESULT ReadBytes(void* pValue, const unsigned long count);
         
-        HRESULT GetInt(int& value);
         HRESULT GetIntNoHash(int& value);
+        HRESULT GetInt(void* pValue);
+        HRESULT GetInt(int& value);
         HRESULT GetString(std::string& szvalue);
+        HRESULT GetFloat(float& value);
         HRESULT GetBool(bool& value);
         HRESULT GetStruct(void* pValue, const int size);
 

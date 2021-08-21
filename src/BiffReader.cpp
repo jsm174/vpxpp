@@ -19,6 +19,27 @@ HRESULT BiffReader::ReadBytes(void* pValue, const unsigned long count)
    return m_pStream->read((unsigned char*)pValue, count) != 0 ? S_OK : S_FALSE;
 }
 
+HRESULT BiffReader::GetIntNoHash(int& value)
+{
+    m_bytesInRecordRemaining -= sizeof(int);
+
+    return m_pStream->read((unsigned char*)&value, sizeof(int)) != 0 ? S_OK : S_FALSE;
+}
+
+HRESULT BiffReader::GetInt(void* pValue)
+{
+   m_bytesInRecordRemaining -= sizeof(int);
+
+   return ReadBytes(pValue, sizeof(int));
+}
+
+HRESULT BiffReader::GetInt(int& value)
+{
+    m_bytesInRecordRemaining -= sizeof(int);
+
+    return ReadBytes((void*)&value, sizeof(int));
+}
+
 HRESULT BiffReader::GetString(std::string &szvalue)
 {
     HRESULT hr;
@@ -43,6 +64,13 @@ HRESULT BiffReader::GetString(std::string &szvalue)
     return hr;
 }
 
+HRESULT BiffReader::GetFloat(float& value)
+{
+   m_bytesInRecordRemaining -= sizeof(float);
+
+   return ReadBytes(&value, sizeof(float));
+}
+
 HRESULT BiffReader::GetBool(bool& value)
 {
    m_bytesInRecordRemaining -= sizeof(bool);
@@ -57,19 +85,7 @@ HRESULT BiffReader::GetStruct(void* pValue, const int size)
    return ReadBytes(pValue, size);
 }
 
-HRESULT BiffReader::GetIntNoHash(int& value)
-{
-    m_bytesInRecordRemaining -= sizeof(int);
 
-    return m_pStream->read((unsigned char*)&value, sizeof(int)) != 0 ? S_OK : S_FALSE;
-}
-
-HRESULT BiffReader::GetInt(int& value)
-{
-    m_bytesInRecordRemaining -= sizeof(int);
-
-    return ReadBytes((void*)&value, sizeof(int));
-}
 
 HRESULT BiffReader::Load()
 {

@@ -10,12 +10,15 @@ add_compile_definitions(
 
 include_directories(
    ext/pole
+   math
 )
 
 add_executable(vpxpp
 
    ext/pole/pole.cpp
 
+   math/vector.h
+   
    src/ILoadable.h
    src/BiffReader.h
    src/BiffReader.cpp
