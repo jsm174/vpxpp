@@ -1,11 +1,12 @@
-#if !defined(_BIFFREADER_H__)
-#define _BIFFREADER_H__
+#pragma once
 
 #include "misc.h"
 #include "pole.h"
 #include "ILoadable.h"
 
 #define FID(A) (int)((unsigned int)(#A[0])|((unsigned int)(#A[1])<<8)|((unsigned int)(#A[2])<<16)|((unsigned int)(#A[3])<<24))
+
+class ILoadable;
 
 class BiffReader {
     public:
@@ -18,6 +19,8 @@ class BiffReader {
         HRESULT GetInt(void* pValue);
         HRESULT GetInt(int& value);
         HRESULT GetString(std::string& szvalue);
+        HRESULT GetWideString(wchar_t* wzvalue, int maxlen);
+        HRESULT GetWideString(std::wstring& wzvalue);
         HRESULT GetFloat(float& value);
         HRESULT GetBool(bool& value);
         HRESULT GetStruct(void* pValue, const int size);
@@ -34,5 +37,3 @@ class BiffReader {
         int m_bytesInRecordRemaining;
         ILoadable* m_pLoadable; 
 };
-
-#endif

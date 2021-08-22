@@ -346,21 +346,21 @@ bool PinTable::LoadToken(const int id, BiffReader * const pBiffReader)
         case FID(BLIM): pBiffReader->GetString(m_ballImage); break;
         case FID(BLIF): pBiffReader->GetString(m_ballImageDecal); break;
         case FID(SSHT): pBiffReader->GetString(m_szScreenShot); break;
-        /* case FID(FBCK): pBiffReader->GetBool(m_backdrop); break;
-        case FID(SEDT): pBiffReader->GetInt(&((int *)pBiffReader->m_pdata)[1]); break;
-        case FID(SSND): pBiffReader->GetInt(&((int *)pBiffReader->m_pdata)[2]); break;
-        case FID(SIMG): pBiffReader->GetInt(&((int *)pBiffReader->m_pdata)[3]); break;
-        case FID(SFNT): pBiffReader->GetInt(&((int *)pBiffReader->m_pdata)[4]); break;
-        case FID(SCOL): pBiffReader->GetInt(&((int *)pBiffReader->m_pdata)[5]); break;
-        case FID(NAME): pBiffReader->GetWideString(m_wzName,sizeof(m_wzName)/sizeof(m_wzName[0])); break;
+        case FID(FBCK): pBiffReader->GetBool(m_backdrop); break;
+        case FID(SEDT): pBiffReader->GetInt(&((int *)pBiffReader->m_pData)[1]); break;
+        case FID(SSND): pBiffReader->GetInt(&((int *)pBiffReader->m_pData)[2]); break;
+        case FID(SIMG): pBiffReader->GetInt(&((int *)pBiffReader->m_pData)[3]); break;
+        case FID(SFNT): pBiffReader->GetInt(&((int *)pBiffReader->m_pData)[4]); break;
+        case FID(SCOL): pBiffReader->GetInt(&((int *)pBiffReader->m_pData)[5]); break;
+        //TODO: case FID(NAME): pBiffReader->GetWideString(m_wzName, sizeof(m_wzName)/sizeof(m_wzName[0])); break;
         case FID(BIMG): pBiffReader->GetString(m_BG_image[0]); break;
         case FID(BIMF): pBiffReader->GetString(m_BG_image[1]); break;
         case FID(BIMS): pBiffReader->GetString(m_BG_image[2]); break;
-        case FID(BIMN): pBiffReader->GetBool(m_ImageBackdropNightDay); break;
+        case FID(BIMN): pBiffReader->GetBool(m_imageBackdropNightDay); break;
         case FID(IMCG): pBiffReader->GetString(m_imageColorGrade); break;
         case FID(EIMG): pBiffReader->GetString(m_envImage); break;
         case FID(PLMA): pBiffReader->GetString(m_playfieldMaterial); break;
-        case FID(NOTX): {std::string txt;  pBiffReader->GetString(txt); m_notesText = CString(txt.c_str()); break; }
+        case FID(NOTX): pBiffReader->GetString(m_notesText); break;
         case FID(LZAM): pBiffReader->GetInt(m_lightAmbient); break;
         case FID(LZDI): pBiffReader->GetInt(m_Light[0].emission); break;
         case FID(LZHI): pBiffReader->GetFloat(m_lightHeight); break;
@@ -370,7 +370,49 @@ bool PinTable::LoadToken(const int id, BiffReader * const pBiffReader)
         case FID(GLES): pBiffReader->GetFloat(m_globalEmissionScale); break;
         case FID(AOSC): pBiffReader->GetFloat(m_AOScale); break;
         case FID(SSSC): pBiffReader->GetFloat(m_SSRScale); break;
-        case FID(BREF): pBiffReader->GetInt(m_useReflectionForBalls); break;*/
+        case FID(BREF): pBiffReader->GetInt(m_useReflectionForBalls); break;
+        case FID(PLST):
+        {
+            int tmp;
+            pBiffReader->GetInt(tmp);
+            m_playfieldReflectionStrength = dequantizeUnsigned<8>(tmp);
+            break;
+        }
+        case FID(BTRA): pBiffReader->GetInt(m_useTrailForBalls); break;
+        case FID(BTST):
+        {
+            int tmp;
+            pBiffReader->GetInt(tmp);
+            m_ballTrailStrength = dequantizeUnsigned<8>(tmp);
+            break;
+        }
+        case FID(BPRS): pBiffReader->GetFloat(m_ballPlayfieldReflectionStrength); break;
+        case FID(DBIS): pBiffReader->GetFloat(m_defaultBulbIntensityScaleOnBall); break;
+        case FID(UAAL): pBiffReader->GetInt(m_useAA); break;
+        case FID(UAOC): pBiffReader->GetInt(m_useAO); break;
+        case FID(USSR): pBiffReader->GetInt(m_useSSR); break;
+        case FID(UFXA): pBiffReader->GetInt(m_useFXAA); break;
+        case FID(BLST): pBiffReader->GetFloat(m_bloom_strength); break;
+        case FID(BCLR): pBiffReader->GetInt(m_colorbackdrop); break;
+        //TODO: case FID(SECB): pBiffReader->GetStruct(&m_protectionData, sizeof(ProtectionData)); break;
+        case FID(CODE):
+        {
+            // if the script is protected then we pass in the proper cryptokey into the code loadstream
+            // TODO: const bool script_protected = (((m_protectionData.flags & DISABLE_EVERYTHING) == DISABLE_EVERYTHING) ||
+            //    ((m_protectionData.flags & DISABLE_SCRIPT_EDITING) == DISABLE_SCRIPT_EDITING));
+
+            //m_pcv->LoadFromStream(pBiffReader->m_pistream, pBiffReader->m_hcrypthash, script_protected ? pBiffReader->m_hcryptkey : NULL);
+            break;
+        }
+        case FID(CCUS): pBiffReader->GetStruct(m_rgcolorcustom, sizeof(COLORREF) * 16); break;
+        case FID(TDFT):
+        {
+            pBiffReader->GetFloat(m_globalDifficulty);
+            int tmp;
+            //const HRESULT hr = LoadValue("Player", "GlobalDifficulty", tmp);
+            //if (hr == S_OK) m_globalDifficulty = dequantizeUnsignedPercent(tmp);
+            break;
+        }
         case FID(CUST):
         {
             std::string tmp;
@@ -378,10 +420,77 @@ bool PinTable::LoadToken(const int id, BiffReader * const pBiffReader)
             m_vCustomInfoTag.push_back(tmp);
             break;
         }
-        case FID(ENDB):
+        case FID(SVOL): pBiffReader->GetFloat(m_TableSoundVolume); break;
+        case FID(BDMO): pBiffReader->GetBool(m_BallDecalMode); break;
+        case FID(MVOL): pBiffReader->GetFloat(m_TableMusicVolume); break;
+        case FID(AVSY): pBiffReader->GetInt(m_TableAdaptiveVSync); break;
+        case FID(OGAC): pBiffReader->GetBool(m_overwriteGlobalDetailLevel); break;
+        case FID(OGDN): pBiffReader->GetBool(m_overwriteGlobalDayNight); break;
+        case FID(GDAC): pBiffReader->GetBool(m_grid); break;
+        case FID(REOP): pBiffReader->GetBool(m_reflectElementsOnPlayfield); break;
+        case FID(ARAC): pBiffReader->GetInt(m_userDetailLevel); break;
+        case FID(MASI): pBiffReader->GetInt(m_numMaterials); break;
+        /* TODO:
+        case FID(MATE):
+        {
+            vector<SaveMaterial> mats(m_numMaterials);
+            pBiffReader->GetStruct(mats.data(), (int)sizeof(SaveMaterial)*m_numMaterials);
+
+            for (size_t i = 0; i < m_materials.size(); ++i)
+                delete m_materials[i];
+            m_materials.clear();
+
+            for (int i = 0; i < m_numMaterials; i++)
+            {
+                Material * const pmat = new Material();
+                pmat->m_cBase = mats[i].cBase;
+                pmat->m_cGlossy = mats[i].cGlossy;
+                pmat->m_cClearcoat = mats[i].cClearcoat;
+                pmat->m_fWrapLighting = mats[i].fWrapLighting;
+                pmat->m_fRoughness = mats[i].fRoughness;
+                pmat->m_fGlossyImageLerp = 1.0f - dequantizeUnsigned<8>(mats[i].fGlossyImageLerp); //!! '1.0f -' to be compatible with previous table versions
+                pmat->m_fThickness = (mats[i].fThickness == 0) ? 0.05f : dequantizeUnsigned<8>(mats[i].fThickness); //!! 0 -> 0.05f to be compatible with previous table versions
+                pmat->m_fEdge = mats[i].fEdge;
+                pmat->m_fOpacity = mats[i].fOpacity;
+                pmat->m_bIsMetal = mats[i].bIsMetal;
+                pmat->m_bOpacityActive = !!(mats[i].bOpacityActive_fEdgeAlpha & 1);
+                pmat->m_fEdgeAlpha = dequantizeUnsigned<7>(mats[i].bOpacityActive_fEdgeAlpha >> 1);
+                pmat->m_szName = mats[i].szName;
+                m_materials.push_back(pmat);
+            }
             break;
+        }
+        case FID(PHMA):
+        {
+            vector<SavePhysicsMaterial> mats(m_numMaterials);
+            pBiffReader->GetStruct(mats.data(), (int)sizeof(SavePhysicsMaterial)*m_numMaterials);
+
+            for (int i = 0; i < m_numMaterials; i++)
+            {
+                bool found = true;
+                Material * pmat = GetMaterial(mats[i].szName);
+                if (pmat == &m_vpinball->m_dummyMaterial)
+                {
+                    assert(!"SaveMaterial not found");
+                    pmat = new Material();
+                    pmat->m_szName = mats[i].szName;
+                    found = false;
+                }
+                pmat->m_fElasticity = mats[i].fElasticity;
+                pmat->m_fElasticityFalloff = mats[i].fElasticityFallOff;
+                pmat->m_fFriction = mats[i].fFriction;
+                pmat->m_fScatterAngle = mats[i].fScatterAngle;
+                if (!found)
+                    m_materials.push_back(pmat);
+            }
+            break;
+        }
+        */
         default:
-            printf("FID: %c%c%c%c NOT IMPLEMENTED!\n", (id & 0xFF), ((id >> 8) & 0xFF), ((id >> 16 & 0xFF)), ((id >> 24 & 0xFF)));
+            if (id != FID(ENDB))
+            {
+                printf("FID: %c%c%c%c NOT IMPLEMENTED!\n", (id & 0xFF), ((id >> 8) & 0xFF), ((id >> 16 & 0xFF)), ((id >> 24 & 0xFF)));
+            }
             break;
     }
 

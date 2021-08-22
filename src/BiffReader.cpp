@@ -64,6 +64,70 @@ HRESULT BiffReader::GetString(std::string &szvalue)
     return hr;
 }
 
+HRESULT BiffReader::GetWideString(wchar_t* wzvalue, int maxlen)
+{
+   HRESULT hr;
+   int len;
+
+   hr = ReadBytes(&len, sizeof(int));
+
+   if (hr != S_OK)
+   {
+      wzvalue[0] = 0;
+      return hr;
+   }
+
+   m_bytesInRecordRemaining -= len + (int)sizeof(int);
+
+   wchar_t* pTmp = new wchar_t[len + 1];
+   memset(pTmp, 0, sizeof(wchar_t) * (len + 1));
+
+   char* pPtr = (char*)pTmp;
+
+   for (int index = 0; index < len; index++) {
+        hr = ReadBytes(pPtr, 2);
+
+        pPtr += sizeof(wchar_t);
+   }
+
+   wcsncpy(wzvalue, pTmp, maxlen);  
+   delete[] pTmp;
+
+   return hr;
+}
+
+HRESULT BiffReader::GetWideString(std::wstring& wzvalue)
+{
+   HRESULT hr;
+   int len;
+
+   hr = ReadBytes(&len, sizeof(int));
+
+   if (hr != S_OK)
+   {
+      wzvalue.clear();
+      return hr;
+   }
+
+   m_bytesInRecordRemaining -= len + (int)sizeof(int);
+
+   wchar_t* pTmp = new wchar_t[len + 1];
+   memset(pTmp, 0, sizeof(wchar_t) * (len + 1));
+
+   char* pPtr = (char*)pTmp;
+
+   for (int index = 0; index < len; index++) {
+        hr = ReadBytes(pPtr, 2);
+
+        pPtr += sizeof(wchar_t);
+   }
+
+   wzvalue = pTmp;
+   delete[] pTmp;
+   
+   return hr;
+}
+
 HRESULT BiffReader::GetFloat(float& value)
 {
    m_bytesInRecordRemaining -= sizeof(float);

@@ -10,6 +10,7 @@ add_compile_definitions(
 
 include_directories(
    ext/pole
+   src
    math
 )
 
@@ -18,11 +19,23 @@ add_executable(vpxpp
    ext/pole/pole.cpp
 
    math/vector.h
+   math/cmath.h
    
+   src/def.h
+   src/def.cpp
+   
+   src/misc.h
+
    src/ILoadable.h
+
+   src/IScriptable.h
+   src/IScriptable.cpp
+
    src/BiffReader.h
    src/BiffReader.cpp
+   
    src/PinTable.h
    src/PinTable.cpp
+   
    src/main.cpp
 )

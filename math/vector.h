@@ -1,5 +1,4 @@
-#if !defined(_VECTOR_H__)
-#define _VECTOR_H__
+#pragma once
 
 #include <math.h>
 #include <float.h>
@@ -412,5 +411,3 @@ public:
     short2() {}
     short2(const short _x, const short _y) : x(_x), y(_y) {}
 };
-
-#endif

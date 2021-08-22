@@ -1,15 +1,38 @@
-#if !defined(_PINTABLE_H__)
-#define _PINTABLE_H__
+#pragma once
 
 #include "pole.h"
+
 #include "ILoadable.h"
-#include <vector>
+#include "IScriptable.h"
 #include "misc.h"
 #include "vector.h"
+#include "cmath.h"
+
+#include <vector>
 
 #define CURRENT_FILE_FORMAT_VERSION  1070
 
-class PinTable : public ILoadable {
+struct LightSource {
+   COLORREF emission;
+   Vertex3Ds pos;
+};
+
+/* TODO: 
+struct ProtectionData {
+   long				fileversion;
+   long				size;
+   unsigned char	paraphrase[16 + 8];
+   unsigned long	flags;
+   int				keyversion;
+   int				spare1;
+   int				spare2;
+};
+*/
+
+class PinTable : 
+    public IScriptable,
+    public ILoadable  
+{
     public:
         PinTable();
         virtual ~PinTable();
@@ -46,7 +69,7 @@ class PinTable : public ILoadable {
         // TODO: float m_global3DZPD;
         float m_3DOffset;
         // TODO: float m_global3DOffset;
-        // TODO: float m_defaultBulbIntensityScaleOnBall;
+        float m_defaultBulbIntensityScaleOnBall;
 
         unsigned int m_BG_current_set;
         float m_BG_inclination[NUM_BG_SETS];
@@ -85,9 +108,31 @@ class PinTable : public ILoadable {
 
         bool m_overridePhysicsFlipper;
 
+        float m_globalDifficulty;
+
+        // TODO: ProtectionData m_protectionData;
+
         std::string m_image;
+        std::string m_playfieldMaterial;
+        COLORREF m_colorbackdrop;
+        bool m_imageBackdropNightDay;
+
+        std::string m_imageColorGrade;
+
         std::string m_ballImage;
         std::string m_ballImageDecal;
+        bool m_BallDecalMode;
+
+        std::string m_envImage;
+
+        int m_numMaterials;
+
+        COLORREF m_rgcolorcustom[16];
+
+        float m_TableSoundVolume;
+        float m_TableMusicVolume;
+        
+        int m_TableAdaptiveVSync;
 
         std::string m_szTableName;
         std::string m_szAuthor;
@@ -105,9 +150,40 @@ class PinTable : public ILoadable {
         std::vector<std::string> m_vCustomInfoTag;
         std::vector<std::string> m_vCustomInfoContent;
 
+        int m_userDetailLevel;
+        bool m_overwriteGlobalDetailLevel;
+
+        bool m_overwriteGlobalDayNight;
+
+        LightSource m_Light[MAX_LIGHT_SOURCES];
+        COLORREF m_lightAmbient;
+        float m_lightHeight;
+        float m_lightRange;
+        float m_lightEmissionScale;
+        float m_envEmissionScale;
+        float m_globalEmissionScale;
+        float m_AOScale;
+        float m_SSRScale;
+
+        int m_useReflectionForBalls;
+        float m_playfieldReflectionStrength;
+        int m_useTrailForBalls;
+        float m_ballTrailStrength;
+        float m_ballPlayfieldReflectionStrength;
+        int m_useAA;
+        int m_useFXAA;
+        int m_useAO;
+        int m_useSSR;
+        float m_bloom_strength;
+
+        bool m_grid;
+        bool m_backdrop;
         bool m_renderDecals;
         bool m_renderEMReels;
         bool m_overwriteGlobalStereo3D;
-};
+        bool m_reflectElementsOnPlayfield;
 
-#endif
+    private:
+        std::string m_notesText;
+
+};
