@@ -9,27 +9,33 @@ add_compile_definitions(
 )
 
 include_directories(
-   ext/pole
-   src
    math
+   ext/pole
 )
 
 add_executable(vpxpp
-
-   ext/pole/pole.cpp
-
    math/vector.h
    math/cmath.h
    
    src/def.h
    src/def.cpp
-   
+
    src/misc.h
+
+   src/hash.h
 
    src/ILoadable.h
 
    src/IScriptable.h
    src/IScriptable.cpp
+
+   src/IEditable.h
+   src/IEditable.cpp
+
+   src/EditableRegistry.h
+
+   src/CodeViewer.h
+   src/CodeViewer.cpp
 
    src/BiffReader.h
    src/BiffReader.cpp
@@ -37,5 +43,46 @@ add_executable(vpxpp
    src/PinTable.h
    src/PinTable.cpp
    
+   src/Bumper.h
+   src/Bumper.cpp
+   src/Decal.h
+   src/Decal.cpp
+   src/DispReel.h
+   src/DispReel.cpp
+   src/Flasher.h
+   src/Flasher.cpp
+   src/Flipper.h
+   src/Flipper.cpp
+   src/Gate.h
+   src/Gate.cpp
+   src/Kicker.h
+   src/Kicker.cpp
+   src/Light.h
+   src/Light.cpp
+   src/LightSeq.h
+   src/LightSeq.cpp
+   src/Plunger.h
+   src/Plunger.cpp
+   src/Primitive.h
+   src/Primitive.cpp
+   src/Ramp.h
+   src/Ramp.cpp
+   src/Rubber.h
+   src/Rubber.cpp
+   src/Spinner.h
+   src/Spinner.cpp
+   src/Surface.h
+   src/Surface.cpp
+   src/Textbox.h
+   src/Textbox.cpp
+   src/Timer.h
+   src/Timer.cpp
+   src/Trigger.h
+   src/Trigger.cpp
+   src/HitTarget.h
+   src/HitTarget.cpp
+
+   ext/pole/pole.cpp
+
    src/main.cpp
 )

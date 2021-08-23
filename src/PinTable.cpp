@@ -5,6 +5,9 @@
 #include <float.h>
 #include <iostream>
 
+#include "ISelect.h"
+#include "EditableRegistry.h"
+
 PinTable::PinTable()
 {
     m_renderDecals = true;
@@ -49,11 +52,12 @@ PinTable::PinTable()
         m_BG_xlatez[i] = 0.0f;
     }
 
+    m_pCodeViewer = new CodeViewer();
+
     m_3DZPD = 0.5f;
     m_3DmaxSeparation = 0.03f;
     m_3DOffset = 0.0f;
     m_overwriteGlobalStereo3D = false;
-
 }
 
 PinTable::~PinTable()
@@ -108,7 +112,30 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
         int cfonts = 0;
         int ccollection = 0;
 
-        LoadData(pGameStream, csubobj, csounds, ctextures, cfonts, ccollection, loadFileVersion);
+        if (LoadData(pGameStream, csubobj, csounds, ctextures, cfonts, ccollection, loadFileVersion) == S_OK) {
+            const int ctotalitems = csubobj + csounds + ctextures + cfonts;
+
+            int cloadeditems = 0;
+
+            for (int i = 0; i < csubobj; i++)
+            {
+                std::string szStmName = "GameStg/GameItem" + std::to_string(i);
+
+                POLE::Stream* pItemStream = new POLE::Stream(pStorage, szStmName);
+              
+                if (!pItemStream->fail()) 
+                {
+                    ItemTypeEnum type;
+                    pItemStream->read((unsigned char*)&type, sizeof(int));
+
+                    IEditable* pEditable = EditableRegistry::Create(type);
+
+                    std::cout << szStmName << " = " << type << "\n";
+                }
+
+                delete pItemStream;
+            }
+        }
 
     }
 
@@ -251,8 +278,12 @@ HRESULT PinTable::LoadData(POLE::Stream* pStream, int& csubobj, int& csounds, in
     return S_OK;
 }
 
-bool PinTable::LoadToken(const int id, BiffReader * const pBiffReader)
+bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 {
+    //FILE* log = fopen("fid.txt","a");
+    //printf("FID: %c%c%c%c \n", (id & 0xFF), ((id >> 8) & 0xFF), ((id >> 16 & 0xFF)), ((id >> 24 & 0xFF)));
+    //fclose(log);
+
     switch(id) {       
         case FID(LEFT): pBiffReader->GetFloat(m_left); break;
         case FID(TOPX): pBiffReader->GetFloat(m_top); break;
@@ -352,7 +383,7 @@ bool PinTable::LoadToken(const int id, BiffReader * const pBiffReader)
         case FID(SIMG): pBiffReader->GetInt(&((int *)pBiffReader->m_pData)[3]); break;
         case FID(SFNT): pBiffReader->GetInt(&((int *)pBiffReader->m_pData)[4]); break;
         case FID(SCOL): pBiffReader->GetInt(&((int *)pBiffReader->m_pData)[5]); break;
-        //TODO: case FID(NAME): pBiffReader->GetWideString(m_wzName, sizeof(m_wzName)/sizeof(m_wzName[0])); break;
+        case FID(NAME): pBiffReader->GetWideString(m_wzName, sizeof(m_wzName)/sizeof(wchar_t)); break;
         case FID(BIMG): pBiffReader->GetString(m_BG_image[0]); break;
         case FID(BIMF): pBiffReader->GetString(m_BG_image[1]); break;
         case FID(BIMS): pBiffReader->GetString(m_BG_image[2]); break;
@@ -401,7 +432,7 @@ bool PinTable::LoadToken(const int id, BiffReader * const pBiffReader)
             // TODO: const bool script_protected = (((m_protectionData.flags & DISABLE_EVERYTHING) == DISABLE_EVERYTHING) ||
             //    ((m_protectionData.flags & DISABLE_SCRIPT_EDITING) == DISABLE_SCRIPT_EDITING));
 
-            //m_pcv->LoadFromStream(pBiffReader->m_pistream, pBiffReader->m_hcrypthash, script_protected ? pBiffReader->m_hcryptkey : NULL);
+            m_pCodeViewer->LoadFromStream(pBiffReader->m_pStream);
             break;
         }
         case FID(CCUS): pBiffReader->GetStruct(m_rgcolorcustom, sizeof(COLORREF) * 16); break;
@@ -430,52 +461,55 @@ bool PinTable::LoadToken(const int id, BiffReader * const pBiffReader)
         case FID(REOP): pBiffReader->GetBool(m_reflectElementsOnPlayfield); break;
         case FID(ARAC): pBiffReader->GetInt(m_userDetailLevel); break;
         case FID(MASI): pBiffReader->GetInt(m_numMaterials); break;
-        /* TODO:
         case FID(MATE):
         {
-            vector<SaveMaterial> mats(m_numMaterials);
+            std::vector<SaveMaterial> mats(m_numMaterials);
             pBiffReader->GetStruct(mats.data(), (int)sizeof(SaveMaterial)*m_numMaterials);
 
             for (size_t i = 0; i < m_materials.size(); ++i)
+            {
                 delete m_materials[i];
+            }
+
             m_materials.clear();
 
             for (int i = 0; i < m_numMaterials; i++)
             {
-                Material * const pmat = new Material();
-                pmat->m_cBase = mats[i].cBase;
-                pmat->m_cGlossy = mats[i].cGlossy;
-                pmat->m_cClearcoat = mats[i].cClearcoat;
-                pmat->m_fWrapLighting = mats[i].fWrapLighting;
-                pmat->m_fRoughness = mats[i].fRoughness;
-                pmat->m_fGlossyImageLerp = 1.0f - dequantizeUnsigned<8>(mats[i].fGlossyImageLerp); //!! '1.0f -' to be compatible with previous table versions
-                pmat->m_fThickness = (mats[i].fThickness == 0) ? 0.05f : dequantizeUnsigned<8>(mats[i].fThickness); //!! 0 -> 0.05f to be compatible with previous table versions
-                pmat->m_fEdge = mats[i].fEdge;
-                pmat->m_fOpacity = mats[i].fOpacity;
-                pmat->m_bIsMetal = mats[i].bIsMetal;
-                pmat->m_bOpacityActive = !!(mats[i].bOpacityActive_fEdgeAlpha & 1);
-                pmat->m_fEdgeAlpha = dequantizeUnsigned<7>(mats[i].bOpacityActive_fEdgeAlpha >> 1);
-                pmat->m_szName = mats[i].szName;
-                m_materials.push_back(pmat);
+                Material* pMaterial = new Material();
+                pMaterial->m_cBase = mats[i].cBase;
+                pMaterial->m_cGlossy = mats[i].cGlossy;
+                pMaterial->m_cClearcoat = mats[i].cClearcoat;
+                pMaterial->m_fWrapLighting = mats[i].fWrapLighting;
+                pMaterial->m_fRoughness = mats[i].fRoughness;
+                pMaterial->m_fGlossyImageLerp = 1.0f - dequantizeUnsigned<8>(mats[i].fGlossyImageLerp); //!! '1.0f -' to be compatible with previous table versions
+                pMaterial->m_fThickness = (mats[i].fThickness == 0) ? 0.05f : dequantizeUnsigned<8>(mats[i].fThickness); //!! 0 -> 0.05f to be compatible with previous table versions
+                pMaterial->m_fEdge = mats[i].fEdge;
+                pMaterial->m_fOpacity = mats[i].fOpacity;
+                pMaterial->m_bIsMetal = mats[i].bIsMetal;
+                pMaterial->m_bOpacityActive = !!(mats[i].bOpacityActive_fEdgeAlpha & 1);
+                pMaterial->m_fEdgeAlpha = dequantizeUnsigned<7>(mats[i].bOpacityActive_fEdgeAlpha >> 1);
+                pMaterial->m_szName = mats[i].szName;
+
+                m_materials.push_back(pMaterial);
             }
             break;
         }
         case FID(PHMA):
         {
-            vector<SavePhysicsMaterial> mats(m_numMaterials);
+            std::vector<SavePhysicsMaterial> mats(m_numMaterials);
             pBiffReader->GetStruct(mats.data(), (int)sizeof(SavePhysicsMaterial)*m_numMaterials);
 
             for (int i = 0; i < m_numMaterials; i++)
             {
                 bool found = true;
                 Material * pmat = GetMaterial(mats[i].szName);
-                if (pmat == &m_vpinball->m_dummyMaterial)
+                /*TODO: if (pmat == &m_vpinball->m_dummyMaterial)
                 {
                     assert(!"SaveMaterial not found");
                     pmat = new Material();
                     pmat->m_szName = mats[i].szName;
                     found = false;
-                }
+                }*/
                 pmat->m_fElasticity = mats[i].fElasticity;
                 pmat->m_fElasticityFalloff = mats[i].fElasticityFallOff;
                 pmat->m_fFriction = mats[i].fFriction;
@@ -485,13 +519,6 @@ bool PinTable::LoadToken(const int id, BiffReader * const pBiffReader)
             }
             break;
         }
-        */
-        default:
-            if (id != FID(ENDB))
-            {
-                printf("FID: %c%c%c%c NOT IMPLEMENTED!\n", (id & 0xFF), ((id >> 8) & 0xFF), ((id >> 16 & 0xFF)), ((id >> 24 & 0xFF)));
-            }
-            break;
     }
 
     return true;
@@ -528,6 +555,29 @@ void PinTable::ReadInfoValue(POLE::Storage* pStorage, const char* pName, char** 
     std::cout << pPath << " = " << *ppValue << "\n";
 
     delete pStream;
+}
+
+Material* PinTable::GetMaterial(const std::string &szName)
+{
+   // TODO: if (szName.empty())
+   //   return &m_vpinball->m_dummyMaterial;
+
+   // during playback, we use the hashtable for lookup
+   if (!m_materialMap.empty())
+   {
+      std::unordered_map<const char*, Material*, StringHashFunctor, StringComparator>::const_iterator
+         it = m_materialMap.find(szName.c_str());
+      if (it != m_materialMap.end())
+         return it->second;
+      // TODO: else
+      //   return &m_vpinball->m_dummyMaterial;
+   }
+
+   for (size_t i = 0; i < m_materials.size(); i++)
+      if(m_materials[i]->m_szName==szName)
+         return m_materials[i];
+
+   // TODO: return &m_vpinball->m_dummyMaterial;
 }
 
 void PinTable::visit( int indent, POLE::Storage* storage, std::string path )

@@ -79,6 +79,8 @@ HRESULT BiffReader::GetWideString(wchar_t* wzvalue, int maxlen)
 
    m_bytesInRecordRemaining -= len + (int)sizeof(int);
 
+   len /= 2;
+
    wchar_t* pTmp = new wchar_t[len + 1];
    memset(pTmp, 0, sizeof(wchar_t) * (len + 1));
 
@@ -86,7 +88,6 @@ HRESULT BiffReader::GetWideString(wchar_t* wzvalue, int maxlen)
 
    for (int index = 0; index < len; index++) {
         hr = ReadBytes(pPtr, 2);
-
         pPtr += sizeof(wchar_t);
    }
 
@@ -111,6 +112,8 @@ HRESULT BiffReader::GetWideString(std::wstring& wzvalue)
 
    m_bytesInRecordRemaining -= len + (int)sizeof(int);
 
+   len /= 2;
+
    wchar_t* pTmp = new wchar_t[len + 1];
    memset(pTmp, 0, sizeof(wchar_t) * (len + 1));
 
@@ -118,7 +121,6 @@ HRESULT BiffReader::GetWideString(std::wstring& wzvalue)
 
    for (int index = 0; index < len; index++) {
         hr = ReadBytes(pPtr, 2);
-
         pPtr += sizeof(wchar_t);
    }
 
@@ -148,8 +150,6 @@ HRESULT BiffReader::GetStruct(void* pValue, const int size)
 
    return ReadBytes(pValue, size);
 }
-
-
 
 HRESULT BiffReader::Load()
 {

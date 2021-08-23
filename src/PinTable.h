@@ -4,11 +4,18 @@
 
 #include "ILoadable.h"
 #include "IScriptable.h"
+#include "IEditable.h"
+
+#include "Material.h"
+#include "CodeViewer.h"
+
 #include "misc.h"
 #include "vector.h"
 #include "cmath.h"
+#include "hash.h"
 
 #include <vector>
+#include <unordered_map>
 
 #define CURRENT_FILE_FORMAT_VERSION  1070
 
@@ -31,7 +38,8 @@ struct ProtectionData {
 
 class PinTable : 
     public IScriptable,
-    public ILoadable  
+    public ILoadable,
+    public IEditable
 {
     public:
         PinTable();
@@ -47,6 +55,8 @@ class PinTable :
 
         void ReadInfoValue(POLE::Storage* pstg, const char* pName, char **pszValue);
         virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+
+        Material* GetMaterial(const std::string &szName);
 
         void visit( int indent, POLE::Storage* storage, std::string path );
 
@@ -126,6 +136,7 @@ class PinTable :
         std::string m_envImage;
 
         int m_numMaterials;
+        std::vector< Material* > m_materials;
 
         COLORREF m_rgcolorcustom[16];
 
@@ -133,6 +144,8 @@ class PinTable :
         float m_TableMusicVolume;
         
         int m_TableAdaptiveVSync;
+
+        CodeViewer* m_pCodeViewer;
 
         std::string m_szTableName;
         std::string m_szAuthor;
@@ -185,5 +198,9 @@ class PinTable :
 
     private:
         std::string m_notesText;
+
+        //std::unordered_map<const char*, Texture *, StringHashFunctor, StringComparator> m_textureMap;  // hash table to speed up texture lookup by name
+        std::unordered_map<const char*, Material*, StringHashFunctor, StringComparator> m_materialMap; // hash table to speed up material lookup by name
+ 
 
 };
