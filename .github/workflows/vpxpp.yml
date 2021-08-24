@@ -18,6 +18,10 @@ jobs:
             platform: osx-x64
             exe: vpxpp
     steps:
+      - run: |
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then 
+             brew install v8
+          fi
       - uses: actions/checkout@v2
       - name: Build vpxpp-${{ matrix.platform }}
         run: |
