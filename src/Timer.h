@@ -4,12 +4,12 @@
 #include "ISelect.h"
 
 class Timer :
-    public IEditable
+	public IEditable
 {
 public:
 
-    Timer();
-    ~Timer();
+	Timer();
+	~Timer();
 
 	static const ItemTypeEnum ItemType = eItemTimer;
 	static const int TypeNameID = 0;
@@ -18,11 +18,11 @@ public:
 	static const unsigned AllowedViews = 1;
 
 	static Timer* COMCreate()
-    {
+	{
 		return new Timer();
 	} 
 
 	static IEditable* COMCreateEditable()   { 
-	return static_cast<IEditable*>(COMCreate()); 
+		return static_cast<IEditable*>(COMCreate()); 
 	}
 };

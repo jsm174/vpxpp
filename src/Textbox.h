@@ -4,12 +4,12 @@
 #include "ISelect.h"
 
 class Textbox :
-    public IEditable
+	public IEditable
 {
 public:
 
-    Textbox();
-    ~Textbox();
+	Textbox();
+	~Textbox();
 
 	static const ItemTypeEnum ItemType = eItemTextbox;
 	static const int TypeNameID = 0;
@@ -18,9 +18,9 @@ public:
 	static const unsigned AllowedViews = 1;
 
 	static Textbox* COMCreate()
-    {
+	{
 		return new Textbox();
 	} 
 
-	static IEditable* COMCreateEditable()   { return static_cast<IEditable*>(COMCreate()); }
+	static IEditable* COMCreateEditable()   { 	return static_cast<IEditable*>(COMCreate()); }
 };

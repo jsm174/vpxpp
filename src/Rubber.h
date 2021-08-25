@@ -4,12 +4,12 @@
 #include "ISelect.h"
 
 class Rubber :
-    public IEditable
+	public IEditable
 {
 public:
 
-    Rubber();
-    ~Rubber();
+	Rubber();
+	~Rubber();
 
 	static const ItemTypeEnum ItemType = eItemRubber;
 	static const int TypeNameID = 0;
@@ -18,11 +18,11 @@ public:
 	static const unsigned AllowedViews = 1;
 
 	static Rubber* COMCreate()
-    {
+	{
 		return new Rubber();
 	} 
 
 	static IEditable* COMCreateEditable()   { 
-	return static_cast<IEditable*>(COMCreate()); 
+		return static_cast<IEditable*>(COMCreate()); 
 	}
 };

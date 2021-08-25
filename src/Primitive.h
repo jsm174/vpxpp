@@ -4,12 +4,12 @@
 #include "ISelect.h"
 
 class Primitive :
-    public IEditable
+	public IEditable
 {
 public:
 
-    Primitive();
-    ~Primitive();
+	Primitive();
+	~Primitive();
 
 	static const ItemTypeEnum ItemType = eItemPrimitive;
 	static const int TypeNameID = 0;
@@ -18,11 +18,11 @@ public:
 	static const unsigned AllowedViews = 1;
 
 	static Primitive* COMCreate()
-    {
+	{
 		return new Primitive();
 	} 
 
 	static IEditable* COMCreateEditable()   { 
-	return static_cast<IEditable*>(COMCreate()); 
+		return static_cast<IEditable*>(COMCreate()); 
 	}
 };

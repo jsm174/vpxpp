@@ -4,12 +4,12 @@
 #include "ISelect.h"
 
 class DispReel :
-    public IEditable
+	public IEditable
 {
 public:
 
-    DispReel();
-    ~DispReel();
+	DispReel();
+	~DispReel();
 
 	static const ItemTypeEnum ItemType = eItemDispReel;
 	static const int TypeNameID = 0;
@@ -18,11 +18,11 @@ public:
 	static const unsigned AllowedViews = 1;
 
 	static DispReel* COMCreate()
-    {
+	{
 		return new DispReel();
 	} 
 
 	static IEditable* COMCreateEditable()   { 
-	return static_cast<IEditable*>(COMCreate()); 
+		return static_cast<IEditable*>(COMCreate()); 
 	}
 };

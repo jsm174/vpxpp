@@ -4,12 +4,12 @@
 #include "ISelect.h"
 
 class HitTarget :
-    public IEditable
+	public IEditable
 {
 public:
 
-    HitTarget();
-    ~HitTarget();
+	HitTarget();
+	~HitTarget();
 
 	static const ItemTypeEnum ItemType = eItemHitTarget;
 	static const int TypeNameID = 0;
@@ -18,11 +18,11 @@ public:
 	static const unsigned AllowedViews = 1;
 
 	static HitTarget* COMCreate()
-    {
+	{
 		return new HitTarget();
 	} 
 
 	static IEditable* COMCreateEditable()   { 
-	return static_cast<IEditable*>(COMCreate()); 
+		return static_cast<IEditable*>(COMCreate()); 
 	}
 };

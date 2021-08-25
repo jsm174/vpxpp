@@ -8,8 +8,8 @@ class Flipper :
 {
 public:
 
-    Flipper();
-    ~Flipper();
+	Flipper();
+	~Flipper();
 
 	static const ItemTypeEnum ItemType = eItemFlipper;
 	static const int TypeNameID = 0;
@@ -18,11 +18,12 @@ public:
 	static const unsigned AllowedViews = 1;
 
 	static Flipper* COMCreate()
-    {
+	{
 		return new Flipper();
 	} 
 
-	static IEditable* COMCreateEditable()   { 
-	return static_cast<IEditable*>(COMCreate()); 
+	static IEditable* COMCreateEditable()   
+	{ 
+		return static_cast<IEditable*>(COMCreate()); 
 	}
 };

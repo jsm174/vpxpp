@@ -4,12 +4,12 @@
 #include "ISelect.h"
 
 class Decal :
-    public IEditable
+	public IEditable
 {
 public:
 
-    Decal();
-    ~Decal();
+	Decal();
+	~Decal();
 
 	static const ItemTypeEnum ItemType = eItemDecal;
 	static const int TypeNameID = 0;
@@ -18,11 +18,12 @@ public:
 	static const unsigned AllowedViews = 1;
 
 	static Decal* COMCreate()
-    {
+	{
 		return new Decal();
 	} 
 
-	static IEditable* COMCreateEditable()   { 
-	return static_cast<IEditable*>(COMCreate()); 
+	static IEditable* COMCreateEditable()   
+	{ 
+		return static_cast<IEditable*>(COMCreate()); 
 	}
 };

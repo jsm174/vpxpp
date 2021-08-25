@@ -23,6 +23,6 @@ public:
 	} 
 
 	static IEditable* COMCreateEditable()   { 
-		return static_cast<IEditable*>(COMCreate()); 
+			return static_cast<IEditable*>(COMCreate()); 
 	}
 };

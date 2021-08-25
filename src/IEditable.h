@@ -1,10 +1,7 @@
 #pragma once
 
-
 class IEditable
 {
-   public:
-      IEditable();
-
-      
+public:
+	IEditable();
 };

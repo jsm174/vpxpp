@@ -4,12 +4,12 @@
 #include "ISelect.h"
 
 class Gate :
-    public IEditable
+	public IEditable
 {
 public:
 
-    Gate();
-    ~Gate();
+	Gate();
+	~Gate();
 
 	static const ItemTypeEnum ItemType = eItemGate;
 	static const int TypeNameID = 0;
@@ -18,11 +18,12 @@ public:
 	static const unsigned AllowedViews = 1;
 
 	static Gate* COMCreate()
-    {
+	{
 		return new Gate();
 	} 
 
-	static IEditable* COMCreateEditable()   { 
-	return static_cast<IEditable*>(COMCreate()); 
+	static IEditable* COMCreateEditable()
+	{ 
+		return static_cast<IEditable*>(COMCreate()); 
 	}
 };

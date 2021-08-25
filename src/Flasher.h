@@ -4,12 +4,12 @@
 #include "ISelect.h"
 
 class Flasher :
-    public IEditable
+	public IEditable
 {
 public:
 
-    Flasher();
-    ~Flasher();
+	Flasher();
+	~Flasher();
 
 	static const ItemTypeEnum ItemType = eItemFlasher;
 	static const int TypeNameID = 0;
@@ -18,11 +18,12 @@ public:
 	static const unsigned AllowedViews = 1;
 
 	static Flasher* COMCreate()
-    {
+	{
 		return new Flasher();
 	} 
 
-	static IEditable* COMCreateEditable()   { 
-	return static_cast<IEditable*>(COMCreate()); 
+	static IEditable* COMCreateEditable()   
+	{ 
+		return static_cast<IEditable*>(COMCreate()); 
 	}
 };

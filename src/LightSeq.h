@@ -4,12 +4,12 @@
 #include "ISelect.h"
 
 class LightSeq :
-    public IEditable
+	public IEditable
 {
 public:
 
-    LightSeq();
-    ~LightSeq();
+	LightSeq();
+	~LightSeq();
 
 	static const ItemTypeEnum ItemType = eItemLightSeq;
 	static const int TypeNameID = 0;
@@ -18,11 +18,11 @@ public:
 	static const unsigned AllowedViews = 1;
 
 	static LightSeq* COMCreate()
-    {
+	{
 		return new LightSeq();
 	} 
 
 	static IEditable* COMCreateEditable()   { 
-	return static_cast<IEditable*>(COMCreate()); 
+		return static_cast<IEditable*>(COMCreate()); 
 	}
 };

@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <float.h>
+#include "def.h"
 
 //TODO: typedef struct D3DXVECTOR4 vec4;
 
@@ -202,10 +203,11 @@ public:
    {
       return x*pv.x + y*pv.y + z*pv.z;
    }
-   /*TODO: float Dot(const Vertex3D_NoTex2 &pv) const
+   
+   float Dot(const Vertex3D_NoTex2 &pv) const
    {
       return x*pv.x + y*pv.y + z*pv.z;
-   }*/
+   }
 
    float LengthSquared() const
    {
@@ -271,7 +273,7 @@ inline Vertex3Ds GetRotatedAxis(const float angle, const Vertex3Ds &axis, const 
 // end of license:GPLv3+, back to 'old MAME'-like
 //
 
-//TODO: void RotateAround(const Vertex3Ds &pvAxis, Vertex3D_NoTex2 * const pvPoint, int count, float angle);
+void RotateAround(const Vertex3Ds &pvAxis, Vertex3D_NoTex2 * const pvPoint, int count, float angle);
 void RotateAround(const Vertex3Ds &pvAxis, Vertex3Ds * const pvPoint, int count, float angle);
 Vertex3Ds RotateAround(const Vertex3Ds &pvAxis, const Vertex2D &pvPoint, float angle);
 

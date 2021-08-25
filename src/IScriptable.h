@@ -4,8 +4,8 @@
 
 class IScriptable
 {
-   public:
-      IScriptable();
+public:
+	IScriptable();
 
-      wchar_t m_wzName[MAXNAMEBUFFER];
+	wchar_t m_wzName[MAXNAMEBUFFER];
 };
