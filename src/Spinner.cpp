@@ -2,7 +2,6 @@
 
 Spinner::Spinner()
 {
-
 }
 
 HRESULT Spinner::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)

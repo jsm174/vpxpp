@@ -2,7 +2,6 @@
 
 Surface::Surface()
 {
-
 }
 
 HRESULT Surface::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)

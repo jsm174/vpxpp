@@ -2,7 +2,6 @@
 
 Trigger::Trigger()
 {
-
 }
 
 HRESULT Trigger::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)

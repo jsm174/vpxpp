@@ -40,7 +40,7 @@ HRESULT BiffReader::GetInt(int& value)
 	return ReadBytes((void*)&value, sizeof(int));
 }
 
-HRESULT BiffReader::GetString(std::string &szvalue)
+HRESULT BiffReader::GetString(std::string& szvalue)
 {
 	HRESULT hr;
 	int len;
@@ -55,7 +55,7 @@ HRESULT BiffReader::GetString(std::string &szvalue)
 
 	m_bytesInRecordRemaining -= len + (int)sizeof(int);
 
-	char* pTmp = new char[len+1];
+	char* pTmp = new char[len + 1];
 	hr = ReadBytes(pTmp, len);
 	pTmp[len] = 0;
 	szvalue = pTmp;
@@ -86,12 +86,13 @@ HRESULT BiffReader::GetWideString(wchar_t* wzvalue, int maxlen)
 
 	char* pPtr = (char*)pTmp;
 
-	for (int index = 0; index < len; index++) {
+	for (int index = 0; index < len; index++)
+	{
 		hr = ReadBytes(pPtr, 2);
 		pPtr += sizeof(wchar_t);
 	}
 
-	wcsncpy(wzvalue, pTmp, maxlen);  
+	wcsncpy(wzvalue, pTmp, maxlen);
 	delete[] pTmp;
 
 	return hr;
@@ -119,7 +120,8 @@ HRESULT BiffReader::GetWideString(std::wstring& wzvalue)
 
 	char* pPtr = (char*)pTmp;
 
-	for (int index = 0; index < len; index++) {
+	for (int index = 0; index < len; index++)
+	{
 		hr = ReadBytes(pPtr, 2);
 		pPtr += sizeof(wchar_t);
 	}
@@ -158,13 +160,13 @@ HRESULT BiffReader::Load()
 	{
 		if (m_version > 30)
 		{
-			/*const HRESULT hr =*/ GetIntNoHash(m_bytesInRecordRemaining);
+			/*const HRESULT hr =*/GetIntNoHash(m_bytesInRecordRemaining);
 		}
 
 		const HRESULT hr = GetInt(tag);
 
 		bool cont = false;
-		
+
 		if (hr == S_OK)
 		{
 			cont = m_pLoadable->LoadToken(tag, this);
@@ -174,7 +176,7 @@ HRESULT BiffReader::Load()
 		{
 			return E_FAIL;
 		}
-		
+
 		if (m_version > 30)
 		{
 			if (m_bytesInRecordRemaining > 0)

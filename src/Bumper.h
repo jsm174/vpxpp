@@ -1,8 +1,8 @@
 #pragma once
 
+#include "BaseProperty.h"
 #include "IEditable.h"
 #include "ISelect.h"
-#include "BaseProperty.h"
 #include "vector.h"
 #include <string>
 
@@ -32,38 +32,34 @@ public:
 	bool m_skirtVisible;
 };
 
-class Bumper :
-	public IEditable
+class Bumper : public ISelect,
+               public IEditable
 {
 public:
+	static const ItemTypeEnum ItemType;
+	static const int TypeNameID;
+	static const int ToolID;
+	static const int CursorID;
+	static const unsigned AllowedViews;
+
+	static Bumper* COMCreate();
+	static IEditable* COMCreateEditable();
 
 	Bumper();
 	~Bumper();
 
-	static const ItemTypeEnum ItemType = eItemBumper;
-	static const int TypeNameID = 0;
-	static const int ToolID = 0; 
-	static const int CursorID = 0;
-	static const unsigned AllowedViews = 1;
-
-	static Bumper* COMCreate()
-	{
-		return new Bumper();
-	} 
-
-	static IEditable* COMCreateEditable()   
-	{ 
-		return static_cast<IEditable*>(COMCreate()); 
-	}
-
+	HRESULT Init(PinTable* ptable, float x, float y, bool fromMouseClick);
 
 	BumperData m_d;
 
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 
-private:
+	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
 
+	virtual PinTable* GetPTable();
+
+private:
 	PinTable* m_ptable;
 
 	VertexBuffer* m_baseVertexBuffer;

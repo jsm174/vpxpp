@@ -2,7 +2,6 @@
 
 Textbox::Textbox()
 {
-
 }
 
 HRESULT Textbox::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)

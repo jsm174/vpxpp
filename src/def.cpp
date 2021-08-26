@@ -27,7 +27,7 @@ __forceinline int min(const int x, const int y)
 
 __forceinline int max(const int x, const int y)
 {
-   return x < y ? y : x;
+	return x < y ? y : x;
 }
 
 __forceinline long max(const long x, const long y)

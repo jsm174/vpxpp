@@ -6,8 +6,8 @@
 #include "ISelect.h"
 #include "PinTable.h"
 
-typedef IEditable*(*CreateFuncType)();
-typedef IEditable*(*CreateAndInitFuncType)(PinTable* pPinTable, float x, float y);
+typedef IEditable* (*CreateFuncType)();
+typedef IEditable* (*CreateAndInitFuncType)(PinTable* pPinTable, float x, float y);
 
 struct EditableInfo
 {
@@ -58,7 +58,7 @@ public:
 		for (it = m_map.begin(); it != m_map.end(); ++it)
 		{
 			if (it->second.toolID == toolID)
-			return it->second.type;
+				return it->second.type;
 		}
 		return eItemInvalid;
 	}

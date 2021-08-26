@@ -2,5 +2,5 @@
 
 IScriptable::IScriptable()
 {
-	 m_wzName[0] = 0;
+	m_wzName[0] = 0;
 }

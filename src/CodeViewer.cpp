@@ -4,7 +4,6 @@
 
 CodeViewer::CodeViewer()
 {
-
 }
 
 CodeViewer::~CodeViewer()
@@ -25,7 +24,8 @@ void CodeViewer::LoadFromStream(POLE::Stream* pStream)
 	memcpy(original_table_script.data(), pText, len);
 
 	uint32_t state = UTF8_ACCEPT;
-	if (validate_utf8(&state, pText, len) == UTF8_REJECT) {
+	if (validate_utf8(&state, pText, len) == UTF8_REJECT)
+	{
 		char* const utf8Text = iso8859_1_to_utf8(pText, len); // old ANSI characters? -> convert to UTF-8
 		delete[] pText;
 		pText = utf8Text;

@@ -1,21 +1,21 @@
 #pragma once
 
+#include "ILoadable.h"
 #include "misc.h"
 #include "pole.h"
-#include "ILoadable.h"
 
-#define FID(A) (int)((unsigned int)(#A[0])|((unsigned int)(#A[1])<<8)|((unsigned int)(#A[2])<<16)|((unsigned int)(#A[3])<<24))
+#define FID(A) (int)((unsigned int)(#A[0]) | ((unsigned int)(#A[1]) << 8) | ((unsigned int)(#A[2]) << 16) | ((unsigned int)(#A[3]) << 24))
 
 class ILoadable;
 
-class BiffReader 
+class BiffReader
 {
 public:
 	BiffReader(POLE::Stream* pStream, ILoadable* pLoadable, void* pData, const int version);
 	virtual ~BiffReader();
 
 	HRESULT ReadBytes(void* pValue, const unsigned long count);
-	
+
 	HRESULT GetIntNoHash(int& value);
 	HRESULT GetInt(void* pValue);
 	HRESULT GetInt(int& value);
@@ -34,5 +34,5 @@ public:
 
 private:
 	int m_bytesInRecordRemaining;
-	ILoadable* m_pLoadable; 
+	ILoadable* m_pLoadable;
 };

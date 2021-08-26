@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ILoadable.h"
+
 enum ItemTypeEnum
 {
 	eItemSurface,
@@ -28,4 +30,17 @@ enum ItemTypeEnum
 	//eItemLightSeqCenter,
 	eItemTypeCount,
 	eItemInvalid = 0xffffffff // Force enum to be 32 bits
+};
+
+class PinTable;
+
+class ISelect : public ILoadable
+{
+public:
+	ISelect();
+
+	//virtual PinTable *GetPTable() = 0;
+	//virtual const PinTable *GetPTable() const = 0;
+
+	void GetTypeNameForType(const ItemTypeEnum type, wchar_t* const buf) const;
 };

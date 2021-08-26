@@ -1,7 +1,7 @@
 #pragma once
 
-#include "pole.h"
 #include "misc.h"
+#include "pole.h"
 
 class PinTable;
 
@@ -12,4 +12,6 @@ public:
 
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version) = 0;
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName) = 0;
+
+	void InitScript();
 };

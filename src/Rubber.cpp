@@ -2,7 +2,6 @@
 
 Rubber::Rubber()
 {
-
 }
 
 HRESULT Rubber::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)

@@ -41,6 +41,9 @@ add_executable(vpxpp
 
 	src/ILoadable.h
 
+	src/ISelect.h
+	src/ISelect.cpp
+
 	src/IScriptable.h
 	src/IScriptable.cpp
 

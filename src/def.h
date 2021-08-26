@@ -26,7 +26,7 @@ typedef float D3DVALUE;
 
 #define MAXNAMEBUFFER 32
 
-class Vertex3D_NoTex2 
+class Vertex3D_NoTex2
 {
 public:
 	// Position

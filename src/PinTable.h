@@ -2,24 +2,25 @@
 
 #include "pole.h"
 
-#include "ILoadable.h"
-#include "IScriptable.h"
 #include "IEditable.h"
+#include "IScriptable.h"
+#include "ISelect.h"
 
-#include "Material.h"
 #include "CodeViewer.h"
+#include "Material.h"
 
-#include "misc.h"
-#include "vector.h"
 #include "cmath.h"
 #include "hash.h"
+#include "misc.h"
+#include "vector.h"
 
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
-#define CURRENT_FILE_FORMAT_VERSION  1070
+#define CURRENT_FILE_FORMAT_VERSION 1070
 
-struct LightSource {
+struct LightSource
+{
 	COLORREF emission;
 	Vertex3Ds pos;
 };
@@ -36,10 +37,9 @@ struct ProtectionData {
 };
 */
 
-class PinTable : 
-	public IScriptable,
-	public ILoadable,
-	public IEditable
+class PinTable : public ISelect,
+                 public IScriptable,
+                 public IEditable
 {
 public:
 	PinTable();
@@ -53,15 +53,18 @@ public:
 
 	HRESULT LoadData(POLE::Stream* pStream, int& csubobj, int& csounds, int& ctextures, int& cfonts, int& ccollection, int version);
 
-	void ReadInfoValue(POLE::Storage* pstg, const char* pName, char **pszValue);
+	void ReadInfoValue(POLE::Storage* pstg, const char* pName, char** pszValue);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
 
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 
-	Material* GetMaterial(const std::string &szName);
+	Material* GetMaterial(const std::string& szName);
 
-	void visit( int indent, POLE::Storage* storage, std::string path );
+	void GetUniqueName(const ItemTypeEnum type, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;
+	void GetUniqueName(const wchar_t* const prefix, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;
+
+	void visit(int indent, POLE::Storage* storage, std::string path);
 
 	Vertex2D m_offset;
 	float m_zoom;
@@ -106,7 +109,7 @@ public:
 	unsigned int m_PhysicsMaxLoops;
 
 	float m_Gravity;
-	
+
 	float m_friction;
 	float m_elasticity;
 	float m_elasticityFalloff;
@@ -145,7 +148,7 @@ public:
 
 	float m_TableSoundVolume;
 	float m_TableMusicVolume;
-	
+
 	int m_TableAdaptiveVSync;
 
 	CodeViewer* m_pCodeViewer;

@@ -5,8 +5,8 @@
 #include "PinTable.h"
 
 #include "BaseProperty.h"
-#include "vector.h"
 #include "RenderDevice.h"
+#include "vector.h"
 
 typedef enum
 {
@@ -24,8 +24,7 @@ typedef enum
 	ImageModeWrap = 1,
 } RampImageAlignment;
 
-class RampData :
-	public BaseProperty
+class RampData : public BaseProperty
 {
 public:
 	//TODO: TimerDataRoot m_tdr;
@@ -49,27 +48,26 @@ public:
 	bool m_imageWalls;
 };
 
-class Ramp :
-    public IEditable
+class Ramp : public IEditable
 {
 public:
-
 	Ramp();
 	~Ramp();
 
 	static const ItemTypeEnum ItemType = eItemRamp;
 	static const int TypeNameID = 0;
-	static const int ToolID = 0; 
+	static const int ToolID = 0;
 	static const int CursorID = 0;
 	static const unsigned AllowedViews = 1;
 
 	static Ramp* COMCreate()
 	{
 		return new Ramp();
-	} 
+	}
 
-	static IEditable* COMCreateEditable()   { 
-		return static_cast<IEditable*>(COMCreate()); 
+	static IEditable* COMCreateEditable()
+	{
+		return static_cast<IEditable*>(COMCreate());
 	}
 
 	RampData m_d;
@@ -78,7 +76,6 @@ public:
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 
 private:
-
 	PinTable* m_ptable;
 
 	int m_rampVertex;

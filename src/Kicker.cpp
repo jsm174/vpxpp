@@ -2,7 +2,6 @@
 
 Kicker::Kicker()
 {
-
 }
 
 HRESULT Kicker::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
