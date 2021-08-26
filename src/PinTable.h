@@ -56,6 +56,9 @@ public:
 	void ReadInfoValue(POLE::Storage* pstg, const char* pName, char **pszValue);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
 
+	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
+
 	Material* GetMaterial(const std::string &szName);
 
 	void visit( int indent, POLE::Storage* storage, std::string path );
@@ -133,8 +136,10 @@ public:
 
 	std::string m_envImage;
 
+	std::vector<IEditable*> m_vedit;
+
 	int m_numMaterials;
-	std::vector< Material* > m_materials;
+	std::vector<Material*> m_materials;
 
 	COLORREF m_rgcolorcustom[16];
 

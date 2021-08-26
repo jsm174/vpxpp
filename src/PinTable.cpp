@@ -131,9 +131,24 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 					IEditable* pEditable = EditableRegistry::Create(type);
 
 					std::cout << szStmName << " = " << type << "\n";
-				}
 
-				delete pItemStream;
+					int id = 0; // VBA id for this item
+					hr = pEditable->InitLoad(pItemStream, this, &id, loadFileVersion);
+					pEditable->InitVBA(false, id, NULL);
+
+					delete pItemStream;
+					pItemStream = NULL;
+
+					if (hr != S_OK)
+					{
+						break;
+					}
+
+					m_vedit.push_back(pEditable);
+				}
+				else {
+					delete pItemStream;
+				}
 			}
 		}
 
@@ -600,4 +615,14 @@ void PinTable::visit( int indent, POLE::Storage* storage, std::string path )
 		if( storage->isDirectory( fullname ) )
 			visit( indent+1, storage, fullname + "/" );
 	}
+}
+
+HRESULT PinTable::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
+{
+	return S_OK;
+}
+
+HRESULT PinTable::InitVBA(bool fNew, int id, wchar_t* const wzName)
+{
+	return S_OK;
 }

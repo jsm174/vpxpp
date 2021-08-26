@@ -26,4 +26,7 @@ public:
 	{ 
 		return static_cast<IEditable*>(COMCreate()); 
 	}
+
+	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 };
