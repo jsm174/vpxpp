@@ -1,30 +1,53 @@
 #pragma once
 
+#include "BaseProperty.h"
 #include "IEditable.h"
 #include "ISelect.h"
+#include "vector.h"
 
-class Decal : public IEditable
+#include "PinTable.h"
+
+class DecalData : public BaseProperty
 {
 public:
+	Vertex2D m_vCenter;
+	float m_width;
+	float m_height;
+	float m_rotation;
+	std::string m_szSurface;
+	DecalType m_decaltype;
+	std::string m_sztext;
+	SizingType m_sizingtype;
+	COLORREF m_color;
+	bool m_verticalText;
+};
+
+class Decal : public ISelect,
+              public IEditable
+{
+public:
+	static const ItemTypeEnum ItemType;
+	static const int TypeNameID;
+	static const int ToolID;
+	static const int CursorID;
+	static const unsigned AllowedViews;
+
+	static Decal* COMCreate();
+	static IEditable* COMCreateEditable();
+	static IEditable* COMCreateAndInit(PinTable* ptable, float x, float y);
+
 	Decal();
 	~Decal();
 
-	static const ItemTypeEnum ItemType = eItemDecal;
-	static const int TypeNameID = 0;
-	static const int ToolID = 0;
-	static const int CursorID = 0;
-	static const unsigned AllowedViews = 1;
+	HRESULT Init(PinTable* ptable, float x, float y, bool fromMouseClick);
 
-	static Decal* COMCreate()
-	{
-		return new Decal();
-	}
-
-	static IEditable* COMCreateEditable()
-	{
-		return static_cast<IEditable*>(COMCreate());
-	}
-
-	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
+	virtual PinTable* GetPTable();
+	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+
+	DecalData m_d;
+
+private:
+	PinTable* m_ptable;
 };

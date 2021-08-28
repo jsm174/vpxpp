@@ -1,12 +1,12 @@
 #pragma once
 
 #include "BaseProperty.h"
-#include "IEditable.h"
 #include "ISelect.h"
+#include "IEditable.h"
 #include "vector.h"
-#include <string>
 
 #include "PinTable.h"
+#include "Timer.h"
 #include "RenderDevice.h"
 
 class BumperData : public BaseProperty
@@ -20,7 +20,7 @@ public:
 	float m_ringSpeed;
 	float m_ringDropOffset;
 	//TODO: U32 m_time_msec;
-	//TODO: TimerDataRoot m_tdr;
+	TimerDataRoot m_tdr;
 	std::string m_szCapMaterial;
 	std::string m_szBaseMaterial;
 	std::string m_szSkirtMaterial;
@@ -44,20 +44,19 @@ public:
 
 	static Bumper* COMCreate();
 	static IEditable* COMCreateEditable();
+	static IEditable* COMCreateAndInit(PinTable* ptable, float x, float y);
 
 	Bumper();
 	~Bumper();
 
 	HRESULT Init(PinTable* ptable, float x, float y, bool fromMouseClick);
 
-	BumperData m_d;
-
-	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
-
+	virtual PinTable* GetPTable();
+	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
 
-	virtual PinTable* GetPTable();
+	BumperData m_d;
 
 private:
 	PinTable* m_ptable;

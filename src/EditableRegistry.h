@@ -33,7 +33,7 @@ public:
 		ei.cursorID = T::CursorID;
 		ei.allowedViews = T::AllowedViews;
 		ei.createFunc = &T::COMCreateEditable;
-		// TODO: ei.createAndInitFunc = &T::COMCreateAndInit;
+		ei.createAndInitFunc = &T::COMCreateAndInit;
 		m_map[ei.type] = ei;
 	}
 

@@ -24,7 +24,7 @@ IEditable* Bumper::COMCreateEditable()
 	return static_cast<IEditable*>(COMCreate());
 }
 
-IEditable* COMCreateAndInit(PinTable* ptable, float x, float y)
+IEditable* Bumper::COMCreateAndInit(PinTable* ptable, float x, float y)
 {
 	Bumper* obj = Bumper::COMCreate();
 	obj->Init(ptable, x, y, true);
@@ -56,11 +56,6 @@ Bumper::~Bumper()
 {
 }
 
-PinTable* Bumper::GetPTable()
-{
-	return m_ptable;
-}
-
 HRESULT Bumper::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 {
 	m_ptable = ptable;
@@ -71,11 +66,6 @@ HRESULT Bumper::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 	m_d.m_vCenter.y = y;
 
 	return InitVBA(true, 0, NULL);
-}
-
-HRESULT Bumper::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
-{
-	return S_OK;
 }
 
 HRESULT Bumper::InitVBA(bool fNew, int id, wchar_t* const wzName)
@@ -93,6 +83,17 @@ HRESULT Bumper::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	return ((HRESULT)0L);
 }
 
+PinTable* Bumper::GetPTable()
+{
+	return m_ptable;
+}
+
+HRESULT Bumper::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
+{
+	return S_OK;
+}
+
 bool Bumper::LoadToken(const int id, BiffReader* const pbr)
 {
+	return true;
 }

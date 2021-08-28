@@ -2,29 +2,50 @@
 
 #include "IEditable.h"
 #include "ISelect.h"
+#include "vector.h"
 
-class Timer : public IEditable
+#include "PinTable.h"
+
+class TimerDataRoot
 {
 public:
+	int m_TimerInterval;
+	bool m_TimerEnabled;
+};
+
+class TimerData
+{
+public:
+	TimerDataRoot m_tdr;
+	Vertex2D m_v;
+};
+
+class Timer : public ISelect,
+              public IEditable
+{
+public:
+	static const ItemTypeEnum ItemType;
+	static const int TypeNameID;
+	static const int ToolID;
+	static const int CursorID;
+	static const unsigned AllowedViews;
+
+	static Timer* COMCreate();
+	static IEditable* COMCreateEditable();
+	static IEditable* COMCreateAndInit(PinTable* ptable, float x, float y);
+
 	Timer();
 	~Timer();
 
-	static const ItemTypeEnum ItemType = eItemTimer;
-	static const int TypeNameID = 0;
-	static const int ToolID = 0;
-	static const int CursorID = 0;
-	static const unsigned AllowedViews = 1;
+	HRESULT Init(PinTable* ptable, float x, float y, bool fromMouseClick);
 
-	static Timer* COMCreate()
-	{
-		return new Timer();
-	}
-
-	static IEditable* COMCreateEditable()
-	{
-		return static_cast<IEditable*>(COMCreate());
-	}
-
-	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
+	virtual PinTable* GetPTable();
+	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+
+	TimerData m_d;
+
+private:
+	PinTable* m_ptable;
 };

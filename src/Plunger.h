@@ -1,30 +1,71 @@
 #pragma once
 
+#include "BaseProperty.h"
 #include "IEditable.h"
 #include "ISelect.h"
+#include "vector.h"
 
-class Plunger : public IEditable
+#include "PinTable.h"
+#include "Timer.h"
+
+class PlungerData : public BaseProperty
 {
 public:
+	COLORREF m_color;
+	Vertex2D m_v;
+	float m_width;
+	float m_height;
+	float m_stroke;
+	float m_zAdjust;
+	float m_speedPull;
+	float m_speedFire;
+	float m_mechStrength;
+	PlungerType m_type;
+	int m_animFrames;
+	TimerDataRoot m_tdr;
+	float m_parkPosition;
+	std::string m_szSurface;
+	float m_scatterVelocity;
+	float m_momentumXfer;
+	char m_szTipShape[MAXTIPSHAPE];
+	float m_rodDiam;
+	float m_ringGap;
+	float m_ringDiam;
+	float m_ringWidth;
+	float m_springDiam;
+	float m_springGauge;
+	float m_springLoops;
+	float m_springEndLoops;
+	bool m_mechPlunger;
+	bool m_autoPlunger;
+};
+
+class Plunger : public ISelect,
+                public IEditable
+{
+public:
+	static const ItemTypeEnum ItemType;
+	static const int TypeNameID;
+	static const int ToolID;
+	static const int CursorID;
+	static const unsigned AllowedViews;
+
+	static Plunger* COMCreate();
+	static IEditable* COMCreateEditable();
+	static IEditable* COMCreateAndInit(PinTable* ptable, float x, float y);
+
 	Plunger();
 	~Plunger();
 
-	static const ItemTypeEnum ItemType = eItemPlunger;
-	static const int TypeNameID = 0;
-	static const int ToolID = 0;
-	static const int CursorID = 0;
-	static const unsigned AllowedViews = 1;
+	HRESULT Init(PinTable* ptable, float x, float y, bool fromMouseClick);
 
-	static Plunger* COMCreate()
-	{
-		return new Plunger();
-	}
-
-	static IEditable* COMCreateEditable()
-	{
-		return static_cast<IEditable*>(COMCreate());
-	}
-
-	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
+	virtual PinTable* GetPTable();
+	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+
+	PlungerData m_d;
+
+private:
+	PinTable* m_ptable;
 };

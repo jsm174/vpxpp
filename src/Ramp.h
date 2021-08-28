@@ -1,33 +1,18 @@
 #pragma once
 
+#include "BaseProperty.h"
 #include "IEditable.h"
 #include "ISelect.h"
-#include "PinTable.h"
-
-#include "BaseProperty.h"
-#include "RenderDevice.h"
 #include "vector.h"
 
-typedef enum
-{
-	RampTypeFlat = 0,
-	RampType4Wire = 1,
-	RampType2Wire = 2,
-	RampType3WireLeft = 3,
-	RampType3WireRight = 4,
-	RampType1Wire = 5,
-} RampType;
-
-typedef enum
-{
-	ImageModeWorld = 0,
-	ImageModeWrap = 1,
-} RampImageAlignment;
+#include "PinTable.h"
+#include "Timer.h"
+#include "RenderDevice.h"
 
 class RampData : public BaseProperty
 {
 public:
-	//TODO: TimerDataRoot m_tdr;
+	TimerDataRoot m_tdr;
 	float m_heightbottom;
 	float m_heighttop;
 	float m_widthbottom;
@@ -51,29 +36,27 @@ public:
 class Ramp : public IEditable
 {
 public:
+	static const ItemTypeEnum ItemType;
+	static const int TypeNameID;
+	static const int ToolID;
+	static const int CursorID;
+	static const unsigned AllowedViews;
+
+	static Ramp* COMCreate();
+	static IEditable* COMCreateEditable();
+	static IEditable* COMCreateAndInit(PinTable* ptable, float x, float y);
+
 	Ramp();
 	~Ramp();
 
-	static const ItemTypeEnum ItemType = eItemRamp;
-	static const int TypeNameID = 0;
-	static const int ToolID = 0;
-	static const int CursorID = 0;
-	static const unsigned AllowedViews = 1;
+	HRESULT Init(PinTable* ptable, float x, float y, bool fromMouseClick);
 
-	static Ramp* COMCreate()
-	{
-		return new Ramp();
-	}
-
-	static IEditable* COMCreateEditable()
-	{
-		return static_cast<IEditable*>(COMCreate());
-	}
+	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
+	virtual PinTable* GetPTable();
+	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
 
 	RampData m_d;
-
-	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
-	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 
 private:
 	PinTable* m_ptable;
