@@ -20,7 +20,7 @@ jobs:
     steps:
       - run: |
           if [[ "${{ matrix.os }}" == "macos-latest" ]]; then 
-             brew install v8
+             brew install v8 nlohmann-json
           fi
       - uses: actions/checkout@v2
       - name: Build vpxpp-${{ matrix.platform }}

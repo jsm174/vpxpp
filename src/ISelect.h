@@ -32,6 +32,34 @@ enum ItemTypeEnum
 	eItemInvalid = 0xffffffff // Force enum to be 32 bits
 };
 
+static const char* ITEMTYPEENUM_STRING[eItemTypeCount] =
+{
+	[eItemSurface] = "eItemSurface",
+	[eItemFlipper] = "eItemFlipper",
+	[eItemTimer] = "eItemTimer",
+	[eItemPlunger] = "eItemPlunger",
+	[eItemTextbox] = "eItemTextbox",
+	[eItemBumper] = "eItemBumper",
+	[eItemTrigger] = "eItemTrigger",
+	[eItemLight] = "eItemLight",
+	[eItemKicker] = "eItemKicker",
+	[eItemDecal] = "eItemDecal",
+	[eItemGate] = "eItemGate",
+	[eItemSpinner] = "eItemSpinner",
+	[eItemRamp] = "eItemRamp",
+	[eItemTable] = "eItemTable",
+	[eItemLightCenter] = "eItemLightCenter",
+	[eItemDragPoint] = "eItemDragPoint",
+	[eItemCollection] = "eItemCollection",
+	[eItemDispReel] = "eItemDispReel",
+	[eItemLightSeq] = "eItemLightSeq",
+	[eItemPrimitive] = "eItemPrimitive",
+	[eItemFlasher] = "eItemFlasher",
+	[eItemRubber] = "eItemRubber",
+	[eItemHitTarget] = "eItemHitTarget",
+	//[eItemLightSeqCenter]= "eItemLightSeqCenter"
+};
+
 class PinTable;
 
 class ISelect : public ILoadable
@@ -39,8 +67,8 @@ class ISelect : public ILoadable
 public:
 	ISelect();
 
-	//virtual PinTable *GetPTable() = 0;
-	//virtual const PinTable *GetPTable() const = 0;
+	//virtual PinTable* GetPTable() = 0;
+	//virtual const PinTable* GetPTable() const = 0;
 
 	void GetTypeNameForType(const ItemTypeEnum type, wchar_t* const buf) const;
 };

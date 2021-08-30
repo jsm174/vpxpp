@@ -15,7 +15,8 @@ add_compile_definitions(
 	V8_COMPRESS_POINTERS
 )
 
-FIND_PACKAGE(V8 REQUIRED)
+find_package(V8 REQUIRED)
+find_package(nlohmann_json 3.2.0 REQUIRED)
 
 include_directories(
 	math
@@ -57,6 +58,9 @@ add_executable(vpxpp
 
 	src/BiffReader.h
 	src/BiffReader.cpp
+
+	src/RegUtil.h
+	src/RegUtil.cpp
 
 	src/PinTable.h
 	src/PinTable.cpp
@@ -105,7 +109,8 @@ add_executable(vpxpp
 	src/main.cpp
 )
 
-target_link_libraries(vpxpp
+target_link_libraries(vpxpp PRIVATE
 	${V8_BASE_LIBRARY}
 	${V8_LIBPLATFORM_LIBRARY}
+	nlohmann_json::nlohmann_json
 )

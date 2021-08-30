@@ -1,4 +1,6 @@
 #include "Bumper.h"
+#include "BiffReader.h"
+#include "RegUtil.h"
 
 const ItemTypeEnum Bumper::ItemType = eItemBumper;
 const int Bumper::TypeNameID = 122;
@@ -60,12 +62,45 @@ HRESULT Bumper::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 {
 	m_ptable = ptable;
 
-	//TODO: SetDefaults(fromMouseClick);
+	SetDefaults(fromMouseClick);
 
 	m_d.m_vCenter.x = x;
 	m_d.m_vCenter.y = y;
 
 	return InitVBA(true, 0, NULL);
+}
+
+void Bumper::SetDefaults(bool fromMouseClick)
+{
+	RegUtil* pRegUtil = RegUtil::SharedInstance();
+
+	m_d.m_radius = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Bumper", "Radius", 45.f) : 45.f;
+
+	SetDefaultPhysics(fromMouseClick);
+
+	m_d.m_heightScale = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Bumper", "HeightScale", 90.0f) : 90.0f;
+	m_d.m_ringSpeed = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Bumper", "RingSpeed", 0.5f) : 0.5f;
+	m_d.m_orientation = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Bumper", "Orientation", 0.0f) : 0.0f;
+	m_d.m_threshold = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Bumper", "Threshold", 1.f) : 1.f;
+
+	const HRESULT hr = pRegUtil->LoadValue("DefaultProps\\Bumper", "Surface", m_d.m_szSurface);
+	if (hr != S_OK || !fromMouseClick)
+	{
+		m_d.m_szSurface.clear();
+	}
+
+	m_d.m_tdr.m_TimerEnabled = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Bumper", "TimerEnabled", false) : false;
+	m_d.m_tdr.m_TimerInterval = fromMouseClick ? pRegUtil->LoadValueIntWithDefault("DefaultProps\\Bumper", "TimerInterval", 100) : 100;
+	m_d.m_capVisible = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Bumper", "CapVisible", true) : true;
+	m_d.m_baseVisible = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Bumper", "BaseVisible", true) : true;
+	m_d.m_ringVisible = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Bumper", "RingVisible", true) : true;
+	m_d.m_skirtVisible = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Bumper", "SkirtVisible", true) : true;
+	m_d.m_reflectionEnabled = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Bumper", "ReflectionEnabled", true) : true;
+	m_d.m_hitEvent = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Bumper", "HasHitEvent", true) : true;
+	m_d.m_collidable = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Bumper", "Collidable", true) : true;
+
+	m_ringAnimate = false;
+	m_d.m_ringDropOffset = 0.0f;
 }
 
 HRESULT Bumper::InitVBA(bool fNew, int id, wchar_t* const wzName)
@@ -90,10 +125,48 @@ PinTable* Bumper::GetPTable()
 
 HRESULT Bumper::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
 {
+	SetDefaults(false);
+	BiffReader biffReader(pStream, this, pId, version);
+
+	m_ptable = pTable;
+
+	biffReader.Load();
+
+	WriteRegDefaults();
+
 	return S_OK;
 }
 
 bool Bumper::LoadToken(const int id, BiffReader* const pbr)
 {
 	return true;
+}
+
+void Bumper::SetDefaultPhysics(bool fromMouseClick)
+{
+	RegUtil* pRegUtil = RegUtil::SharedInstance();
+
+	m_d.m_force = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Bumper", "Force", 15) : 15;
+	m_d.m_scatter = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Bumper", "Scatter", 0) : 0;
+}
+
+void Bumper::WriteRegDefaults()
+{
+	RegUtil* pRegUtil = RegUtil::SharedInstance();
+
+	pRegUtil->SaveValueFloat("DefaultProps\\Bumper", "Radius", m_d.m_radius);
+	pRegUtil->SaveValueFloat("DefaultProps\\Bumper", "Force", m_d.m_force);
+	pRegUtil->SaveValueFloat("DefaultProps\\Bumper", "Scatter", m_d.m_scatter);
+	pRegUtil->SaveValueFloat("DefaultProps\\Bumper", "HeightScale", m_d.m_heightScale);
+	pRegUtil->SaveValueFloat("DefaultProps\\Bumper", "RingSpeed", m_d.m_ringSpeed);
+	pRegUtil->SaveValueFloat("DefaultProps\\Bumper", "Orientation", m_d.m_orientation);
+	pRegUtil->SaveValueFloat("DefaultProps\\Bumper", "Threshold", m_d.m_threshold);
+	pRegUtil->SaveValueBool("DefaultProps\\Bumper", "TimerEnabled", m_d.m_tdr.m_TimerEnabled);
+	pRegUtil->SaveValueInt("DefaultProps\\Bumper", "TimerInterval", m_d.m_tdr.m_TimerInterval);
+	pRegUtil->SaveValueBool("DefaultProps\\Bumper", "CapVisible", m_d.m_capVisible);
+	pRegUtil->SaveValueBool("DefaultProps\\Bumper", "BaseVisible", m_d.m_baseVisible);
+	pRegUtil->SaveValueBool("DefaultProps\\Bumper", "HasHitEvent", m_d.m_hitEvent);
+	pRegUtil->SaveValueBool("DefaultProps\\Bumper", "Collidable", m_d.m_collidable);
+	pRegUtil->SaveValueBool("DefaultProps\\Bumper", "ReflectionEnabled", m_d.m_reflectionEnabled);
+	pRegUtil->SaveValue("DefaultProps\\Bumper", "Surface", m_d.m_szSurface);
 }

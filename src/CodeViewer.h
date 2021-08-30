@@ -26,8 +26,8 @@ static char* iso8859_1_to_utf8(const char* str, const size_t length)
 	return utf8;
 }
 
-#define UTF8_ACCEPT 0
-#define UTF8_REJECT 1
+#define CODEVIEWER_UTF8_ACCEPT 0
+#define CODEVIEWER_UTF8_REJECT 1
 
 static const uint8_t utf8d[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 00..1f
@@ -53,8 +53,8 @@ static uint32_t validate_utf8(uint32_t* const state, const char* const str, cons
 		const uint32_t type = utf8d[(uint8_t)str[i]];
 		*state = utf8d[256 + (*state) * 16 + type];
 
-		if (*state == UTF8_REJECT)
-			return UTF8_REJECT;
+		if (*state == CODEVIEWER_UTF8_REJECT)
+			return CODEVIEWER_UTF8_REJECT;
 	}
 	return *state;
 }

@@ -1,6 +1,14 @@
 #pragma once
 
+
+#include <stdint.h>
+
+typedef uint32_t DWORD;   // DWORD = unsigned 32 bit value
+typedef uint16_t WORD;    // WORD = unsigned 16 bit value
+typedef uint8_t BYTE;     // BYTE = unsigned 8 bit value
+
 typedef long HRESULT;
+
 
 #define S_OK ((HRESULT)0L)
 #define S_FALSE ((HRESULT)1L)

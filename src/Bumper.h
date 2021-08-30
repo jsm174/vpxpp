@@ -54,8 +54,12 @@ public:
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 	virtual PinTable* GetPTable();
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual void SetDefaults(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
 
+    virtual void SetDefaultPhysics(bool fromMouseClick);
+    virtual void WriteRegDefaults();
+	
 	BumperData m_d;
 
 private:

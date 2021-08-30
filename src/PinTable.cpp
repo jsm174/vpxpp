@@ -1,5 +1,6 @@
 #include "PinTable.h"
 #include "BiffReader.h"
+#include "RegUtil.h"
 
 #include <float.h>
 #include <iostream>
@@ -21,7 +22,9 @@ PinTable::PinTable()
 
 	m_plungerNormalize = 100;
 	m_plungerFilter = false;
-	m_PhysicsMaxLoops = 0xFFFFFFFFu; // TODO: LoadValueIntWithDefault("Player", "PhysicsMaxLoops", 0xFFFFFFFFu);
+
+	RegUtil* pRegUtil = RegUtil::SharedInstance();
+	m_PhysicsMaxLoops = pRegUtil->LoadValueIntWithDefault("Player", "PhysicsMaxLoops", 0xFFFFFFFFu);
 
 	m_right = 0.0f;
 	m_bottom = 0.0f;
@@ -131,7 +134,7 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 
 					IEditable* pEditable = EditableRegistry::Create(type);
 
-					std::cout << szStmName << " = " << type << "\n";
+					std::cout << szStmName << " = " << type << " " << ITEMTYPEENUM_STRING[type] << "\n";
 
 					int id = 0; // VBA id for this item
 					hr = pEditable->InitLoad(pItemStream, this, &id, loadFileVersion);
@@ -447,14 +450,16 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 	{
 		int tmp;
 		pBiffReader->GetInt(tmp);
-		// TODO: m_plungerNormalize = LoadValueIntWithDefault("Player", "PlungerNormalize", tmp);
+		RegUtil* pRegUtil = RegUtil::SharedInstance();
+		m_plungerNormalize = pRegUtil->LoadValueIntWithDefault("Player", "PlungerNormalize", tmp);
 		break;
 	}
 	case FID(MPDF):
 	{
 		bool tmp;
 		pBiffReader->GetBool(tmp);
-		// TODO: m_plungerFilter = LoadValueBoolWithDefault("Player", "PlungerFilter", tmp);
+		RegUtil* pRegUtil = RegUtil::SharedInstance();
+		m_plungerFilter = pRegUtil->LoadValueBoolWithDefault("Player", "PlungerFilter", tmp);
 		break;
 	}
 	case FID(PHML):
@@ -462,7 +467,8 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 		pBiffReader->GetInt((int&)m_PhysicsMaxLoops);
 		if (m_PhysicsMaxLoops == 0xFFFFFFFF)
 		{
-			// TODO: LoadValue("Player", "PhysicsMaxLoops", m_PhysicsMaxLoops);
+			RegUtil* pRegUtil = RegUtil::SharedInstance();
+			pRegUtil->LoadValue("Player", "PhysicsMaxLoops", m_PhysicsMaxLoops);
 		}
 		break;
 	}
