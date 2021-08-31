@@ -2,9 +2,7 @@
 #include "BiffReader.h"
 #include "RegUtil.h"
 
-#include <float.h>
 #include <iostream>
-#include <stdio.h>
 
 #include "EditableRegistry.h"
 #include "ISelect.h"
@@ -282,9 +280,70 @@ HRESULT PinTable::LoadCustomInfo(POLE::Storage* pStorage, int version)
 	return S_OK;
 }
 
+void PinTable::SetLoadDefaults()
+{
+	for (unsigned int i = 0; i < NUM_BG_SETS; ++i)
+	{
+		m_BG_image[i].clear();
+	}
+
+	m_imageColorGrade.clear();
+	m_ballImage.clear();
+	m_ballImageDecal.clear();
+	m_imageBackdropNightDay = false;
+	m_envImage.clear();
+
+	m_szScreenShot.clear();
+
+	m_colorbackdrop = RGB(0x62, 0x6E, 0x8E);
+
+	m_lightAmbient = RGB((int)(0.1 * 255), (int)(0.1 * 255), (int)(0.1 * 255));
+
+	for (unsigned int i = 0; i < MAX_LIGHT_SOURCES; ++i)
+	{
+		m_Light[i].emission = RGB((int)(0.4 * 255), (int)(0.4 * 255), (int)(0.4 * 255));
+		m_Light[i].pos = Vertex3Ds(0.f, 0.f, 400.0f);
+	}
+
+	m_lightHeight = 1000.0f;
+	m_lightRange = 3000.0f;
+	m_lightEmissionScale = 1000000.0f;
+	m_globalEmissionScale = 1.0f;
+	m_envEmissionScale = 10.0f;
+	m_AOScale = 1.75f;
+	m_SSRScale = 0.5f;
+
+	m_angletiltMax = 6.0f;
+	m_angletiltMin = 4.5f;
+
+	m_useReflectionForBalls = -1;
+	m_playfieldReflectionStrength = 0.2f;
+	m_reflectElementsOnPlayfield = false;
+
+	m_useTrailForBalls = -1;
+	m_ballTrailStrength = 0.4f;
+	m_ballPlayfieldReflectionStrength = 1.f;
+
+	m_useAA = -1;
+	m_useFXAA = -1;
+	m_useAO = -1;
+	m_useSSR = -1;
+
+	m_bloom_strength = 1.0f;
+
+	m_TableSoundVolume = 1.0f;
+	m_TableMusicVolume = 1.0f;
+
+	m_BallDecalMode = false;
+
+	m_TableAdaptiveVSync = -1;
+
+	m_overridePhysicsFlipper = false;
+}
+
 HRESULT PinTable::LoadData(POLE::Stream* pStream, int& csubobj, int& csounds, int& ctextures, int& cfonts, int& ccollection, int version)
 {
-	// TODO: SetLoadDefaults();
+	SetLoadDefaults();
 
 	int rgi[6] = {0, 0, 0, 0, 0, 0};
 
@@ -300,12 +359,99 @@ HRESULT PinTable::LoadData(POLE::Stream* pStream, int& csubobj, int& csounds, in
 	return S_OK;
 }
 
+void PinTable::ReadInfoValue(POLE::Storage* pStorage, const char* pName, char** ppValue)
+{
+	char pPath[255];
+	snprintf(pPath, 255, "TableInfo/%s", pName);
+
+	POLE::Stream* pStream = new POLE::Stream(pStorage, pPath);
+
+	int len = pStream->size() / 2;
+
+	wchar_t* pWString = new wchar_t[len + 1];
+	memset(pWString, 0, sizeof(wchar_t) * (len + 1));
+
+	BiffReader biffReader(pStream, NULL, NULL, 0);
+
+	char* pPtr = (char*)pWString;
+
+	for (int index = 0; index < len; index++)
+	{
+		biffReader.ReadBytes(pPtr, 2);
+		pPtr += sizeof(wchar_t);
+	}
+
+	len = wcstombs(nullptr, pWString, 0);
+
+	*ppValue = (char*)malloc(len + 1);
+	memset(*ppValue, 0, len + 1);
+
+	wcstombs(*ppValue, pWString, len);
+
+	std::cout << pPath << " = " << *ppValue << "\n";
+
+	delete pStream;
+}
+
+Material* PinTable::GetMaterial(const std::string& szName)
+{
+	// TODO: if (szName.empty())
+	//   return &m_vpinball->m_dummyMaterial;
+
+	// during playback, we use the hashtable for lookup
+	if (!m_materialMap.empty())
+	{
+		std::unordered_map<const char*, Material*, StringHashFunctor, StringComparator>::const_iterator
+		    it = m_materialMap.find(szName.c_str());
+		if (it != m_materialMap.end())
+			return it->second;
+		// TODO: else
+		//   return &m_vpinball->m_dummyMaterial;
+	}
+
+	for (size_t i = 0; i < m_materials.size(); i++)
+		if (m_materials[i]->m_szName == szName)
+			return m_materials[i];
+
+	// TODO: return &m_vpinball->m_dummyMaterial;
+}
+
+HRESULT PinTable::InitVBA(bool fNew, int id, wchar_t* const wzName)
+{
+	return S_OK;
+}
+
+PinTable* PinTable::GetPTable()
+{
+	return this;
+}
+
+HRESULT PinTable::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
+{
+	SetDefaults(false);
+
+	int csubobj, csounds, ctextures, cfonts, ccollection;
+	LoadData(pStream, csubobj, csounds, ctextures, cfonts, ccollection, version);
+
+	return S_OK;
+}
+
+void PinTable::SetDefaults(bool fromMouseClick)
+{
+}
+
+void PinTable::SetDefaultPhysics(bool fromMouseClick)
+{
+	m_Gravity = 0.97f * GRAVITYCONST;
+
+	m_friction = DEFAULT_TABLE_CONTACTFRICTION;
+	m_elasticity = DEFAULT_TABLE_ELASTICITY;
+	m_elasticityFalloff = DEFAULT_TABLE_ELASTICITY_FALLOFF;
+	m_scatter = DEFAULT_TABLE_PFSCATTERANGLE;
+}
+
 bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 {
-	//FILE* log = fopen("fid.txt","a");
-	//printf("FID: %c%c%c%c \n", (id & 0xFF), ((id >> 8) & 0xFF), ((id >> 16 & 0xFF)), ((id >> 24 & 0xFF)));
-	//fclose(log);
-
 	switch (id)
 	{
 	case FID(LEFT):
@@ -639,7 +785,9 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 	case FID(BCLR):
 		pBiffReader->GetInt(m_colorbackdrop);
 		break;
-	//TODO: case FID(SECB): pBiffReader->GetStruct(&m_protectionData, sizeof(ProtectionData)); break;
+	case FID(SECB):
+		//TODO: pBiffReader->GetStruct(&m_protectionData, sizeof(ProtectionData));
+		break;
 	case FID(CODE):
 	{
 		// if the script is protected then we pass in the proper cryptokey into the code loadstream
@@ -760,98 +908,6 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 	return true;
 }
 
-void PinTable::ReadInfoValue(POLE::Storage* pStorage, const char* pName, char** ppValue)
-{
-	char pPath[255];
-	snprintf(pPath, 255, "TableInfo/%s", pName);
-
-	POLE::Stream* pStream = new POLE::Stream(pStorage, pPath);
-
-	int len = pStream->size() / 2;
-
-	wchar_t* pWString = new wchar_t[len + 1];
-	memset(pWString, 0, sizeof(wchar_t) * (len + 1));
-
-	BiffReader biffReader(pStream, NULL, NULL, 0);
-
-	char* pPtr = (char*)pWString;
-
-	for (int index = 0; index < len; index++)
-	{
-		biffReader.ReadBytes(pPtr, 2);
-		pPtr += sizeof(wchar_t);
-	}
-
-	len = wcstombs(nullptr, pWString, 0);
-
-	*ppValue = (char*)malloc(len + 1);
-	memset(*ppValue, 0, len + 1);
-
-	wcstombs(*ppValue, pWString, len);
-
-	std::cout << pPath << " = " << *ppValue << "\n";
-
-	delete pStream;
-}
-
-Material* PinTable::GetMaterial(const std::string& szName)
-{
-	// TODO: if (szName.empty())
-	//   return &m_vpinball->m_dummyMaterial;
-
-	// during playback, we use the hashtable for lookup
-	if (!m_materialMap.empty())
-	{
-		std::unordered_map<const char*, Material*, StringHashFunctor, StringComparator>::const_iterator
-		    it = m_materialMap.find(szName.c_str());
-		if (it != m_materialMap.end())
-			return it->second;
-		// TODO: else
-		//   return &m_vpinball->m_dummyMaterial;
-	}
-
-	for (size_t i = 0; i < m_materials.size(); i++)
-		if (m_materials[i]->m_szName == szName)
-			return m_materials[i];
-
-	// TODO: return &m_vpinball->m_dummyMaterial;
-}
-
-void PinTable::visit(int indent, POLE::Storage* storage, std::string path)
-{
-	std::list<std::string> entries;
-	entries = storage->entries(path);
-
-	std::list<std::string>::iterator it;
-	for (it = entries.begin(); it != entries.end(); ++it)
-	{
-		std::string name = *it;
-		std::string fullname = path + name;
-		for (int j = 0; j < indent; j++)
-			std::cout << "    ";
-		POLE::Stream* ss = new POLE::Stream(storage, fullname);
-		std::cout << name;
-		if (ss)
-			if (!ss->fail())
-				std::cout << "  (" << ss->size() << ")";
-		std::cout << std::endl;
-		delete ss;
-
-		if (storage->isDirectory(fullname))
-			visit(indent + 1, storage, fullname + "/");
-	}
-}
-
-HRESULT PinTable::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
-{
-	return S_OK;
-}
-
-HRESULT PinTable::InitVBA(bool fNew, int id, wchar_t* const wzName)
-{
-	return S_OK;
-}
-
 void PinTable::GetUniqueName(const ItemTypeEnum type, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const
 {
 	wchar_t wzRoot[256];
@@ -884,4 +940,29 @@ void PinTable::GetUniqueName(const wchar_t* const wzRoot, wchar_t* const wzUniqu
 
    WideStrNCopy(wzName, wzUniqueName, wzUniqueName_maxlength);
    delete[] wzName;*/
+}
+
+void PinTable::visit(int indent, POLE::Storage* storage, std::string path)
+{
+	std::list<std::string> entries;
+	entries = storage->entries(path);
+
+	std::list<std::string>::iterator it;
+	for (it = entries.begin(); it != entries.end(); ++it)
+	{
+		std::string name = *it;
+		std::string fullname = path + name;
+		for (int j = 0; j < indent; j++)
+			std::cout << "    ";
+		POLE::Stream* ss = new POLE::Stream(storage, fullname);
+		std::cout << name;
+		if (ss)
+			if (!ss->fail())
+				std::cout << "  (" << ss->size() << ")";
+		std::cout << std::endl;
+		delete ss;
+
+		if (storage->isDirectory(fullname))
+			visit(indent + 1, storage, fullname + "/");
+	}
 }

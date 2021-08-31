@@ -153,6 +153,11 @@ HRESULT BiffReader::GetStruct(void* pValue, const int size)
 	return ReadBytes(pValue, size);
 }
 
+HRESULT BiffReader::GetVector2(Vertex2D& vec)
+{
+   return GetStruct(&vec.x, 2 * sizeof(float));
+}
+
 HRESULT BiffReader::Load()
 {
 	int tag = 0;

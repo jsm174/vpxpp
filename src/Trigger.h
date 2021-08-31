@@ -20,7 +20,7 @@ public:
 	float m_scaleX;
 	float m_scaleY;
 	float m_hit_height;
-	//TODO: U32 m_time_msec;
+	uint32_t m_time_msec;
 	float m_animSpeed;
 	float m_wireThickness;
 	bool m_enabled;

@@ -33,7 +33,8 @@ add_executable(vpxpp
 	src/def.cpp
 
 	src/misc.h
-
+	src/physconst.h
+	
 	src/hash.h
 
 	src/BaseProperty.h

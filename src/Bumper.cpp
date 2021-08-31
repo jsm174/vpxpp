@@ -70,6 +70,38 @@ HRESULT Bumper::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 	return InitVBA(true, 0, NULL);
 }
 
+HRESULT Bumper::InitVBA(bool fNew, int id, wchar_t* const wzName)
+{
+	wchar_t wzUniqueName[128];
+	if (fNew && !wzName)
+	{
+		{
+			GetPTable()->GetUniqueName(eItemBumper, wzUniqueName, 128);
+			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
+			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
+		}
+	}
+	InitScript();
+	return ((HRESULT)0L);
+}
+
+PinTable* Bumper::GetPTable()
+{
+	return m_ptable;
+}
+
+HRESULT Bumper::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
+{
+	SetDefaults(false);
+
+	m_ptable = pTable;
+
+	BiffReader biffReader(pStream, this, pId, version);
+	biffReader.Load();
+
+	return S_OK;
+}
+
 void Bumper::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -103,51 +135,114 @@ void Bumper::SetDefaults(bool fromMouseClick)
 	m_d.m_ringDropOffset = 0.0f;
 }
 
-HRESULT Bumper::InitVBA(bool fNew, int id, wchar_t* const wzName)
-{
-	wchar_t wzUniqueName[128];
-	if (fNew && !wzName)
-	{
-		{
-			GetPTable()->GetUniqueName(eItemBumper, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
-			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
-		}
-	}
-	InitScript();
-	return ((HRESULT)0L);
-}
-
-PinTable* Bumper::GetPTable()
-{
-	return m_ptable;
-}
-
-HRESULT Bumper::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
-{
-	SetDefaults(false);
-	BiffReader biffReader(pStream, this, pId, version);
-
-	m_ptable = pTable;
-
-	biffReader.Load();
-
-	WriteRegDefaults();
-
-	return S_OK;
-}
-
-bool Bumper::LoadToken(const int id, BiffReader* const pbr)
-{
-	return true;
-}
-
 void Bumper::SetDefaultPhysics(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
 
 	m_d.m_force = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Bumper", "Force", 15) : 15;
 	m_d.m_scatter = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Bumper", "Scatter", 0) : 0;
+}
+
+bool Bumper::LoadToken(const int id, BiffReader* const pBiffReader)
+{
+	switch (id)
+	{
+	case FID(PIID):
+		pBiffReader->GetInt((int*)pBiffReader->m_pData);
+		break;
+	case FID(VCEN):
+		pBiffReader->GetVector2(m_d.m_vCenter);
+		break;
+	case FID(RADI):
+		pBiffReader->GetFloat(m_d.m_radius);
+		break;
+	case FID(MATR):
+		pBiffReader->GetString(m_d.m_szCapMaterial);
+		break;
+	case FID(RIMA):
+		pBiffReader->GetString(m_d.m_szRingMaterial);
+		break;
+	case FID(BAMA):
+		pBiffReader->GetString(m_d.m_szBaseMaterial);
+		break;
+	case FID(SKMA):
+		pBiffReader->GetString(m_d.m_szSkirtMaterial);
+		break;
+	case FID(TMON):
+		pBiffReader->GetBool(m_d.m_tdr.m_TimerEnabled);
+		break;
+	case FID(TMIN):
+		pBiffReader->GetInt(m_d.m_tdr.m_TimerInterval);
+		break;
+	case FID(THRS):
+		pBiffReader->GetFloat(m_d.m_threshold);
+		break;
+	case FID(FORC):
+		pBiffReader->GetFloat(m_d.m_force);
+		break;
+	case FID(BSCT):
+		pBiffReader->GetFloat(m_d.m_scatter);
+		break;
+	case FID(HISC):
+		pBiffReader->GetFloat(m_d.m_heightScale);
+		break;
+	case FID(RISP):
+		pBiffReader->GetFloat(m_d.m_ringSpeed);
+		break;
+	case FID(ORIN):
+		pBiffReader->GetFloat(m_d.m_orientation);
+		break;
+	case FID(RDLI):
+		pBiffReader->GetFloat(m_d.m_ringDropOffset);
+		break;
+	case FID(SURF):
+		pBiffReader->GetString(m_d.m_szSurface);
+		break;
+	case FID(NAME):
+		pBiffReader->GetWideString(m_wzName, sizeof(m_wzName) / sizeof(wchar_t));
+		break;
+	case FID(BVIS):
+	{
+		// backwards compatibility when loading old VP9 tables
+		bool value;
+		pBiffReader->GetBool(value);
+		m_d.m_capVisible = value;
+		m_d.m_baseVisible = value;
+		m_d.m_ringVisible = value;
+		m_d.m_skirtVisible = value;
+		break;
+	}
+	case FID(CAVI):
+		pBiffReader->GetBool(m_d.m_capVisible);
+		break;
+	case FID(HAHE):
+		pBiffReader->GetBool(m_d.m_hitEvent);
+		break;
+	case FID(COLI):
+		pBiffReader->GetBool(m_d.m_collidable);
+		break;
+	case FID(BSVS):
+	{
+		pBiffReader->GetBool(m_d.m_baseVisible);
+
+		m_d.m_ringVisible = m_d.m_baseVisible;
+		m_d.m_skirtVisible = m_d.m_baseVisible;
+		break;
+	}
+	case FID(RIVS):
+		pBiffReader->GetBool(m_d.m_ringVisible);
+		break;
+	case FID(SKVS):
+		pBiffReader->GetBool(m_d.m_skirtVisible);
+		break;
+	case FID(REEN):
+		pBiffReader->GetBool(m_d.m_reflectionEnabled);
+		break;
+	default:
+		ISelect::LoadToken(id, pBiffReader);
+		break;
+	}
+	return true;
 }
 
 void Bumper::WriteRegDefaults()

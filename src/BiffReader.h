@@ -4,7 +4,7 @@
 #include "misc.h"
 #include "pole.h"
 
-#define FID(A) (int)((unsigned int)(#A[0]) | ((unsigned int)(#A[1]) << 8) | ((unsigned int)(#A[2]) << 16) | ((unsigned int)(#A[3]) << 24))
+#include "vector.h"
 
 class ILoadable;
 
@@ -25,6 +25,7 @@ public:
 	HRESULT GetFloat(float& value);
 	HRESULT GetBool(bool& value);
 	HRESULT GetStruct(void* pValue, const int size);
+	HRESULT GetVector2(Vertex2D& vec);
 
 	HRESULT Load();
 

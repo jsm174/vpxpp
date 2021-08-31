@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <stdint.h>
 
 typedef uint32_t DWORD;   // DWORD = unsigned 32 bit value
@@ -8,7 +7,6 @@ typedef uint16_t WORD;    // WORD = unsigned 16 bit value
 typedef uint8_t BYTE;     // BYTE = unsigned 8 bit value
 
 typedef long HRESULT;
-
 
 #define S_OK ((HRESULT)0L)
 #define S_FALSE ((HRESULT)1L)
@@ -24,6 +22,68 @@ typedef int COLORREF;
 #define MAX_LIGHT_SOURCES 2
 #define LIGHTSEQQUEUESIZE 100
 #define MAXTIPSHAPE 256
+
+#define FID(A) (int)((unsigned int)(#A[0]) | ((unsigned int)(#A[1]) << 8) | ((unsigned int)(#A[2]) << 16) | ((unsigned int)(#A[3]) << 24))
+
+#define RGB(r,g,b) ((COLORREF)(((DWORD)(r)) | (((DWORD)(g))<<8) | (((DWORD)(b))<<16)))
+
+enum ItemTypeEnum
+{
+	eItemSurface,
+	eItemFlipper,
+	eItemTimer,
+	eItemPlunger,
+	eItemTextbox,
+	eItemBumper,
+	eItemTrigger,
+	eItemLight,
+	eItemKicker,
+	eItemDecal,
+	eItemGate,
+	eItemSpinner,
+	eItemRamp,
+	eItemTable,
+	eItemLightCenter,
+	eItemDragPoint,
+	eItemCollection,
+	eItemDispReel,
+	eItemLightSeq,
+	eItemPrimitive,
+	eItemFlasher,
+	eItemRubber,
+	eItemHitTarget,
+	//eItemLightSeqCenter,
+	eItemTypeCount,
+	eItemInvalid = 0xffffffff // Force enum to be 32 bits
+};
+
+static const char* ITEMTYPEENUM_STRING[eItemTypeCount] =
+{
+	[eItemSurface] = "eItemSurface",
+	[eItemFlipper] = "eItemFlipper",
+	[eItemTimer] = "eItemTimer",
+	[eItemPlunger] = "eItemPlunger",
+	[eItemTextbox] = "eItemTextbox",
+	[eItemBumper] = "eItemBumper",
+	[eItemTrigger] = "eItemTrigger",
+	[eItemLight] = "eItemLight",
+	[eItemKicker] = "eItemKicker",
+	[eItemDecal] = "eItemDecal",
+	[eItemGate] = "eItemGate",
+	[eItemSpinner] = "eItemSpinner",
+	[eItemRamp] = "eItemRamp",
+	[eItemTable] = "eItemTable",
+	[eItemLightCenter] = "eItemLightCenter",
+	[eItemDragPoint] = "eItemDragPoint",
+	[eItemCollection] = "eItemCollection",
+	[eItemDispReel] = "eItemDispReel",
+	[eItemLightSeq] = "eItemLightSeq",
+	[eItemPrimitive] = "eItemPrimitive",
+	[eItemFlasher] = "eItemFlasher",
+	[eItemRubber] = "eItemRubber",
+	[eItemHitTarget] = "eItemHitTarget",
+	//[eItemLightSeqCenter]= "eItemLightSeqCenter"
+};
 
 typedef enum
 {

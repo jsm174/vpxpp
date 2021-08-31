@@ -12,6 +12,7 @@
 #include "cmath.h"
 #include "hash.h"
 #include "misc.h"
+#include "physconst.h"
 #include "vector.h"
 
 #include <unordered_map>
@@ -50,19 +51,22 @@ public:
 
 	HRESULT LoadInfo(POLE::Storage* pStorage, int version);
 	HRESULT LoadCustomInfo(POLE::Storage* pStorage, int version);
-
 	HRESULT LoadData(POLE::Stream* pStream, int& csubobj, int& csounds, int& ctextures, int& cfonts, int& ccollection, int version);
-
 	void ReadInfoValue(POLE::Storage* pstg, const char* pName, char** pszValue);
-	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
 
-	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
+	virtual PinTable* GetPTable();
+	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual void SetDefaults(bool fromMouseClick);
+	virtual void SetDefaultPhysics(bool fromMouseClick);
+	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
 
 	Material* GetMaterial(const std::string& szName);
 
 	void GetUniqueName(const ItemTypeEnum type, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;
 	void GetUniqueName(const wchar_t* const prefix, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;
+
+	void SetLoadDefaults();
 
 	void visit(int indent, POLE::Storage* storage, std::string path);
 

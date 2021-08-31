@@ -2,7 +2,7 @@
 
 inline unsigned long StringHash(const unsigned char* str)
 {
-	//MessageBox(0, str, 0, 0);
+	//TODO: MessageBox(0, str, 0, 0);
 	unsigned long hash = 5381;
 	int c;
 
@@ -12,7 +12,10 @@ inline unsigned long StringHash(const unsigned char* str)
 	return hash;
 }
 
-inline unsigned long StringHash(const char* str) { return StringHash((const unsigned char*)str); }
+inline unsigned long StringHash(const char* str)
+{
+	return StringHash((const unsigned char*)str);
+}
 
 struct StringHashFunctor
 {

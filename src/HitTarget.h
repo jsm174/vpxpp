@@ -20,7 +20,7 @@ public:
 
 	float m_elasticityFalloff;
 	float m_dropSpeed;
-	//TODO: U32   m_time_msec;
+	uint32_t m_time_msec;
 	int m_raiseDelay;
 
 	float m_depthBias;

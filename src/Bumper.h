@@ -1,13 +1,14 @@
 #pragma once
 
 #include "BaseProperty.h"
-#include "ISelect.h"
 #include "IEditable.h"
+#include "IScriptable.h"
+#include "ISelect.h"
 #include "vector.h"
 
 #include "PinTable.h"
-#include "Timer.h"
 #include "RenderDevice.h"
+#include "Timer.h"
 
 class BumperData : public BaseProperty
 {
@@ -19,7 +20,7 @@ public:
 	float m_orientation;
 	float m_ringSpeed;
 	float m_ringDropOffset;
-	//TODO: U32 m_time_msec;
+	uint32_t m_time_msec;
 	TimerDataRoot m_tdr;
 	std::string m_szCapMaterial;
 	std::string m_szBaseMaterial;
@@ -33,7 +34,8 @@ public:
 };
 
 class Bumper : public ISelect,
-               public IEditable
+               public IEditable,
+               public IScriptable
 {
 public:
 	static const ItemTypeEnum ItemType;
@@ -55,11 +57,11 @@ public:
 	virtual PinTable* GetPTable();
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
 	virtual void SetDefaults(bool fromMouseClick);
+	virtual void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
 
-    virtual void SetDefaultPhysics(bool fromMouseClick);
-    virtual void WriteRegDefaults();
-	
+	virtual void WriteRegDefaults();
+
 	BumperData m_d;
 
 private:

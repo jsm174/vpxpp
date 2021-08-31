@@ -14,4 +14,6 @@ public:
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName) = 0;
 
 	void InitScript();
+
+	bool m_backglass;
 };
