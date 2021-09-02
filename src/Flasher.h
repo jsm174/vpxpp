@@ -1,10 +1,14 @@
 #pragma once
 
 #include "IEditable.h"
+#include "IScriptable.h"
 #include "ISelect.h"
 
+#include "BiffReader.h"
 #include "PinTable.h"
+#include "RenderDevice.h"
 #include "Timer.h"
+#include "def.h"
 
 class FlasherData
 {
@@ -32,7 +36,8 @@ public:
 };
 
 class Flasher : public ISelect,
-                public IEditable
+                public IEditable,
+                public IScriptable
 {
 public:
 	static const ItemTypeEnum ItemType;
@@ -53,10 +58,31 @@ public:
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 	virtual PinTable* GetPTable();
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual void SetDefaults(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+
+	virtual void WriteRegDefaults();
 
 	FlasherData m_d;
 
+	bool m_lockedByLS;
+	bool m_inPlayState;
+
 private:
 	PinTable* m_ptable;
+
+	unsigned int m_numVertices;
+	int m_numPolys;
+	float m_minx;
+	float m_maxx;
+	float m_miny;
+	float m_maxy;
+	Vertex3D_TexelOnly* m_vertices;
+
+	VertexBuffer* m_dynamicVertexBuffer;
+	IndexBuffer* m_dynamicIndexBuffer;
+
+	// TODO: PropertyPane* m_propVisual;
+
+	bool m_dynamicVertexBufferRegenerate;
 };

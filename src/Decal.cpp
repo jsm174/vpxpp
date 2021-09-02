@@ -1,5 +1,4 @@
 #include "Decal.h"
-#include "BiffReader.h"
 #include "RegUtil.h"
 
 const ItemTypeEnum Decal::ItemType = eItemDecal;

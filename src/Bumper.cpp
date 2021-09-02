@@ -1,5 +1,4 @@
 #include "Bumper.h"
-#include "BiffReader.h"
 #include "RegUtil.h"
 
 const ItemTypeEnum Bumper::ItemType = eItemBumper;

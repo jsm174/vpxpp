@@ -6,6 +6,7 @@
 #include "ISelect.h"
 #include "vector.h"
 
+#include "BiffReader.h"
 #include "PinTable.h"
 #include "RenderDevice.h"
 #include "Timer.h"
