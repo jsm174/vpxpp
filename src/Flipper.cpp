@@ -53,7 +53,7 @@ HRESULT Flipper::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 
 	SetDefaults(fromMouseClick);
 
-	//TODO: m_phitflipper = NULL;
+	// TODO: m_phitflipper = NULL;
 
 	return InitVBA(true, 0, NULL);
 }

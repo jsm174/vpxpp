@@ -46,9 +46,9 @@ HRESULT Trigger::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 	m_d.m_vCenter.x = x;
 	m_d.m_vCenter.y = y;
 
-	//TODO: SetDefaults(fromMouseClick);
-	//TODO: if (m_vdpoint.empty())
-	//TODO: InitShape(x, y);
+	// TODO: SetDefaults(fromMouseClick);
+	// TODO: if (m_vdpoint.empty())
+	// TODO: InitShape(x, y);
 
 	return InitVBA(true, 0, NULL);
 }

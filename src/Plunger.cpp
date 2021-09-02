@@ -45,7 +45,7 @@ HRESULT Plunger::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 	m_d.m_v.x = x;
 	m_d.m_v.y = y;
 
-	//TODO: SetDefaults(fromMouseClick);
+	// TODO: SetDefaults(fromMouseClick);
 
 	return InitVBA(true, 0, NULL);
 }

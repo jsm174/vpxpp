@@ -786,7 +786,7 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 		pBiffReader->GetInt(m_colorbackdrop);
 		break;
 	case FID(SECB):
-		//TODO: pBiffReader->GetStruct(&m_protectionData, sizeof(ProtectionData));
+		// TODO: pBiffReader->GetStruct(&m_protectionData, sizeof(ProtectionData));
 		break;
 	case FID(CODE):
 	{

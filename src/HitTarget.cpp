@@ -42,8 +42,8 @@ HRESULT HitTarget::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 	m_d.m_vPosition.x = x;
 	m_d.m_vPosition.y = y;
 
-	//TODO: SetDefaults(false);
-	//TODO: m_hitEvent = false;
+	// TODO: SetDefaults(false);
+	// TODO: m_hitEvent = false;
 
 	InitVBA(true, 0, NULL);
 

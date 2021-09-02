@@ -46,9 +46,9 @@ HRESULT Light::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 	m_d.m_vCenter.x = x;
 	m_d.m_vCenter.y = y;
 
-	//TODO: SetDefaults(fromMouseClick);
+	// TODO: SetDefaults(fromMouseClick);
 
-	//TODO: InitShape();
+	// TODO: InitShape();
 
 	//m_lockedByLS = false;
 	//m_inPlayState = m_d.m_state;

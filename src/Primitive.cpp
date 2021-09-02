@@ -46,11 +46,11 @@ HRESULT Primitive::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 	m_d.m_vPosition.x = x;
 	m_d.m_vPosition.y = y;
 
-	//TODO: SetDefaults(fromMouseClick);
+	// TODO: SetDefaults(fromMouseClick);
 
 	InitVBA(true, 0, NULL);
 
-	//TODO:UpdateStatusBarInfo();
+	// TODO:UpdateStatusBarInfo();
 
 	return S_OK;
 }

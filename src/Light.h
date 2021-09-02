@@ -27,7 +27,7 @@ public:
    COLORREF m_color;
    COLORREF m_color2; 
    TimerDataRoot m_tdr;
-   //TODO: Shape m_shape;
+   // TODO: Shape m_shape;
    std::string m_szSurface;
 
    float m_depthBias;

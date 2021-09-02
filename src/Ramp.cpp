@@ -33,7 +33,7 @@ IEditable* Ramp::COMCreateAndInit(PinTable* ptable, float x, float y)
 
 Ramp::Ramp()
 {
-	//TODO: m_menuid = IDR_SURFACEMENU;
+	// TODO: m_menuid = IDR_SURFACEMENU;
 	m_d.m_collidable = true;
 	m_d.m_visible = true;
 	m_dynamicVertexBuffer = NULL;
@@ -59,7 +59,7 @@ HRESULT Ramp::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 {
 	m_ptable = ptable;
 
-	//TODO:   SetDefaults(fromMouseClick);
+	// TODO:   SetDefaults(fromMouseClick);
 	// m_d.m_visible = true;
 
 	// float length = 0.5f * LoadValueFloatWithDefault("DefaultProps\\Ramp", "Length", 400.0f);

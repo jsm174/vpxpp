@@ -4,7 +4,7 @@
 #include <float.h>
 #include "def.h"
 
-//TODO: typedef struct D3DXVECTOR4 vec4;
+// TODO: typedef struct D3DXVECTOR4 vec4;
 
 // 2D vector
 class Vertex2D

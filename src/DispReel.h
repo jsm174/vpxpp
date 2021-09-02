@@ -59,12 +59,12 @@ public:
 
 	virtual void WriteRegDefaults();
 
-	class DispReelAnimObject //TODO: : public AnimObject
+	class DispReelAnimObject // TODO: : public AnimObject
 	{
 	public:
 		virtual void Animate()
 		{
-			//TODO: m_pDispReel->Animate();
+			// TODO: m_pDispReel->Animate();
 		} 
 
 		DispReel* m_pDispReel;

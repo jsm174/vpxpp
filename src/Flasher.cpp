@@ -71,7 +71,7 @@ HRESULT Flasher::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 
 	SetDefaults(fromMouseClick);
 
-	//TODO: InitShape();
+	// TODO: InitShape();
 
 	InitVBA(true, 0, NULL);
 

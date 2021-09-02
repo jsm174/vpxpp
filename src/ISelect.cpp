@@ -6,7 +6,7 @@ ISelect::ISelect()
 
 void ISelect::GetTypeNameForType(const ItemTypeEnum type, wchar_t* const buf) const
 {
-	//TODO: UINT strID;
+	// TODO: UINT strID;
 
 	//switch (type)
 	//{

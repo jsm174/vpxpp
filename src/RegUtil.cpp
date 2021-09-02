@@ -63,7 +63,7 @@ HRESULT RegUtil::LoadValue(const std::string& szKey, const std::string& szValue,
 
 	if ((*pNode)[szValue] != nullptr)
 	{
-		//TODO: szbuffer = (*pNode)[szValue];
+		// TODO: szbuffer = (*pNode)[szValue];
 		return S_OK;
 	}
 

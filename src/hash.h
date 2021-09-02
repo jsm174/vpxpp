@@ -2,7 +2,7 @@
 
 inline unsigned long StringHash(const unsigned char* str)
 {
-	//TODO: MessageBox(0, str, 0, 0);
+	// TODO: MessageBox(0, str, 0, 0);
 	unsigned long hash = 5381;
 	int c;
 

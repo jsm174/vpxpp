@@ -46,7 +46,7 @@ HRESULT LightSeq::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 	m_d.m_vCenter.x = x;
 	m_d.m_vCenter.y = y;
 
-	//TODO: SetDefaults(fromMouseClick);
+	// TODO: SetDefaults(fromMouseClick);
 
 	return InitVBA(true, 0, NULL);
 }

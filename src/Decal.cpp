@@ -51,7 +51,7 @@ HRESULT Decal::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 
 	InitVBA(true, 0, NULL);
 
-	//TODO: EnsureSize();
+	// TODO: EnsureSize();
 
 	return S_OK;
 }
