@@ -2,10 +2,12 @@
 
 #include "BaseProperty.h"
 #include "IEditable.h"
+#include "IScriptable.h"
 #include "ISelect.h"
 #include "vector.h"
 
 #include "PinTable.h"
+#include "RenderDevice.h"
 #include "Timer.h"
 
 class HitTargetData : public BaseProperty
@@ -32,7 +34,8 @@ public:
 };
 
 class HitTarget : public ISelect,
-               public IEditable
+                  public IEditable,
+                  public IScriptable
 {
 public:
 	static const ItemTypeEnum ItemType;
@@ -53,10 +56,33 @@ public:
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 	virtual PinTable* GetPTable();
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual void SetDefaults(bool fromMouseClick);
+	void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+
+	virtual void WriteRegDefaults();
 
 	HitTargetData m_d;
 
+	bool m_hitEvent;
+
 private:
 	PinTable* m_ptable;
+
+	const Vertex3D_NoTex2* m_vertices;
+	const WORD* m_indices;
+	unsigned int m_numVertices;
+	unsigned int m_numIndices;
+
+	// TODO: PropertyPane* m_propVisual;
+	// TODO: PropertyPane* m_propPosition;
+	// TODO: PropertyPane* m_propPhysics;
+
+	VertexBuffer* m_vertexBuffer;
+	IndexBuffer* m_indexBuffer;
+
+	uint32_t m_timeStamp;
+	float m_moveAnimationOffset;
+	bool m_moveAnimation;
+	bool m_moveDown;
 };

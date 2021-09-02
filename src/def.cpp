@@ -61,3 +61,17 @@ __forceinline unsigned long long max(const unsigned long long x, const unsigned 
 {
 	return x < y ? y : x;
 }
+
+__forceinline float clamp(const float x, const float min, const float max)
+{
+	if (x < min)
+	{
+		return min;
+	}
+	else if (x > max)
+	{
+		return max;
+	}
+
+	return x;
+}

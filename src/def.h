@@ -21,6 +21,7 @@ __forceinline unsigned int min(const unsigned int x, const unsigned int y);
 __forceinline unsigned int max(const unsigned int x, const unsigned int y);
 __forceinline unsigned long long min(const unsigned long long x, const unsigned long long y);
 __forceinline unsigned long long max(const unsigned long long x, const unsigned long long y);
+__forceinline float clamp(const float x, const float min, const float max);
 
 typedef float D3DVALUE;
 

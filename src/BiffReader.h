@@ -26,6 +26,8 @@ public:
 	HRESULT GetBool(bool& value);
 	HRESULT GetStruct(void* pValue, const int size);
 	HRESULT GetVector2(Vertex2D& vec);
+	HRESULT GetVector3(Vertex3Ds& vec);
+	HRESULT GetVector3Padded(Vertex3Ds& vec);
 
 	HRESULT Load();
 

@@ -155,7 +155,25 @@ HRESULT BiffReader::GetStruct(void* pValue, const int size)
 
 HRESULT BiffReader::GetVector2(Vertex2D& vec)
 {
-   return GetStruct(&vec.x, 2 * sizeof(float));
+	return GetStruct(&vec.x, 2 * sizeof(float));
+}
+
+HRESULT BiffReader::GetVector3(Vertex3Ds& vec)
+{
+	return GetStruct(&vec.x, 3 * sizeof(float));
+}
+
+HRESULT BiffReader::GetVector3Padded(Vertex3Ds& vec)
+{
+	float data[4];
+	HRESULT hr = GetStruct(data, 4 * sizeof(float));
+	if (hr == S_OK)
+	{
+		vec.x = data[0];
+		vec.y = data[1];
+		vec.z = data[2];
+	}
+	return hr;
 }
 
 HRESULT BiffReader::Load()
