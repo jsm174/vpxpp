@@ -26,6 +26,11 @@ __forceinline float clamp(const float x, const float min, const float max);
 typedef float D3DVALUE;
 
 #define MAXNAMEBUFFER 32
+#define MAXSTRING 1024
+
+#define EDITOR_BG_WIDTH    1000
+#define EDITOR_BG_HEIGHT   750
+
 
 class Vertex3D_NoTex2
 {

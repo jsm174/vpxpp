@@ -19,6 +19,7 @@ public:
 	HRESULT GetIntNoHash(int& value);
 	HRESULT GetInt(void* pValue);
 	HRESULT GetInt(int& value);
+	HRESULT GetString(char* const szvalue, const size_t szvalue_maxlength);
 	HRESULT GetString(std::string& szvalue);
 	HRESULT GetWideString(wchar_t* wzvalue, int maxlen);
 	HRESULT GetWideString(std::wstring& wzvalue);

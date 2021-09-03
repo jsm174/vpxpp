@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IEditable.h"
+#include "IScriptable.h"
 #include "ISelect.h"
 #include "vector.h"
 
@@ -13,7 +14,7 @@ public:
 	Vertex2D m_v;
 	Vertex2D m_vCenter;
 	std::wstring m_wzCollection;
-	long m_updateinterval;
+	int m_updateinterval;
 	TimerDataRoot m_tdr;
 };
 
@@ -44,7 +45,8 @@ enum
 };
 
 class LightSeq : public ISelect,
-                 public IEditable
+                 public IEditable,
+                 public IScriptable
 {
 public:
 	static const ItemTypeEnum ItemType;
@@ -65,7 +67,20 @@ public:
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 	virtual PinTable* GetPTable();
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual void SetDefaults(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+
+	virtual void WriteRegDefaults();
+
+	class LightSeqAnimObject // TODO: : public AnimObject
+	{
+	public:
+		virtual void Animate()
+		{
+			// TODO: m_pLightSeq->Animate();
+		} 
+		LightSeq* m_pLightSeq;
+	} m_lightseqanim;
 
 	LightSeqData m_d;
 

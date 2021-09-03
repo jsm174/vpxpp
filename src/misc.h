@@ -12,7 +12,7 @@ typedef long HRESULT;
 #define S_FALSE ((HRESULT)1L)
 #define E_FAIL ((HRESULT)0x80004005L)
 
-#define NUM_BG_SETS 3 // different backdrop settings: DT,FS,FSS
+#define NUM_BG_SETS 3 
 #define BG_DESKTOP 0
 #define BG_FULLSCREEN 1
 #define BG_FSS 2
@@ -52,7 +52,6 @@ enum ItemTypeEnum
 	eItemFlasher,
 	eItemRubber,
 	eItemHitTarget,
-	//eItemLightSeqCenter,
 	eItemTypeCount,
 	eItemInvalid = 0xffffffff // Force enum to be 32 bits
 };
@@ -82,7 +81,6 @@ static const char* ITEMTYPEENUM_STRING[eItemTypeCount] =
 	[eItemFlasher] = "eItemFlasher",
 	[eItemRubber] = "eItemRubber",
 	[eItemHitTarget] = "eItemHitTarget",
-	//[eItemLightSeqCenter]= "eItemLightSeqCenter"
 };
 
 typedef enum

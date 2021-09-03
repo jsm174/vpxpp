@@ -2,10 +2,13 @@
 
 #include "BaseProperty.h"
 #include "IEditable.h"
+#include "IScriptable.h"
 #include "ISelect.h"
 #include "vector.h"
 
+#include "BiffReader.h"
 #include "PinTable.h"
+#include "RenderDevice.h"
 #include "Timer.h"
 
 class KickerData : public BaseProperty
@@ -25,7 +28,8 @@ public:
 };
 
 class Kicker : public ISelect,
-               public IEditable
+               public IEditable,
+               public IScriptable
 {
 public:
 	static const ItemTypeEnum ItemType;
@@ -46,10 +50,26 @@ public:
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 	virtual PinTable* GetPTable();
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual void SetDefaults(bool fromMouseClick);
+	virtual void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+
+	virtual void WriteRegDefaults();
 
 	KickerData m_d;
 
 private:
 	PinTable* m_ptable;
+
+	// TODO: KickerHitCircle* m_phitkickercircle;
+
+	VertexBuffer* m_vertexBuffer;
+	IndexBuffer* m_indexBuffer;
+	unsigned int m_numVertices;
+	unsigned int m_numIndices;
+
+	float m_baseHeight;
+
+	VertexBuffer* m_plateVertexBuffer;
+	IndexBuffer* m_plateIndexBuffer;
 };

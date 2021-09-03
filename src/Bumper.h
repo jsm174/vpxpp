@@ -1,9 +1,9 @@
 #pragma once
 
 #include "BaseProperty.h"
+#include "ISelect.h"
 #include "IEditable.h"
 #include "IScriptable.h"
-#include "ISelect.h"
 #include "vector.h"
 
 #include "BiffReader.h"

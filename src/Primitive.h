@@ -2,10 +2,13 @@
 
 #include "BaseProperty.h"
 #include "IEditable.h"
+#include "IScriptable.h"
 #include "ISelect.h"
 #include "vector.h"
 
+#include "BiffReader.h"
 #include "PinTable.h"
+#include "RenderDevice.h"
 #include "Timer.h"
 
 class PrimitiveData : public BaseProperty
@@ -45,9 +48,12 @@ public:
 };
 
 class Primitive : public ISelect,
-                  public IEditable
+                  public IEditable,
+                  public IScriptable
 {
 public:
+	static const int Max_Primitive_Sides;
+
 	static const ItemTypeEnum ItemType;
 	static const int TypeNameID;
 	static const int ToolID;
@@ -66,10 +72,32 @@ public:
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 	virtual PinTable* GetPTable();
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual void SetDefaults(bool fromMouseClick);
+	virtual void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+
+	virtual void WriteRegDefaults();
 
 	PrimitiveData m_d;
 
+	bool m_lockedByLS;
+	bool m_inPlayState;
+
 private:
 	PinTable* m_ptable;
+
+	int m_numGroupVertices;
+	int m_numGroupIndices;
+	float m_currentFrame;
+
+	int m_numIndices;
+	int m_numVertices;
+
+	// TODO: PropertyPane* m_propVisual;
+	// TODO: PropertyPane* m_propPosition;
+	// TODO: PropertyPane* m_propPhysics;
+
+	VertexBuffer* m_vertexBuffer;
+	IndexBuffer* m_indexBuffer;
+	bool m_vertexBufferRegenerate;
 };

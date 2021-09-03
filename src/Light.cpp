@@ -1,4 +1,5 @@
 #include "Light.h"
+#include "RegUtil.h"
 
 const ItemTypeEnum Light::ItemType = eItemLight;
 const int Light::TypeNameID = 130;
@@ -33,6 +34,19 @@ IEditable* Light::COMCreateAndInit(PinTable* ptable, float x, float y)
 
 Light::Light()
 {
+	// TODO: m_menuid = IDR_SURFACEMENU;
+	m_customMoverVBuffer = NULL;
+	m_customMoverIBuffer = NULL;
+	m_bulbLightIndexBuffer = NULL;
+	m_bulbLightVBuffer = NULL;
+	m_bulbSocketIndexBuffer = NULL;
+	m_bulbSocketVBuffer = NULL;
+	m_d.m_depthBias = 0.0f;
+	// TODO: m_d.m_shape = ShapeCustom;
+	m_d.m_visible = true;
+	m_roundLight = false;
+	// TODO: m_propVisual = NULL;
+	m_updateBulbLightHeight = false;
 }
 
 Light::~Light()
@@ -46,12 +60,12 @@ HRESULT Light::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 	m_d.m_vCenter.x = x;
 	m_d.m_vCenter.y = y;
 
-	// TODO: SetDefaults(fromMouseClick);
+	SetDefaults(fromMouseClick);
 
 	// TODO: InitShape();
 
-	//m_lockedByLS = false;
-	//m_inPlayState = m_d.m_state;
+	m_lockedByLS = false;
+	m_inPlayState = m_d.m_state;
 	m_d.m_visible = true;
 
 	return InitVBA(true, 0, NULL);
@@ -79,10 +93,216 @@ PinTable* Light::GetPTable()
 
 HRESULT Light::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
 {
+	SetDefaults(false);
+
+	m_d.m_falloff = 50.f;
+	m_d.m_falloff_power = 2.0f;
+	m_d.m_state = LightStateOff;
+	// TODO: m_d.m_shape = ShapeCustom;
+
+	m_d.m_tdr.m_TimerEnabled = false;
+	m_d.m_tdr.m_TimerInterval = 100;
+
+	m_d.m_color = RGB(255, 255, 0);
+	m_d.m_color2 = RGB(255, 255, 255);
+
+	m_rgblinkpattern = "10";
+	m_blinkinterval = 125;
+
+	m_ptable = pTable;
+
+	m_lockedByLS = false;
+	m_inPlayState = m_d.m_state;
+
+	BiffReader biffReader(pStream, this, pId, version);
+	biffReader.Load();
+
 	return S_OK;
 }
 
-bool Light::LoadToken(const int id, BiffReader* const pbr)
+void Light::SetDefaults(bool fromMouseClick)
 {
+	RegUtil* pRegUtil = RegUtil::SharedInstance();
+
+	m_duration = 0;
+	m_finalState = 0;
+
+	m_d.m_falloff = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Light", "Falloff", 50.f) : 50.f;
+	m_d.m_falloff_power = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Light", "FalloffPower", 2.0f) : 2.0f;
+	m_d.m_state = fromMouseClick ? (LightState)pRegUtil->LoadValueIntWithDefault("DefaultProps\\Light", "LightState", LightStateOff) : LightStateOff;
+
+	// TODO: m_d.m_shape = ShapeCustom;
+
+	m_d.m_tdr.m_TimerEnabled = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Light", "TimerEnabled", false) : false;
+	m_d.m_tdr.m_TimerInterval = fromMouseClick ? pRegUtil->LoadValueIntWithDefault("DefaultProps\\Light", "TimerInterval", 100) : 100;
+	m_d.m_color = fromMouseClick ? pRegUtil->LoadValueIntWithDefault("DefaultProps\\Light", "Color", RGB(255, 255, 0)) : RGB(255, 255, 0);
+	m_d.m_color2 = fromMouseClick ? pRegUtil->LoadValueIntWithDefault("DefaultProps\\Light", "ColorFull", RGB(255, 255, 255)) : RGB(255, 255, 255);
+
+	HRESULT hr = pRegUtil->LoadValue("DefaultProps\\Light", "OffImage", m_d.m_szImage);
+	if ((hr != S_OK) || !fromMouseClick)
+	{
+		m_d.m_szImage.clear();
+	}
+
+	hr = pRegUtil->LoadValue("DefaultProps\\Light", "BlinkPattern", m_rgblinkpattern);
+	if ((hr != S_OK) || !fromMouseClick)
+	{
+		m_rgblinkpattern = "10";
+	}
+
+	m_blinkinterval = fromMouseClick ? pRegUtil->LoadValueIntWithDefault("DefaultProps\\Light", "BlinkInterval", 125) : 125;
+	m_d.m_intensity = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Light", "Intensity", 1.0f) : 1.0f;
+	m_d.m_transmissionScale = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Light", "TransmissionScale", 0.5f) : 0.f; // difference in defaults is intended
+
+	m_d.m_intensity_scale = 1.0f;
+
+	hr = pRegUtil->LoadValue("DefaultProps\\Light", "Surface", m_d.m_szSurface);
+	if ((hr != S_OK) || !fromMouseClick)
+	{
+		m_d.m_szSurface.clear();
+	}
+
+	m_d.m_fadeSpeedUp = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Light", "FadeSpeedUp", 0.2f) : 0.2f;
+	m_d.m_fadeSpeedDown = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Light", "FadeSpeedDown", 0.2f) : 0.2f;
+	m_d.m_BulbLight = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Light", "Bulb", false) : false;
+	m_d.m_imageMode = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Light", "ImageMode", false) : false;
+	m_d.m_showBulbMesh = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Light", "ShowBulbMesh", false) : false;
+	m_d.m_staticBulbMesh = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Light", "StaticBulbMesh", true) : true;
+	m_d.m_showReflectionOnBall = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Light", "ShowReflectionOnBall", true) : true;
+	m_d.m_meshRadius = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Light", "ScaleBulbMesh", 20.0f) : 20.0f;
+	m_d.m_modulate_vs_add = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Light", "BulbModulateVsAdd", 0.9f) : 0.9f;
+	m_d.m_bulbHaloHeight = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Light", "BulbHaloHeight", 28.0f) : 28.0f;
+}
+
+bool Light::LoadToken(const int id, BiffReader* const pBiffReader)
+{
+	switch (id)
+	{
+	case FID(PIID):
+		pBiffReader->GetInt((int*)pBiffReader->m_pData);
+		break;
+	case FID(VCEN):
+		pBiffReader->GetVector2(m_d.m_vCenter);
+		break;
+	case FID(RADI):
+		pBiffReader->GetFloat(m_d.m_falloff);
+		break;
+	case FID(FAPO):
+		pBiffReader->GetFloat(m_d.m_falloff_power);
+		break;
+	case FID(STAT):
+	{
+		pBiffReader->GetInt(&m_d.m_state);
+		m_inPlayState = m_d.m_state;
+		break;
+	}
+	case FID(COLR):
+		pBiffReader->GetInt(m_d.m_color);
+		break;
+	case FID(COL2):
+		pBiffReader->GetInt(m_d.m_color2);
+		break;
+	case FID(IMG1):
+		pBiffReader->GetString(m_d.m_szImage);
+		break;
+	case FID(TMON):
+		pBiffReader->GetBool(m_d.m_tdr.m_TimerEnabled);
+		break;
+	case FID(TMIN):
+		pBiffReader->GetInt(m_d.m_tdr.m_TimerInterval);
+		break;
+	case FID(SHAP):
+		m_roundLight = true;
+		break;
+	case FID(BPAT):
+		pBiffReader->GetString(m_rgblinkpattern);
+		break;
+	case FID(BINT):
+		pBiffReader->GetInt(m_blinkinterval);
+		break;
+	case FID(BWTH):
+		pBiffReader->GetFloat(m_d.m_intensity);
+		break;
+	case FID(TRMS):
+		pBiffReader->GetFloat(m_d.m_transmissionScale);
+		break;
+	case FID(SURF):
+		pBiffReader->GetString(m_d.m_szSurface);
+		break;
+	case FID(NAME):
+		pBiffReader->GetWideString(m_wzName, sizeof(m_wzName) / sizeof(wchar_t));
+		break;
+	case FID(BGLS):
+		pBiffReader->GetBool(m_backglass);
+		break;
+	case FID(LIDB):
+		pBiffReader->GetFloat(m_d.m_depthBias);
+		break;
+	case FID(FASP):
+		pBiffReader->GetFloat(m_d.m_fadeSpeedUp);
+		break;
+	case FID(FASD):
+		pBiffReader->GetFloat(m_d.m_fadeSpeedDown);
+		break;
+	case FID(BULT):
+		pBiffReader->GetBool(m_d.m_BulbLight);
+		break;
+	case FID(IMMO):
+		pBiffReader->GetBool(m_d.m_imageMode);
+		break;
+	case FID(SHBM):
+		pBiffReader->GetBool(m_d.m_showBulbMesh);
+		break;
+	case FID(STBM):
+		pBiffReader->GetBool(m_d.m_staticBulbMesh);
+		break;
+	case FID(SHRB):
+		pBiffReader->GetBool(m_d.m_showReflectionOnBall);
+		break;
+	case FID(BMSC):
+		pBiffReader->GetFloat(m_d.m_meshRadius);
+		break;
+	case FID(BMVA):
+		pBiffReader->GetFloat(m_d.m_modulate_vs_add);
+		break;
+	case FID(BHHI):
+		pBiffReader->GetFloat(m_d.m_bulbHaloHeight);
+		break;
+	default:
+	{
+		// TODO: LoadPointToken(id, pBiffReader, pBiffReader->m_version);
+		ISelect::LoadToken(id, pBiffReader);
+		break;
+	}
+	}
 	return true;
+}
+
+void Light::WriteRegDefaults()
+{
+	RegUtil* pRegUtil = RegUtil::SharedInstance();
+
+	pRegUtil->SaveValueFloat("DefaultProps\\Light", "Falloff", m_d.m_falloff);
+	pRegUtil->SaveValueFloat("DefaultProps\\Light", "FalloffPower", m_d.m_falloff_power);
+	pRegUtil->SaveValueInt("DefaultProps\\Light", "LightState", m_d.m_state);
+	pRegUtil->SaveValueBool("DefaultProps\\Light", "TimerEnabled", m_d.m_tdr.m_TimerEnabled);
+	pRegUtil->SaveValueInt("DefaultProps\\Light", "TimerInterval", m_d.m_tdr.m_TimerInterval);
+	pRegUtil->SaveValueInt("DefaultProps\\Light", "Color", m_d.m_color);
+	pRegUtil->SaveValueInt("DefaultProps\\Light", "ColorFull", m_d.m_color2);
+	pRegUtil->SaveValue("DefaultProps\\Light", "OffImage", m_d.m_szImage);
+	pRegUtil->SaveValue("DefaultProps\\Light", "BlinkPattern", m_rgblinkpattern);
+	pRegUtil->SaveValueInt("DefaultProps\\Light", "BlinkInterval", m_blinkinterval);
+	pRegUtil->SaveValue("DefaultProps\\Light", "Surface", m_d.m_szSurface);
+	pRegUtil->SaveValueFloat("DefaultProps\\Light", "FadeSpeedUp", m_d.m_fadeSpeedUp);
+	pRegUtil->SaveValueFloat("DefaultProps\\Light", "FadeSpeedDown", m_d.m_fadeSpeedDown);
+	pRegUtil->SaveValueFloat("DefaultProps\\Light", "Intensity", m_d.m_intensity);
+	pRegUtil->SaveValueFloat("DefaultProps\\Light", "TransmissionScale", m_d.m_transmissionScale);
+	pRegUtil->SaveValueBool("DefaultProps\\Light", "Bulb", m_d.m_BulbLight);
+	pRegUtil->SaveValueBool("DefaultProps\\Light", "ImageMode", m_d.m_imageMode);
+	pRegUtil->SaveValueBool("DefaultProps\\Light", "ShowBulbMesh", m_d.m_showBulbMesh);
+	pRegUtil->SaveValueBool("DefaultProps\\Light", "StaticBulbMesh", m_d.m_staticBulbMesh);
+	pRegUtil->SaveValueBool("DefaultProps\\Light", "ShowReflectionOnBall", m_d.m_showReflectionOnBall);
+	pRegUtil->SaveValueFloat("DefaultProps\\Light", "ScaleBulbMesh", m_d.m_meshRadius);
+	pRegUtil->SaveValueFloat("DefaultProps\\Light", "BulbModulateVsAdd", m_d.m_modulate_vs_add);
+	pRegUtil->SaveValueFloat("DefaultProps\\Light", "BulbHaloHeight", m_d.m_bulbHaloHeight);
 }

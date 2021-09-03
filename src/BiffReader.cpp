@@ -40,6 +40,30 @@ HRESULT BiffReader::GetInt(int& value)
 	return ReadBytes((void*)&value, sizeof(int));
 }
 
+HRESULT BiffReader::GetString(char* const szvalue, const size_t szvalue_maxlength)
+{
+	HRESULT hr;
+	int len;
+
+	hr = ReadBytes(&len, sizeof(int));
+
+	if (hr != S_OK)
+	{
+		szvalue[0] = 0;
+		return hr;
+	}
+
+	m_bytesInRecordRemaining -= len + (int)sizeof(int);
+
+	char* tmp = new char[len + 1];
+	hr = ReadBytes(tmp, len);
+	tmp[len] = 0;
+	strncpy(szvalue, tmp, szvalue_maxlength);
+	// TODO: strncpy_s(szvalue, szvalue_maxlength, tmp, len);
+	delete[] tmp;
+	return hr;
+}
+
 HRESULT BiffReader::GetString(std::string& szvalue)
 {
 	HRESULT hr;

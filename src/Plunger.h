@@ -2,10 +2,12 @@
 
 #include "BaseProperty.h"
 #include "IEditable.h"
+#include "IScriptable.h"
 #include "ISelect.h"
 #include "vector.h"
 
 #include "PinTable.h"
+#include "RenderDevice.h"
 #include "Timer.h"
 
 class PlungerData : public BaseProperty
@@ -41,7 +43,8 @@ public:
 };
 
 class Plunger : public ISelect,
-                public IEditable
+                public IEditable,
+                public IScriptable
 {
 public:
 	static const ItemTypeEnum ItemType;
@@ -62,10 +65,19 @@ public:
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 	virtual PinTable* GetPTable();
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual void SetDefaults(bool fromMouseClick);
+	void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+
+	virtual void WriteRegDefaults();
 
 	PlungerData m_d;
 
 private:
 	PinTable* m_ptable;
+
+	VertexBuffer* m_vertexBuffer;
+	IndexBuffer* m_indexBuffer;
+
+	// TODO: HitPlunger* m_phitplunger;
 };
