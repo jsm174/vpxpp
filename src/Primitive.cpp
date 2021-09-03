@@ -258,7 +258,7 @@ bool Primitive::LoadToken(const int id, BiffReader* const pBiffReader)
 		pBiffReader->GetInt(m_d.m_Sides);
 		break;
 	case FID(NAME):
-		pBiffReader->GetWideString(m_wzName, sizeof(m_wzName) / sizeof(m_wzName[0]));
+		pBiffReader->GetWideString(m_wzName, sizeof(m_wzName) / sizeof(wchar_t));
 		break;
 	case FID(MATR):
 		pBiffReader->GetString(m_d.m_szMaterial);

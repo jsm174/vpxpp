@@ -152,7 +152,7 @@ bool DispReel::LoadToken(const int id, BiffReader* const pBiffReader)
 		pBiffReader->GetInt(m_d.m_tdr.m_TimerInterval);
 		break;
 	case FID(NAME):
-		pBiffReader->GetWideString(m_wzName, sizeof(m_wzName) / sizeof(m_wzName[0]));
+		pBiffReader->GetWideString(m_wzName, sizeof(m_wzName) / sizeof(wchar_t));
 		break;
 	case FID(TRNS):
 		pBiffReader->GetBool(m_d.m_transparent);
