@@ -1,4 +1,5 @@
 #include "Timer.h"
+#include "RegUtil.h"
 
 const ItemTypeEnum Timer::ItemType = eItemTimer;
 const int Timer::TypeNameID = 101;
@@ -72,10 +73,57 @@ PinTable* Timer::GetPTable()
 
 HRESULT Timer::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
 {
+	SetDefaults(false);
+
+	m_ptable = pTable;
+
+	BiffReader biffReader(pStream, this, pId, version);
+	biffReader.Load();
+
 	return S_OK;
 }
 
-bool Timer::LoadToken(const int id, BiffReader* const pbr)
+void Timer::SetDefaults(bool fromMouseClick)
 {
+	RegUtil* pRegUtil = RegUtil::SharedInstance();
+
+	m_d.m_tdr.m_TimerEnabled = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault("DefaultProps\\Timer", "TimerEnabled", true) : true;
+	m_d.m_tdr.m_TimerInterval = fromMouseClick ? pRegUtil->LoadValueIntWithDefault("DefaultProps\\Timer", "TimerInterval", 100) : 100;
+}
+
+bool Timer::LoadToken(const int id, BiffReader* const pBiffReader)
+{
+	switch (id)
+	{
+	case FID(PIID):
+		pBiffReader->GetInt((int*)pBiffReader->m_pData);
+		break;
+	case FID(VCEN):
+		pBiffReader->GetVector2(m_d.m_v);
+		break;
+	case FID(TMON):
+		pBiffReader->GetBool(m_d.m_tdr.m_TimerEnabled);
+		break;
+	case FID(TMIN):
+		pBiffReader->GetInt(m_d.m_tdr.m_TimerInterval);
+		break;
+	case FID(NAME):
+		pBiffReader->GetWideString(m_wzName, sizeof(m_wzName) / sizeof(wchar_t));
+		break;
+	case FID(BGLS):
+		pBiffReader->GetBool(m_backglass);
+		break;
+	default:
+		ISelect::LoadToken(id, pBiffReader);
+		break;
+	}
 	return true;
+}
+
+void Timer::WriteRegDefaults()
+{
+	RegUtil* pRegUtil = RegUtil::SharedInstance();
+
+	pRegUtil->SaveValueBool("DefaultProps\\Timer", "TimerEnabled", m_d.m_tdr.m_TimerEnabled);
+	pRegUtil->SaveValueInt("DefaultProps\\Timer", "TimerInterval", m_d.m_tdr.m_TimerInterval);
 }
