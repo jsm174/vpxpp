@@ -1,6 +1,6 @@
 #include "EditableRegistry.h"
+#include <iostream>
 #include <map>
-#include <stdio.h>
 
 #include "Bumper.h"
 #include "Decal.h"
@@ -70,7 +70,7 @@ void v8_test()
 
 			// Convert the result to an UTF8 string and print it.
 			v8::String::Utf8Value utf8(isolate, result);
-			printf("%s\n", *utf8);
+			std::cout << *utf8 << std::endl;
 		}
 	}
 
@@ -112,7 +112,8 @@ void glfw_test()
 	VkInstance instance;
 	if (vkCreateInstance(&instanceCreateInfo, NULL, &instance) != VK_SUCCESS)
 	{
-		exit(EXIT_FAILURE);
+		std::cout << "vkinstance failure" << std::endl;
+		return;
 	}
 
 	uint32_t deviceCount = 0;
@@ -137,8 +138,7 @@ void glfw_test()
 
 	if (err)
 	{
-		glfwTerminate();
-		exit(EXIT_FAILURE);
+		std::cout << "surface failure" << std::endl;
 	}
 
 	glfwTerminate();
@@ -183,5 +183,5 @@ int main(int argc, char** argv)
 
 	glfw_test();
 
-	printf("done");
+	std::cout << "done" << std::endl;
 }
