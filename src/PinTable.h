@@ -1,13 +1,14 @@
 #pragma once
 
-#include "pole.h"
-
 #include "IEditable.h"
 #include "IScriptable.h"
 #include "ISelect.h"
+#include "pole.h"
 
+#include "BiffReader.h"
 #include "CodeViewer.h"
 #include "Material.h"
+#include "PinSound.h"
 
 #include "cmath.h"
 #include "hash.h"
@@ -52,6 +53,7 @@ public:
 	HRESULT LoadInfo(POLE::Storage* pStorage, int version);
 	HRESULT LoadCustomInfo(POLE::Storage* pStorage, int version);
 	HRESULT LoadData(POLE::Stream* pStream, int& csubobj, int& csounds, int& ctextures, int& cfonts, int& ccollection, int version);
+	HRESULT LoadSoundFromStream(POLE::Stream* pStream, const int version);
 	void ReadInfoValue(POLE::Storage* pstg, const char* pName, char** pszValue);
 
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
@@ -147,6 +149,8 @@ public:
 
 	int m_numMaterials;
 	std::vector<Material*> m_materials;
+
+	std::vector<PinSound*> m_vsound;
 
 	COLORREF m_rgcolorcustom[16];
 

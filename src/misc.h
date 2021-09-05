@@ -2,9 +2,9 @@
 
 #include <stdint.h>
 
-typedef uint32_t DWORD;   // DWORD = unsigned 32 bit value
-typedef uint16_t WORD;    // WORD = unsigned 16 bit value
-typedef uint8_t BYTE;     // BYTE = unsigned 8 bit value
+typedef uint32_t DWORD; // DWORD = unsigned 32 bit value
+typedef uint16_t WORD;  // WORD = unsigned 16 bit value
+typedef uint8_t BYTE;   // BYTE = unsigned 8 bit value
 
 typedef long HRESULT;
 
@@ -12,7 +12,7 @@ typedef long HRESULT;
 #define S_FALSE ((HRESULT)1L)
 #define E_FAIL ((HRESULT)0x80004005L)
 
-#define NUM_BG_SETS 3 
+#define NUM_BG_SETS 3
 #define BG_DESKTOP 0
 #define BG_FULLSCREEN 1
 #define BG_FSS 2
@@ -23,9 +23,11 @@ typedef int COLORREF;
 #define LIGHTSEQQUEUESIZE 100
 #define MAXTIPSHAPE 256
 
+#define NEW_SOUND_FORMAT_VERSION 1031
+
 #define FID(A) (int)((unsigned int)(#A[0]) | ((unsigned int)(#A[1]) << 8) | ((unsigned int)(#A[2]) << 16) | ((unsigned int)(#A[3]) << 24))
 
-#define RGB(r,g,b) ((COLORREF)(((DWORD)(r)) | (((DWORD)(g))<<8) | (((DWORD)(b))<<16)))
+#define RGB(r, g, b) ((COLORREF)(((DWORD)(r)) | (((DWORD)(g)) << 8) | (((DWORD)(b)) << 16)))
 
 enum ItemTypeEnum
 {
@@ -57,30 +59,30 @@ enum ItemTypeEnum
 };
 
 static const char* ITEMTYPEENUM_STRING[eItemTypeCount] =
-{
-	[eItemSurface] = "eItemSurface",
-	[eItemFlipper] = "eItemFlipper",
-	[eItemTimer] = "eItemTimer",
-	[eItemPlunger] = "eItemPlunger",
-	[eItemTextbox] = "eItemTextbox",
-	[eItemBumper] = "eItemBumper",
-	[eItemTrigger] = "eItemTrigger",
-	[eItemLight] = "eItemLight",
-	[eItemKicker] = "eItemKicker",
-	[eItemDecal] = "eItemDecal",
-	[eItemGate] = "eItemGate",
-	[eItemSpinner] = "eItemSpinner",
-	[eItemRamp] = "eItemRamp",
-	[eItemTable] = "eItemTable",
-	[eItemLightCenter] = "eItemLightCenter",
-	[eItemDragPoint] = "eItemDragPoint",
-	[eItemCollection] = "eItemCollection",
-	[eItemDispReel] = "eItemDispReel",
-	[eItemLightSeq] = "eItemLightSeq",
-	[eItemPrimitive] = "eItemPrimitive",
-	[eItemFlasher] = "eItemFlasher",
-	[eItemRubber] = "eItemRubber",
-	[eItemHitTarget] = "eItemHitTarget",
+    {
+        [eItemSurface] = "eItemSurface",
+        [eItemFlipper] = "eItemFlipper",
+        [eItemTimer] = "eItemTimer",
+        [eItemPlunger] = "eItemPlunger",
+        [eItemTextbox] = "eItemTextbox",
+        [eItemBumper] = "eItemBumper",
+        [eItemTrigger] = "eItemTrigger",
+        [eItemLight] = "eItemLight",
+        [eItemKicker] = "eItemKicker",
+        [eItemDecal] = "eItemDecal",
+        [eItemGate] = "eItemGate",
+        [eItemSpinner] = "eItemSpinner",
+        [eItemRamp] = "eItemRamp",
+        [eItemTable] = "eItemTable",
+        [eItemLightCenter] = "eItemLightCenter",
+        [eItemDragPoint] = "eItemDragPoint",
+        [eItemCollection] = "eItemCollection",
+        [eItemDispReel] = "eItemDispReel",
+        [eItemLightSeq] = "eItemLightSeq",
+        [eItemPrimitive] = "eItemPrimitive",
+        [eItemFlasher] = "eItemFlasher",
+        [eItemRubber] = "eItemRubber",
+        [eItemHitTarget] = "eItemHitTarget",
 };
 
 typedef enum
@@ -278,3 +280,23 @@ typedef enum
 	HitFatTargetSlim = 8,
 	HitTargetSlim = 9,
 } TargetType;
+
+typedef enum : char { 
+	SNDOUT_TABLE = 0, 
+	SNDOUT_BACKGLASS = 1 
+} SoundOutTypes;
+
+#pragma pack(push, 1)
+typedef struct tWAVEFORMATEX
+{
+	WORD wFormatTag;
+	WORD nChannels;
+	DWORD nSamplesPerSec;
+	DWORD nAvgBytesPerSec;
+	WORD nBlockAlign;
+	WORD wBitsPerSample;
+	WORD cbSize;
+} WAVEFORMATEX, *PWAVEFORMATEX, *LPWAVEFORMATEX;
+typedef const WAVEFORMATEX* LPCWAVEFORMATEX;
+#pragma pack(pop)
+

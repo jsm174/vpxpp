@@ -1,5 +1,4 @@
 #include "PinTable.h"
-#include "BiffReader.h"
 #include "RegUtil.h"
 
 #include <iostream>
@@ -83,6 +82,8 @@ void PinTable::LoadGameFromFilename(const char* pFilename)
 
 HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 {
+	visit(0, pStorage, "/");
+
 	int loadFileVersion = CURRENT_FILE_FORMAT_VERSION;
 
 	POLE::Stream* pGameStream = new POLE::Stream(pStorage, "GameStg/GameData");
@@ -130,9 +131,7 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 					ItemTypeEnum type;
 					pItemStream->read((unsigned char*)&type, sizeof(int));
 
-					IEditable* pEditable = EditableRegistry::Create(type);
-
-					std::cout << szStmName << " = " << type << " " << ITEMTYPEENUM_STRING[type] << "\n";
+					IEditable* const pEditable = EditableRegistry::Create(type);
 
 					int id = 0; // VBA id for this item
 					hr = pEditable->InitLoad(pItemStream, this, &id, loadFileVersion);
@@ -147,11 +146,37 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 					}
 
 					m_vedit.push_back(pEditable);
+
+					std::cout << szStmName << " = " << type << " " << ITEMTYPEENUM_STRING[type] << std::endl;
+				}
+				else
+				{
+					delete pItemStream;
+					pItemStream = NULL;
+				}
+
+				cloadeditems++;
+			}
+
+			for (int i = 0; i < csounds; i++)
+			{
+				std::string szStmName = "GameStg/Sound" + std::to_string(i);
+
+				POLE::Stream* pItemStream = new POLE::Stream(pStorage, szStmName);
+
+				if (!pItemStream->fail())
+				{
+					LoadSoundFromStream(pItemStream, loadFileVersion);
+
+					delete pItemStream;
+					pItemStream = NULL;
 				}
 				else
 				{
 					delete pItemStream;
 				}
+
+				std::cout << szStmName << std::endl;
 			}
 		}
 	}
@@ -163,89 +188,89 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 
 HRESULT PinTable::LoadInfo(POLE::Storage* pStorage, int version)
 {
-	char* pValue = nullptr;
+	char* pValue = NULL;
 	ReadInfoValue(pStorage, "TableName", &pValue);
-	if (pValue != nullptr)
+	if (pValue != NULL)
 	{
 		m_szTableName = pValue;
 		delete[] pValue;
 	}
 
-	pValue = nullptr;
+	pValue = NULL;
 	ReadInfoValue(pStorage, "AuthorName", &pValue);
-	if (pValue != nullptr)
+	if (pValue != NULL)
 	{
 		m_szAuthor = pValue;
 		delete[] pValue;
 	}
 
-	pValue = nullptr;
+	pValue = NULL;
 	ReadInfoValue(pStorage, "TableVersion", &pValue);
-	if (pValue != nullptr)
+	if (pValue != NULL)
 	{
 		m_szVersion = pValue;
 		delete[] pValue;
 	}
 
-	pValue = nullptr;
+	pValue = NULL;
 	ReadInfoValue(pStorage, "ReleaseDate", &pValue);
-	if (pValue != nullptr)
+	if (pValue != NULL)
 	{
 		m_szReleaseDate = pValue;
 		delete[] pValue;
 	}
 
-	pValue = nullptr;
+	pValue = NULL;
 	ReadInfoValue(pStorage, "AuthorEmail", &pValue);
-	if (pValue != nullptr)
+	if (pValue != NULL)
 	{
 		m_szAuthorEMail = pValue;
 		delete[] pValue;
 	}
 
-	pValue = nullptr;
+	pValue = NULL;
 	ReadInfoValue(pStorage, "AuthorWebSite", &pValue);
-	if (pValue != nullptr)
+	if (pValue != NULL)
 	{
 		m_szWebSite = pValue;
 		delete[] pValue;
 	}
 
-	pValue = nullptr;
+	pValue = NULL;
 	ReadInfoValue(pStorage, "TableBlurb", &pValue);
-	if (pValue != nullptr)
+	if (pValue != NULL)
 	{
 		m_szBlurb = pValue;
 		delete[] pValue;
 	}
 
-	pValue = nullptr;
+	pValue = NULL;
 	ReadInfoValue(pStorage, "TableDescription", &pValue);
-	if (pValue != nullptr)
+	if (pValue != NULL)
 	{
 		m_szDescription = pValue;
 		delete[] pValue;
 	}
 
-	pValue = nullptr;
+	pValue = NULL;
 	ReadInfoValue(pStorage, "TableRules", &pValue);
-	if (pValue != nullptr)
+	if (pValue != NULL)
 	{
 		m_szRules = pValue;
 		delete[] pValue;
 	}
 
-	pValue = nullptr;
+	pValue = NULL;
 	ReadInfoValue(pStorage, "TableSaveDate", &pValue);
-	if (pValue != nullptr)
+	if (pValue != NULL)
 	{
 		m_szDateSaved = pValue;
 		delete[] pValue;
 	}
 
-	pValue = nullptr;
+	pValue = NULL;
 	ReadInfoValue(pStorage, "TableSaveRev", &pValue);
-	if (pValue != nullptr)
+	if (pValue != NULL)
 	{
 		m_numTimesSaved = atoi(pValue);
 		delete[] pValue;
@@ -359,6 +384,155 @@ HRESULT PinTable::LoadData(POLE::Stream* pStream, int& csubobj, int& csounds, in
 	return S_OK;
 }
 
+HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileVersion)
+{
+	int len;
+
+	if (pStream->read((unsigned char*)&len, sizeof(int)) == 0)
+	{
+		return S_FALSE;
+	}
+
+	PinSound* const pPinSound = new PinSound();
+	char* pTmp = new char[len + 1];
+
+	if (pStream->read((unsigned char*)pTmp, len) == 0)
+	{
+		delete pPinSound;
+		return S_FALSE;
+	}
+
+	pTmp[len] = 0;
+	pPinSound->m_szName = pTmp;
+	delete[] pTmp;
+
+	if (pStream->read((unsigned char*)&len, sizeof(int)) == 0)
+	{
+		delete pPinSound;
+		return S_FALSE;
+	}
+
+	pTmp = new char[len + 1];
+
+	if (pStream->read((unsigned char*)pTmp, len) == 0)
+	{
+		delete pPinSound;
+		return S_FALSE;
+	}
+
+	pTmp[len] = 0;
+	pPinSound->m_szPath = pTmp;
+	delete[] pTmp;
+
+	if (pStream->read((unsigned char*)&len, sizeof(int)) == 0)
+	{
+		delete pPinSound;
+		return S_FALSE;
+	}
+
+	pTmp = new char[len + 1];
+
+	if (pStream->read((unsigned char*)pTmp, len) == 0)
+	{
+		delete pPinSound;
+		return S_FALSE;
+	}
+
+	delete[] pTmp;
+
+	if (pPinSound->IsWav2())
+	{
+		if (pStream->read((unsigned char*)(&pPinSound->m_wfx), sizeof(pPinSound->m_wfx)) == 0)
+		{
+			delete pPinSound;
+			return S_FALSE;
+		}
+	}
+
+	if (pStream->read((unsigned char*)(&pPinSound->m_cdata), sizeof(int)) == 0)
+	{
+		delete pPinSound;
+		return S_FALSE;
+	}
+
+	pPinSound->m_pData = new char[pPinSound->m_cdata];
+
+	if (pStream->read((unsigned char*)(pPinSound->m_pData), pPinSound->m_cdata) == 0)
+	{
+		delete pPinSound;
+		return S_FALSE;
+	}
+
+	if (loadFileVersion >= NEW_SOUND_FORMAT_VERSION)
+	{
+		if (pStream->read((unsigned char*)(&pPinSound->m_outputTarget), sizeof(char)) == 0)
+		{
+			delete pPinSound;
+			return S_FALSE;
+		}
+
+		if (pStream->read((unsigned char*)(&pPinSound->m_volume), sizeof(int)) == 0)
+		{
+			delete pPinSound;
+			return S_FALSE;
+		}
+
+		if (pStream->read((unsigned char*)(&pPinSound->m_balance), sizeof(int)) == 0)
+		{
+			delete pPinSound;
+			return S_FALSE;
+		}
+
+		if (pStream->read((unsigned char*)(&pPinSound->m_fade), sizeof(int)) == 0)
+		{
+			delete pPinSound;
+			return S_FALSE;
+		}
+
+		if (pStream->read((unsigned char*)(&pPinSound->m_volume), sizeof(int)) == 0)
+		{
+			delete pPinSound;
+			return S_FALSE;
+		}
+	}
+	else
+	{
+		bool toBackglassOutput = false;
+
+		if (pStream->read((unsigned char*)&toBackglassOutput, sizeof(bool)) == 0)
+		{
+			delete pPinSound;
+			return S_FALSE;
+		}
+
+		/* TODO: pPinSound->m_outputTarget = (StrStrI(pPinSound->m_szName.c_str(), "bgout_") != NULL) || (_stricmp(pPinSound->m_szPath.c_str(), "* Backglass Output *") == 0) // legacy behavior, where the BG selection was encoded into the strings directly
+		                              || toBackglassOutput
+		                          ? SNDOUT_BACKGLASS
+		                          : SNDOUT_TABLE;*/
+	}
+
+	HRESULT hr = pPinSound->ReInitialize();
+
+	if (hr != S_OK)
+	{
+		delete pPinSound;
+		return hr;
+	}
+
+	for (size_t i = 0; i < m_vsound.size(); ++i)
+	{
+		if (m_vsound[i]->m_szName == pPinSound->m_szName && m_vsound[i]->m_szPath == pPinSound->m_szPath)
+		{
+			delete pPinSound;
+			return S_FALSE;
+		}
+	}
+
+	m_vsound.push_back(pPinSound);
+
+	return S_OK;
+}
+
 void PinTable::ReadInfoValue(POLE::Storage* pStorage, const char* pName, char** ppValue)
 {
 	char pPath[255];
@@ -381,7 +555,7 @@ void PinTable::ReadInfoValue(POLE::Storage* pStorage, const char* pName, char** 
 		pPtr += sizeof(wchar_t);
 	}
 
-	len = wcstombs(nullptr, pWString, 0);
+	len = wcstombs(NULL, pWString, 0);
 
 	*ppValue = (char*)malloc(len + 1);
 	memset(*ppValue, 0, len + 1);

@@ -68,6 +68,9 @@ add_executable(vpxpp
 	src/PinTable.h
 	src/PinTable.cpp
 
+	src/PinSound.h
+	src/PinSound.cpp
+
 	src/Bumper.h
 	src/Bumper.cpp
 	src/Decal.h
