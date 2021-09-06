@@ -79,6 +79,9 @@ add_executable(vpxpp
 	src/PinBinary.h
 	src/PinBinary.cpp
 
+	src/PinFont.h
+	src/PinFont.cpp
+
 	src/BaseTexture.h
 	src/BaseTexture.cpp
 

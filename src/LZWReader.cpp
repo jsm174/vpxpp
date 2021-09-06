@@ -7,15 +7,15 @@
 #define OPEN_ERROR -3
 #define CREATE_ERROR -4
 
-LZWReader::LZWReader(POLE::Stream *pStream, int *bits, int width, int height, int pitch)
+LZWReader::LZWReader(POLE::Stream* pStream, int* bits, int width, int height, int pitch)
 {
 	m_cbStride = pitch;
-	m_pbBitsOutCur = ((BYTE *)bits);
+	m_pbBitsOutCur = ((BYTE*)bits);
 
 	m_cfilebuffer = FILE_BUF_SIZE - 1;
 	m_readahead = FILE_BUF_SIZE;
 
-	m_pstm = pStream;
+	m_pStream = pStream;
 
 	m_width = width;
 	m_height = height;
@@ -196,7 +196,7 @@ int LZWReader::get_next_code()
 short LZWReader::Decoder()
 {
 	BYTE *sp, *bufptr;
-	BYTE *buf;
+	BYTE* buf;
 	DWORD bufcnt;
 	int c, oc, fc, code, size;
 
@@ -364,9 +364,9 @@ short LZWReader::Decoder()
 	LARGE_INTEGER li;
 	li.QuadPart = -toofar;
 
-	// TODO: m_pstm->Seek(li, STREAM_SEEK_CUR, NULL);
+	// TODO: m_pStream->Seek(li, STREAM_SEEK_CUR, NULL);
 
-	m_pstm->seek(li.QuadPart);
+	m_pStream->seek(li.QuadPart);
 
 	return (0);
 }
@@ -383,18 +383,18 @@ int LZWReader::get_byte()
 		m_cfilebuffer = 0;
 		//ULONG read = 0;
 		m_readahead = 0;
-		m_readahead = m_pstm->read(m_pfilebufferbytes, FILE_BUF_SIZE);
+		m_readahead = m_pStream->read(m_pfilebufferbytes, FILE_BUF_SIZE);
 	}
 
 	return m_pfilebufferbytes[m_cfilebuffer];
 }
 
-BYTE *LZWReader::NextLine()
+BYTE* LZWReader::NextLine()
 {
-	BYTE *pbRet;
+	BYTE* pbRet;
 
 	pbRet = m_pbBitsOutCur;
-	m_pbBitsOutCur += m_cbStride; // fucking upside down dibs!
+	m_pbBitsOutCur += m_cbStride;
 
 	m_linesleft--;
 

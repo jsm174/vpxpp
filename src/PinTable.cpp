@@ -4,7 +4,6 @@
 #include <iostream>
 
 #include "EditableRegistry.h"
-#include "ISelect.h"
 
 PinTable::PinTable()
 {
@@ -243,7 +242,19 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 
 				POLE::Stream* pItemStream = new POLE::Stream(pStorage, szStmName);
 
-				std::cout << szStmName << std::endl;
+				if (!pItemStream->fail())
+				{
+					PinFont* const ppf = new PinFont();
+					ppf->LoadFromStream(pItemStream, loadFileVersion);
+					m_vfont.push_back(ppf);
+					ppf->Register();
+
+					delete pItemStream;
+					pItemStream = NULL;
+
+					std::cout << szStmName << std::endl;
+				}
+
 				cloadeditems++;
 			}
 		}
@@ -661,23 +672,33 @@ void PinTable::ReadInfoValue(POLE::Storage* pStorage, const char* pName, char** 
 
 Material* PinTable::GetMaterial(const std::string& szName)
 {
-	// TODO: if (szName.empty())
-	//   return &m_vpinball->m_dummyMaterial;
+	if (szName.empty())
+	{
+		// TODO: return &m_vpinball->m_dummyMaterial;
+	}
 
 	// during playback, we use the hashtable for lookup
 	if (!m_materialMap.empty())
 	{
 		std::unordered_map<const char*, Material*, StringHashFunctor, StringComparator>::const_iterator
-		    it = m_materialMap.find(szName.c_str());
+			it = m_materialMap.find(szName.c_str());
 		if (it != m_materialMap.end())
+		{
 			return it->second;
-		// TODO: else
-		//   return &m_vpinball->m_dummyMaterial;
+		}
+		else
+		{
+			// TODO:   return &m_vpinball->m_dummyMaterial;
+		}
 	}
 
 	for (size_t i = 0; i < m_materials.size(); i++)
+	{
 		if (m_materials[i]->m_szName == szName)
+		{
 			return m_materials[i];
+		}
+	}
 
 	// TODO: return &m_vpinball->m_dummyMaterial;
 }
@@ -1131,8 +1152,8 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 			pMaterial->m_cClearcoat = mats[i].cClearcoat;
 			pMaterial->m_fWrapLighting = mats[i].fWrapLighting;
 			pMaterial->m_fRoughness = mats[i].fRoughness;
-			pMaterial->m_fGlossyImageLerp = 1.0f - dequantizeUnsigned<8>(mats[i].fGlossyImageLerp);                  //!! '1.0f -' to be compatible with previous table versions
-			pMaterial->m_fThickness = (mats[i].fThickness == 0) ? 0.05f : dequantizeUnsigned<8>(mats[i].fThickness); //!! 0 -> 0.05f to be compatible with previous table versions
+			pMaterial->m_fGlossyImageLerp = 1.0f - dequantizeUnsigned<8>(mats[i].fGlossyImageLerp);
+			pMaterial->m_fThickness = (mats[i].fThickness == 0) ? 0.05f : dequantizeUnsigned<8>(mats[i].fThickness);
 			pMaterial->m_fEdge = mats[i].fEdge;
 			pMaterial->m_fOpacity = mats[i].fOpacity;
 			pMaterial->m_bIsMetal = mats[i].bIsMetal;
@@ -1165,7 +1186,9 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 			pmat->m_fFriction = mats[i].fFriction;
 			pmat->m_fScatterAngle = mats[i].fScatterAngle;
 			if (!found)
+			{
 				m_materials.push_back(pmat);
+			}
 		}
 		break;
 	}
@@ -1233,16 +1256,24 @@ void PinTable::visit(int indent, POLE::Storage* storage, std::string path)
 		std::string name = *it;
 		std::string fullname = path + name;
 		for (int j = 0; j < indent; j++)
+		{
 			std::cout << "    ";
+		}
 		POLE::Stream* ss = new POLE::Stream(storage, fullname);
 		std::cout << name;
 		if (ss)
+		{
 			if (!ss->fail())
+			{
 				std::cout << "  (" << ss->size() << ")";
+			}
+		}
 		std::cout << std::endl;
 		delete ss;
 
 		if (storage->isDirectory(fullname))
+		{
 			visit(indent + 1, storage, fullname + "/");
+		}
 	}
 }

@@ -8,8 +8,9 @@
 #include "BiffReader.h"
 #include "CodeViewer.h"
 #include "Material.h"
-#include "PinSound.h"
 #include "PinBinary.h"
+#include "PinFont.h"
+#include "PinSound.h"
 #include "Texture.h"
 
 #include "cmath.h"
@@ -42,8 +43,8 @@ struct ProtectionData {
 */
 
 class PinTable : public ISelect,
-                 public IScriptable,
-                 public IEditable
+				 public IScriptable,
+				 public IEditable
 {
 public:
 	PinTable();
@@ -156,8 +157,8 @@ public:
 
 	int m_numMaterials;
 	std::vector<Material*> m_materials;
-
 	std::vector<PinSound*> m_vsound;
+	std::vector<PinFont*> m_vfont;
 
 	COLORREF m_rgcolorcustom[16];
 
