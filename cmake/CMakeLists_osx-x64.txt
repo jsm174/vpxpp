@@ -40,6 +40,9 @@ add_executable(vpxpp
 	
 	src/def.h
 	src/def.cpp
+  
+        src/extern.h
+        src/extern.cpp
 
 	src/misc.h
 	src/physconst.h
@@ -131,6 +134,9 @@ add_executable(vpxpp
 	src/Trigger.cpp
 	src/HitTarget.h
 	src/HitTarget.cpp
+
+	src/Player.h
+	src/Player.cpp
 
 	ext/pole/pole.cpp
 	ext/stb/stb_image.h

@@ -7,6 +7,9 @@
 #include "Collection.h"
 #include "EditableRegistry.h"
 
+#include "extern.h"
+#include "Player.h"
+
 PinTable::PinTable()
 {
 	m_renderDecals = true;
@@ -1367,4 +1370,7 @@ void PinTable::visit(int indent, POLE::Storage* storage, std::string path)
 
 void PinTable::Play(const bool cameraMode)
 {
+	g_pplayer = new Player(cameraMode, this);
+	g_pplayer->Create();
+
 }
