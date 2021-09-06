@@ -88,6 +88,11 @@ HRESULT Plunger::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int
 	return S_OK;
 }
 
+HRESULT Plunger::InitPostLoad()
+{
+	return S_OK;
+}
+
 void Plunger::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -126,7 +131,7 @@ void Plunger::SetDefaults(bool fromMouseClick)
 	if ((hr != S_OK) || !fromMouseClick)
 	{
 		strncpy(m_d.m_szTipShape,
-		        "0 .34; 2 .6; 3 .64; 5 .7; 7 .84; 8 .88; 9 .9; 11 .92; 14 .92; 39 .84", sizeof(m_d.m_szTipShape) - 1);
+				"0 .34; 2 .6; 3 .64; 5 .7; 7 .84; 8 .88; 9 .9; 11 .92; 14 .92; 39 .84", sizeof(m_d.m_szTipShape) - 1);
 	}
 
 	m_d.m_rodDiam = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Plunger", "CustomRodDiam", 0.60f) : 0.60f;

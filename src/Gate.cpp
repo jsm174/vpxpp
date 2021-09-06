@@ -97,6 +97,11 @@ HRESULT Gate::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int ve
 	return S_OK;
 }
 
+HRESULT Gate::InitPostLoad()
+{
+   return S_OK;
+}
+
 void Gate::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

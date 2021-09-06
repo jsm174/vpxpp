@@ -93,6 +93,12 @@ HRESULT Kicker::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int 
 	return S_OK;
 }
 
+HRESULT Kicker::InitPostLoad()
+{
+	// TODO: m_phitkickercircle = NULL;
+	return S_OK;
+}
+
 void Kicker::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -171,7 +177,8 @@ bool Kicker::LoadToken(const int id, BiffReader* const pBiffReader)
 	case FID(TYPE):
 	{
 		pBiffReader->GetInt(&m_d.m_kickertype);
-		if (m_d.m_kickertype > KickerCup2) {
+		if (m_d.m_kickertype > KickerCup2)
+		{
 			m_d.m_kickertype = KickerInvisible;
 		}
 		break;

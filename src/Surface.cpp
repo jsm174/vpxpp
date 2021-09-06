@@ -203,6 +203,11 @@ HRESULT Surface::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int
 	return S_OK;
 }
 
+HRESULT Surface::InitPostLoad()
+{
+	return S_OK;
+}
+
 void Surface::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

@@ -69,6 +69,11 @@ HRESULT Bumper::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 	return InitVBA(true, 0, NULL);
 }
 
+HRESULT Bumper::InitPostLoad()
+{
+   return S_OK;
+}
+
 HRESULT Bumper::InitVBA(bool fNew, int id, wchar_t* const wzName)
 {
 	wchar_t wzUniqueName[128];

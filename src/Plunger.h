@@ -43,8 +43,8 @@ public:
 };
 
 class Plunger : public ISelect,
-                public IEditable,
-                public IScriptable
+				public IEditable,
+				public IScriptable
 {
 public:
 	static const ItemTypeEnum ItemType;
@@ -65,6 +65,7 @@ public:
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
 	virtual PinTable* GetPTable();
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
+	virtual HRESULT InitPostLoad();
 	virtual void SetDefaults(bool fromMouseClick);
 	void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);

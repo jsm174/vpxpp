@@ -4,6 +4,10 @@ IEditable::IEditable()
 {
 }
 
+IEditable::~IEditable()
+{
+}
+
 void IEditable::InitScript()
 {
 	/*if (!GetScriptable())

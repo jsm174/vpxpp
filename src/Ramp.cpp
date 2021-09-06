@@ -123,6 +123,11 @@ HRESULT Ramp::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int ve
 	return S_OK;
 }
 
+HRESULT Ramp::InitPostLoad()
+{
+	return S_OK;
+}
+
 void Ramp::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

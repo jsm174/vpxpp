@@ -85,6 +85,11 @@ HRESULT LightSeq::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, in
 	return S_OK;
 }
 
+HRESULT LightSeq::InitPostLoad()
+{
+	return S_OK;
+}
+
 void LightSeq::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

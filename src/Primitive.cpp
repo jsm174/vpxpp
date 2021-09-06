@@ -128,6 +128,15 @@ HRESULT Primitive::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, i
 	return S_OK;
 }
 
+HRESULT Primitive::InitPostLoad()
+{
+	// TODO: WaitForMeshDecompression();
+
+	// TODO: UpdateStatusBarInfo();
+
+	return S_OK;
+}
+
 void Primitive::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -397,17 +406,17 @@ bool Primitive::LoadToken(const int id, BiffReader* const pBiffReader)
 			g_pPrimitiveDecompressThreadPool = new ThreadPool(g_pvp->m_logicalNumberOfProcessors);
 
 		g_pPrimitiveDecompressThreadPool->enqueue([uclen, c, this]
-		                                          {
-			                                          mz_ulong uclen2 = uclen;
-			                                          const int error = uncompress((unsigned char*)m_mesh.m_vertices.data(), &uclen2, c, m_compressedVertices);
-			                                          if (error != Z_OK)
-			                                          {
-				                                          char err[128];
-				                                          sprintf_s(err, "Could not uncompress primitive vertex data, error %d", error);
-				                                          ShowError(err);
-			                                          }
-			                                          free(c);
-		                                          });
+												  {
+													  mz_ulong uclen2 = uclen;
+													  const int error = uncompress((unsigned char*)m_mesh.m_vertices.data(), &uclen2, c, m_compressedVertices);
+													  if (error != Z_OK)
+													  {
+														  char err[128];
+														  sprintf_s(err, "Could not uncompress primitive vertex data, error %d", error);
+														  ShowError(err);
+													  }
+													  free(c);
+												  });
 		break;
 	}
 #endif
@@ -446,17 +455,17 @@ bool Primitive::LoadToken(const int id, BiffReader* const pBiffReader)
 				g_pPrimitiveDecompressThreadPool = new ThreadPool(g_pvp->m_logicalNumberOfProcessors);
 
 			g_pPrimitiveDecompressThreadPool->enqueue([uclen, c, this]
-			                                          {
-				                                          mz_ulong uclen2 = uclen;
-				                                          const int error = uncompress((unsigned char*)m_mesh.m_indices.data(), &uclen2, c, m_compressedIndices);
-				                                          if (error != Z_OK)
-				                                          {
-					                                          char err[128];
-					                                          sprintf_s(err, "Could not uncompress (large) primitive index data, error %d", error);
-					                                          ShowError(err);
-				                                          }
-				                                          free(c);
-			                                          });
+													  {
+														  mz_ulong uclen2 = uclen;
+														  const int error = uncompress((unsigned char*)m_mesh.m_indices.data(), &uclen2, c, m_compressedIndices);
+														  if (error != Z_OK)
+														  {
+															  char err[128];
+															  sprintf_s(err, "Could not uncompress (large) primitive index data, error %d", error);
+															  ShowError(err);
+														  }
+														  free(c);
+													  });
 		}
 		else
 		{
@@ -469,21 +478,21 @@ bool Primitive::LoadToken(const int id, BiffReader* const pBiffReader)
 				g_pPrimitiveDecompressThreadPool = new ThreadPool(g_pvp->m_logicalNumberOfProcessors);
 
 			g_pPrimitiveDecompressThreadPool->enqueue([uclen, c, this]
-			                                          {
-				                                          std::vector<WORD> tmp(m_numIndices);
+													  {
+														  std::vector<WORD> tmp(m_numIndices);
 
-				                                          mz_ulong uclen2 = uclen;
-				                                          const int error = uncompress((unsigned char*)tmp.data(), &uclen2, c, m_compressedIndices);
-				                                          if (error != Z_OK)
-				                                          {
-					                                          char err[128];
-					                                          sprintf_s(err, "Could not uncompress (small) primitive index data, error %d", error);
-					                                          ShowError(err);
-				                                          }
-				                                          free(c);
-				                                          for (int i = 0; i < m_numIndices; ++i)
-					                                          m_mesh.m_indices[i] = tmp[i];
-			                                          });
+														  mz_ulong uclen2 = uclen;
+														  const int error = uncompress((unsigned char*)tmp.data(), &uclen2, c, m_compressedIndices);
+														  if (error != Z_OK)
+														  {
+															  char err[128];
+															  sprintf_s(err, "Could not uncompress (small) primitive index data, error %d", error);
+															  ShowError(err);
+														  }
+														  free(c);
+														  for (int i = 0; i < m_numIndices; ++i)
+															  m_mesh.m_indices[i] = tmp[i];
+													  });
 		}
 		break;
 	}

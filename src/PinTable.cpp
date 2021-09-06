@@ -4,9 +4,8 @@
 #include "cmath.h"
 #include <iostream>
 
-#include "EditableRegistry.h"
 #include "Collection.h"
-
+#include "EditableRegistry.h"
 
 PinTable::PinTable()
 {
@@ -288,12 +287,39 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 
 				cloadeditems++;
 
+				for (size_t i = 0; i < m_vedit.size(); i++)
+				{
+					IEditable* const piedit = m_vedit[i];
+					piedit->InitPostLoad();
+				}
 				// TODO: ::SendMessage(hwndProgressBar, PBM_SETPOS, cloadeditems, 0);
+			}
+		}
+
+		if (loadFileVersion < 1030)
+		{
+			for (size_t i = 0; i < m_materials.size(); ++i)
+			{
+				m_materials[i]->m_fGlossyImageLerp = 1.f;
+			}
+		}
+
+		if (loadFileVersion < 1040)
+		{
+			for (size_t i = 0; i < m_materials.size(); ++i)
+			{
+				m_materials[i]->m_fThickness = 0.05f;
 			}
 		}
 	}
 
 	delete pGameStream;
+
+	if (m_pbTempScreenshot)
+	{
+		delete m_pbTempScreenshot;
+		m_pbTempScreenshot = NULL;
+	}
 
 	return hr;
 }
@@ -758,6 +784,11 @@ HRESULT PinTable::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, in
 
 	LoadData(pStream, csubobj, csounds, ctextures, cfonts, ccollection, version);
 
+	return S_OK;
+}
+
+HRESULT PinTable::InitPostLoad()
+{
 	return S_OK;
 }
 

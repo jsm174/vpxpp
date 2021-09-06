@@ -56,6 +56,10 @@ HitTarget::HitTarget()
 	m_timeStamp = 0;
 }
 
+HitTarget::~HitTarget()
+{
+}
+
 HRESULT HitTarget::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 {
 	m_ptable = ptable;
@@ -102,6 +106,13 @@ HRESULT HitTarget::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, i
 	BiffReader biffReader(pStream, this, pId, version);
 	biffReader.Load();
 
+	// TODO: UpdateStatusBarInfo();
+
+	return S_OK;
+}
+
+HRESULT HitTarget::InitPostLoad()
+{
 	// TODO: UpdateStatusBarInfo();
 
 	return S_OK;

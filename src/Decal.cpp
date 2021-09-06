@@ -87,6 +87,13 @@ HRESULT Decal::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int v
 	return S_OK;
 }
 
+HRESULT Decal::InitPostLoad()
+{
+   // TODO: EnsureSize();
+
+   return S_OK;
+}
+
 void Decal::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

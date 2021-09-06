@@ -111,6 +111,11 @@ HRESULT Flasher::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int
 	return S_OK;
 }
 
+HRESULT Flasher::InitPostLoad()
+{
+   return S_OK;
+}
+
 void Flasher::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

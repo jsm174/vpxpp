@@ -89,6 +89,28 @@ HRESULT Flipper::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int
 	return S_OK;
 }
 
+HRESULT Flipper::InitPostLoad()
+{
+	if (m_d.m_height > 1000.0f)
+	{
+		m_d.m_height = 50.0f;
+	}
+	if (m_d.m_rubberheight > 1000.f)
+	{
+		m_d.m_rubberheight = 8.f;
+	}
+	if (m_d.m_rubberthickness > 0.f && m_d.m_height > 16.0f && m_d.m_rubberwidth == 0.f)
+	{
+		m_d.m_rubberwidth = m_d.m_height - 16.0f;
+	}
+	if (m_d.m_rubberwidth > 1000.f)
+	{
+		m_d.m_rubberwidth = m_d.m_height - 16.0f;
+	}
+
+	return S_OK;
+}
+
 void Flipper::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -99,8 +121,8 @@ void Flipper::SetDefaults(bool fromMouseClick)
 
 	m_d.m_StartAngle = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault(regKey, "StartAngle", 121.f) : 121.f;
 	m_d.m_EndAngle = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault(regKey, "EndAngle", 70.f) : 70.f;
-	m_d.m_BaseRadius = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault(regKey, "BaseRadius", 21.5f) : 21.5f;   // 15
-	m_d.m_EndRadius = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault(regKey, "EndRadius", 13.f) : 13.f;       // 6
+	m_d.m_BaseRadius = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault(regKey, "BaseRadius", 21.5f) : 21.5f;	// 15
+	m_d.m_EndRadius = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault(regKey, "EndRadius", 13.f) : 13.f;		// 6
 	m_d.m_FlipperRadiusMax = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault(regKey, "Length", 130.f) : 130.f; // 80
 	m_d.m_FlipperRadiusMin = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault(regKey, "MaxDifLength", 0.f) : 0.f;
 

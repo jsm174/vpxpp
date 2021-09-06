@@ -86,6 +86,11 @@ HRESULT DispReel::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, in
 	return S_OK;
 }
 
+HRESULT DispReel::InitPostLoad()
+{
+	return S_OK;
+}
+
 void DispReel::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -254,13 +259,13 @@ void DispReel::WriteRegDefaults()
 
 float DispReel::getBoxWidth() const
 {
-	const float width = (float)m_d.m_reelcount * m_d.m_width + (float)m_d.m_reelcount * m_d.m_reelspacing + m_d.m_reelspacing; // spacing also includes edges
+	const float width = (float)m_d.m_reelcount * m_d.m_width + (float)m_d.m_reelcount * m_d.m_reelspacing + m_d.m_reelspacing;
 	return width;
 }
 
 float DispReel::getBoxHeight() const
 {
-	const float height = m_d.m_height + m_d.m_reelspacing + m_d.m_reelspacing; // spacing also includes edges
+	const float height = m_d.m_height + m_d.m_reelspacing + m_d.m_reelspacing; 
 
 	return height;
 }

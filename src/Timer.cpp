@@ -83,6 +83,11 @@ HRESULT Timer::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int v
 	return S_OK;
 }
 
+HRESULT Timer::InitPostLoad()
+{
+	return S_OK;
+}
+
 void Timer::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

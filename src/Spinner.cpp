@@ -92,6 +92,11 @@ HRESULT Spinner::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int
 	return S_OK;
 }
 
+HRESULT Spinner::InitPostLoad()
+{
+	return S_OK;
+}
+
 void Spinner::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

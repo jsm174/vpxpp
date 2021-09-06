@@ -120,6 +120,11 @@ HRESULT Light::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int v
 	return S_OK;
 }
 
+HRESULT Light::InitPostLoad()
+{
+	return S_OK;
+}
+
 void Light::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

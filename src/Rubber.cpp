@@ -115,6 +115,15 @@ HRESULT Rubber::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int 
 	return S_OK;
 }
 
+HRESULT Rubber::InitPostLoad()
+{
+	if (m_d.m_hitHeight == -1.0f)
+	{
+		m_d.m_hitHeight = m_d.m_height;
+	}
+	return S_OK;
+}
+
 void Rubber::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

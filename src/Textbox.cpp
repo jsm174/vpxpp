@@ -93,6 +93,13 @@ HRESULT Textbox::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int
 	return S_OK;
 }
 
+HRESULT Textbox::InitPostLoad()
+{
+	// TODO: m_texture = NULL;
+
+	return S_OK;
+}
+
 void Textbox::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

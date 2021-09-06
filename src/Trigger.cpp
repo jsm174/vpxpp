@@ -106,6 +106,12 @@ HRESULT Trigger::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int
 	return S_OK;
 }
 
+HRESULT Trigger::InitPostLoad()
+{
+	// TODO: UpdateStatusBarInfo();
+	return S_OK;
+}
+
 void Trigger::SetDefaults(bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
