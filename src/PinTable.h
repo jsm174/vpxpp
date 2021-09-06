@@ -38,7 +38,9 @@ public:
 	PinTable();
 	virtual ~PinTable();
 
-	void LoadGameFromFilename(const char* pFilename);
+	void InitTablePostLoad();
+
+	HRESULT LoadGameFromFilename(const std::string& szFilename);
 	HRESULT LoadGameFromStorage(POLE::Storage* pStorage);
 
 	HRESULT LoadInfo(POLE::Storage* pStorage, int version);
@@ -56,6 +58,8 @@ public:
 	virtual void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
 
+	void Play(const bool cameraMode);
+
 	Material* GetMaterial(const std::string& szName);
 
 	void GetUniqueName(const ItemTypeEnum type, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;
@@ -66,6 +70,9 @@ public:
 	PinBinary* GetImageLinkBinary(const int id);
 
 	void visit(int indent, POLE::Storage* storage, std::string path);
+
+	std::string m_szFilename;
+	std::string m_szTitle;
 
 	Vertex2D m_offset;
 	float m_zoom;

@@ -135,6 +135,12 @@ add_executable(vpxpp
 	ext/pole/pole.cpp
 	ext/stb/stb_image.h
 
+        src/VPinball.h
+        src/VPinball.cpp
+
+        src/VPApp.h
+        src/VPApp.cpp
+
 	src/main.cpp
 )
 

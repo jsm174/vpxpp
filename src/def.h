@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #ifdef min
 #undef min
 #endif
@@ -28,9 +30,8 @@ typedef float D3DVALUE;
 #define MAXNAMEBUFFER 32
 #define MAXSTRING 1024
 
-#define EDITOR_BG_WIDTH    1000
-#define EDITOR_BG_HEIGHT   750
-
+#define EDITOR_BG_WIDTH 1000
+#define EDITOR_BG_HEIGHT 750
 
 class Vertex3D_NoTex2
 {
@@ -57,3 +58,5 @@ public:
 	D3DVALUE tu;
 	D3DVALUE tv;
 };
+
+void TitleFromFilename(const std::string& szfilename, std::string& sztitle);

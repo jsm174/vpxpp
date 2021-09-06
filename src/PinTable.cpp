@@ -65,20 +65,29 @@ PinTable::~PinTable()
 {
 }
 
-void PinTable::LoadGameFromFilename(const char* pFilename)
+HRESULT PinTable::LoadGameFromFilename(const std::string& szFilename)
 {
-	POLE::Storage* pStorage = new POLE::Storage(pFilename);
-	pStorage->open();
+	HRESULT hr = S_FALSE;
 
-	if (pStorage->result() != POLE::Storage::Ok)
+	if (szFilename.empty())
 	{
+		// TODO: ShowError("Empty File Name String!");
+	}
+	else
+	{
+		m_szFilename = szFilename;
+
+		POLE::Storage* pStorage = new POLE::Storage(szFilename.c_str());
+
+		if (pStorage->open())
+		{
+			hr = LoadGameFromStorage(pStorage);
+		}
+
+		delete pStorage;
 	}
 
-	LoadGameFromStorage(pStorage);
-
-	delete pStorage;
-
-	return;
+	return hr;
 }
 
 HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
@@ -792,6 +801,10 @@ HRESULT PinTable::InitPostLoad()
 	return S_OK;
 }
 
+void PinTable::InitTablePostLoad()
+{
+}
+
 void PinTable::SetDefaults(bool fromMouseClick)
 {
 }
@@ -1350,4 +1363,8 @@ void PinTable::visit(int indent, POLE::Storage* storage, std::string path)
 			visit(indent + 1, storage, fullname + "/");
 		}
 	}
+}
+
+void PinTable::Play(const bool cameraMode)
+{
 }
