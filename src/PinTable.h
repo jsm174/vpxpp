@@ -7,13 +7,13 @@
 
 #include "BiffReader.h"
 #include "CodeViewer.h"
+#include "Collection.h"
 #include "Material.h"
 #include "PinBinary.h"
 #include "PinFont.h"
 #include "PinSound.h"
 #include "Texture.h"
 
-#include "cmath.h"
 #include "hash.h"
 #include "misc.h"
 #include "physconst.h"
@@ -29,18 +29,6 @@ struct LightSource
 	COLORREF emission;
 	Vertex3Ds pos;
 };
-
-/* TODO: 
-struct ProtectionData {
-	long fileversion;
-	long size;
-	unsigned char paraphrase[16 + 8];
-	unsigned long flags;
-	int keyversion;
-	int spare1;
-	int spare2;
-};
-*/
 
 class PinTable : public ISelect,
 				 public IScriptable,
@@ -136,8 +124,6 @@ public:
 
 	float m_globalDifficulty;
 
-	// TODO: ProtectionData m_protectionData;
-
 	std::string m_image;
 	std::string m_playfieldMaterial;
 	COLORREF m_colorbackdrop;
@@ -159,6 +145,7 @@ public:
 	std::vector<Material*> m_materials;
 	std::vector<PinSound*> m_vsound;
 	std::vector<PinFont*> m_vfont;
+	std::vector<Collection*> m_vcollection;
 
 	COLORREF m_rgcolorcustom[16];
 

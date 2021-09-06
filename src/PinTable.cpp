@@ -1,9 +1,12 @@
 #include "PinTable.h"
 #include "RegUtil.h"
 
+#include "cmath.h"
 #include <iostream>
 
 #include "EditableRegistry.h"
+#include "Collection.h"
+
 
 PinTable::PinTable()
 {
@@ -256,6 +259,36 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 				}
 
 				cloadeditems++;
+			}
+
+			for (int i = 0; i < ccollection; i++)
+			{
+				std::string szStmName = "GameStg/Collection" + std::to_string(i);
+
+				POLE::Stream* pItemStream = new POLE::Stream(pStorage, szStmName);
+
+				if (!pItemStream->fail())
+				{
+					// TODO: CComObject<Collection>* pcol;
+					// CComObject<Collection>::CreateInstance(&pcol);
+					// pcol->AddRef();
+					// pcol->LoadData(pstmItem, this, loadFileVersion);
+					// m_vcollection.push_back(pcol);
+					// m_pcv->AddItem((IScriptable*)pcol, false);
+
+					Collection* pCollection = new Collection();
+					pCollection->LoadData(pItemStream, this, loadFileVersion);
+					m_vcollection.push_back(pCollection);
+
+					delete pItemStream;
+					pItemStream = NULL;
+
+					std::cout << szStmName << std::endl;
+				}
+
+				cloadeditems++;
+
+				// TODO: ::SendMessage(hwndProgressBar, PBM_SETPOS, cloadeditems, 0);
 			}
 		}
 	}
@@ -717,7 +750,12 @@ HRESULT PinTable::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, in
 {
 	SetDefaults(false);
 
-	int csubobj, csounds, ctextures, cfonts, ccollection;
+	int csubobj;
+	int csounds;
+	int ctextures;
+	int cfonts;
+	int ccollection;
+
 	LoadData(pStream, csubobj, csounds, ctextures, cfonts, ccollection, version);
 
 	return S_OK;
@@ -1035,7 +1073,7 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 	{
 		int tmp;
 		pBiffReader->GetInt(tmp);
-		m_playfieldReflectionStrength = dequantizeUnsigned<8>(tmp);
+		m_playfieldReflectionStrength = dequantizeUnsigned8(tmp);
 		break;
 	}
 	case FID(BTRA):
@@ -1045,7 +1083,7 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 	{
 		int tmp;
 		pBiffReader->GetInt(tmp);
-		m_ballTrailStrength = dequantizeUnsigned<8>(tmp);
+		m_ballTrailStrength = dequantizeUnsigned8(tmp);
 		break;
 	}
 	case FID(BPRS):
@@ -1091,8 +1129,13 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 	{
 		pBiffReader->GetFloat(m_globalDifficulty);
 		int tmp;
-		//const HRESULT hr = LoadValue("Player", "GlobalDifficulty", tmp);
-		//if (hr == S_OK) m_globalDifficulty = dequantizeUnsignedPercent(tmp);
+		RegUtil* pRegUtil = RegUtil::SharedInstance();
+
+		const HRESULT hr = pRegUtil->LoadValue("Player", "GlobalDifficulty", tmp);
+		if (hr == S_OK)
+		{
+			m_globalDifficulty = dequantizeUnsignedPercent(tmp);
+		}
 		break;
 	}
 	case FID(CUST):
@@ -1152,13 +1195,13 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 			pMaterial->m_cClearcoat = mats[i].cClearcoat;
 			pMaterial->m_fWrapLighting = mats[i].fWrapLighting;
 			pMaterial->m_fRoughness = mats[i].fRoughness;
-			pMaterial->m_fGlossyImageLerp = 1.0f - dequantizeUnsigned<8>(mats[i].fGlossyImageLerp);
-			pMaterial->m_fThickness = (mats[i].fThickness == 0) ? 0.05f : dequantizeUnsigned<8>(mats[i].fThickness);
+			pMaterial->m_fGlossyImageLerp = 1.0f - dequantizeUnsigned8(mats[i].fGlossyImageLerp);
+			pMaterial->m_fThickness = (mats[i].fThickness == 0) ? 0.05f : dequantizeUnsigned8(mats[i].fThickness);
 			pMaterial->m_fEdge = mats[i].fEdge;
 			pMaterial->m_fOpacity = mats[i].fOpacity;
 			pMaterial->m_bIsMetal = mats[i].bIsMetal;
 			pMaterial->m_bOpacityActive = !!(mats[i].bOpacityActive_fEdgeAlpha & 1);
-			pMaterial->m_fEdgeAlpha = dequantizeUnsigned<7>(mats[i].bOpacityActive_fEdgeAlpha >> 1);
+			pMaterial->m_fEdgeAlpha = dequantizeUnsigned7(mats[i].bOpacityActive_fEdgeAlpha >> 1);
 			pMaterial->m_szName = mats[i].szName;
 
 			m_materials.push_back(pMaterial);

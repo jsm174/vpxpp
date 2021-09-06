@@ -31,7 +31,9 @@ include_directories(
 
 add_executable(vpxpp
 	math/vector.h
+
 	math/cmath.h
+	math/cmath.cpp
 
 	src/LZWReader.h
 	src/LZWReader.cpp
@@ -60,6 +62,9 @@ add_executable(vpxpp
 	src/IEditable.cpp
 
 	src/EditableRegistry.h
+
+	src/Collection.h
+	src/Collection.cpp
 
 	src/CodeViewer.h
 	src/CodeViewer.cpp
