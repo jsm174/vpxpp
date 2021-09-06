@@ -9,6 +9,8 @@
 #include "CodeViewer.h"
 #include "Material.h"
 #include "PinSound.h"
+#include "PinBinary.h"
+#include "Texture.h"
 
 #include "cmath.h"
 #include "hash.h"
@@ -54,6 +56,7 @@ public:
 	HRESULT LoadCustomInfo(POLE::Storage* pStorage, int version);
 	HRESULT LoadData(POLE::Stream* pStream, int& csubobj, int& csounds, int& ctextures, int& cfonts, int& ccollection, int version);
 	HRESULT LoadSoundFromStream(POLE::Stream* pStream, const int version);
+	HRESULT LoadImageFromStream(POLE::Stream* pStream, unsigned int index, int version);
 	void ReadInfoValue(POLE::Storage* pstg, const char* pName, char** pszValue);
 
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
@@ -69,6 +72,8 @@ public:
 	void GetUniqueName(const wchar_t* const prefix, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;
 
 	void SetLoadDefaults();
+
+	PinBinary* GetImageLinkBinary(const int id);
 
 	void visit(int indent, POLE::Storage* storage, std::string path);
 
@@ -147,6 +152,8 @@ public:
 
 	std::vector<IEditable*> m_vedit;
 
+	std::vector<Texture*> m_vimage;
+
 	int m_numMaterials;
 	std::vector<Material*> m_materials;
 
@@ -173,6 +180,8 @@ public:
 	std::string m_szScreenShot;
 	std::string m_szDateSaved;
 	unsigned int m_numTimesSaved;
+
+	PinBinary* m_pbTempScreenshot;
 
 	std::vector<std::string> m_vCustomInfoTag;
 	std::vector<std::string> m_vCustomInfoContent;
@@ -213,6 +222,6 @@ public:
 private:
 	std::string m_notesText;
 
-	//std::unordered_map<const char*, Texture *, StringHashFunctor, StringComparator> m_textureMap;  // hash table to speed up texture lookup by name
-	std::unordered_map<const char*, Material*, StringHashFunctor, StringComparator> m_materialMap; // hash table to speed up material lookup by name
+	std::unordered_map<const char*, Texture*, StringHashFunctor, StringComparator> m_textureMap;
+	std::unordered_map<const char*, Material*, StringHashFunctor, StringComparator> m_materialMap;
 };

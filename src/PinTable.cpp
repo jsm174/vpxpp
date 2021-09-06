@@ -170,13 +170,81 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 
 					delete pItemStream;
 					pItemStream = NULL;
+
+					std::cout << szStmName << std::endl;
 				}
 				else
 				{
 					delete pItemStream;
 				}
 
+				cloadeditems++;
+			}
+
+			m_vimage.empty();
+			m_vimage.resize(ctextures);
+
+			{
+				for (int i = 0; i < ctextures; i++)
+				{
+					std::string szStmName = "GameStg/Image" + std::to_string(i);
+
+					POLE::Stream* pItemStream = new POLE::Stream(pStorage, szStmName);
+
+					if (!pItemStream->fail())
+					{
+						hr = LoadImageFromStream(pItemStream, i, loadFileVersion);
+
+						if (hr != S_OK)
+						{
+							return hr;
+						}
+
+						delete pItemStream;
+						pItemStream = NULL;
+
+						std::cout << szStmName << std::endl;
+					}
+					else
+					{
+						delete pItemStream;
+					}
+
+					cloadeditems++;
+				}
+			}
+
+			for (size_t i = 0; i < m_vimage.size(); ++i)
+			{
+				if (!m_vimage[i] || m_vimage[i]->m_pdsBuffer == NULL)
+				{
+					m_vimage.erase(m_vimage.begin() + i);
+					--i;
+				}
+			}
+
+			for (size_t i = 0; i < m_vimage.size() - 1; ++i)
+			{
+				for (size_t i2 = i + 1; i2 < m_vimage.size(); ++i2)
+				{
+					if (m_vimage[i]->m_szName == m_vimage[i2]->m_szName && m_vimage[i]->m_szPath == m_vimage[i2]->m_szPath)
+					{
+						m_vimage.erase(m_vimage.begin() + i2);
+						--i2;
+					}
+				}
+			}
+
+			// TODO: ::SendMessage(hwndProgressBar, PBM_SETPOS, cloadeditems, 0);
+
+			for (int i = 0; i < cfonts; i++)
+			{
+				std::string szStmName = "GameStg/Font" + std::to_string(i);
+
+				POLE::Stream* pItemStream = new POLE::Stream(pStorage, szStmName);
+
 				std::cout << szStmName << std::endl;
+				cloadeditems++;
 			}
 		}
 	}
@@ -529,6 +597,30 @@ HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileV
 	}
 
 	m_vsound.push_back(pPinSound);
+
+	return S_OK;
+}
+
+HRESULT PinTable::LoadImageFromStream(POLE::Stream* pStream, unsigned int index, int version)
+{
+	if (version < 100)
+	{
+		// TODO: ShowError("Tables from Tech Beta 3 and below are not supported in this version.");
+		return E_FAIL;
+	}
+	else
+	{
+		Texture* const pTexture = new Texture();
+
+		if (pTexture->LoadFromStream(pStream, version, this) == S_OK)
+		{
+			m_vimage[index] = pTexture;
+		}
+		else
+		{
+			delete pTexture;
+		}
+	}
 
 	return S_OK;
 }
@@ -1114,6 +1206,20 @@ void PinTable::GetUniqueName(const wchar_t* const wzRoot, wchar_t* const wzUniqu
 
    WideStrNCopy(wzName, wzUniqueName, wzUniqueName_maxlength);
    delete[] wzName;*/
+}
+
+PinBinary* PinTable::GetImageLinkBinary(const int id)
+{
+	switch (id)
+	{
+	case 1:
+		PinBinary* const pPinBinary = m_pbTempScreenshot;
+		m_pbTempScreenshot = NULL;
+		return pPinBinary;
+		break;
+	}
+
+	return NULL;
 }
 
 void PinTable::visit(int indent, POLE::Storage* storage, std::string path)

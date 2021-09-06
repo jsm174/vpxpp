@@ -5,8 +5,22 @@
 typedef uint32_t DWORD; // DWORD = unsigned 32 bit value
 typedef uint16_t WORD;  // WORD = unsigned 16 bit value
 typedef uint8_t BYTE;   // BYTE = unsigned 8 bit value
-
+typedef int32_t LONG;
 typedef long HRESULT;
+typedef int COLORREF;
+typedef int64_t LONGLONG;
+
+typedef union _LARGE_INTEGER {
+  struct {
+    DWORD LowPart;
+    LONG  HighPart;
+  };
+  struct {
+    DWORD LowPart;
+    LONG  HighPart;
+  } u;
+  LONGLONG QuadPart;
+} LARGE_INTEGER, *PLARGE_INTEGER;
 
 #define S_OK ((HRESULT)0L)
 #define S_FALSE ((HRESULT)1L)
@@ -17,7 +31,7 @@ typedef long HRESULT;
 #define BG_FULLSCREEN 1
 #define BG_FSS 2
 
-typedef int COLORREF;
+#define MIN_TEXTURE_SIZE 8
 
 #define MAX_LIGHT_SOURCES 2
 #define LIGHTSEQQUEUESIZE 100
@@ -28,6 +42,9 @@ typedef int COLORREF;
 #define FID(A) (int)((unsigned int)(#A[0]) | ((unsigned int)(#A[1]) << 8) | ((unsigned int)(#A[2]) << 16) | ((unsigned int)(#A[3]) << 24))
 
 #define RGB(r, g, b) ((COLORREF)(((DWORD)(r)) | (((DWORD)(g)) << 8) | (((DWORD)(b)) << 16)))
+
+// TODO: #define MAX(a,b)        (((a) > (b)) ? (a) : (b))
+#define MIN(a,b)        (((a) < (b)) ? (a) : (b))
 
 enum ItemTypeEnum
 {
@@ -281,10 +298,17 @@ typedef enum
 	HitTargetSlim = 9,
 } TargetType;
 
-typedef enum : char { 
-	SNDOUT_TABLE = 0, 
-	SNDOUT_BACKGLASS = 1 
+typedef enum : char
+{
+	SNDOUT_TABLE = 0,
+	SNDOUT_BACKGLASS = 1
 } SoundOutTypes;
+
+typedef enum
+{
+	RGBA,
+	RGB_FP
+} TextureFormat;
 
 #pragma pack(push, 1)
 typedef struct tWAVEFORMATEX
@@ -299,4 +323,3 @@ typedef struct tWAVEFORMATEX
 } WAVEFORMATEX, *PWAVEFORMATEX, *LPWAVEFORMATEX;
 typedef const WAVEFORMATEX* LPCWAVEFORMATEX;
 #pragma pack(pop)
-
