@@ -37,7 +37,7 @@ bool VPApp::InitInstance(std::string szTableFilename)
 	m_file = false;
 	m_play = false;
 	m_run = true;
-    m_loadFileResult = true;
+	m_loadFileResult = true;
 	m_szTableFilename.clear();
 	m_szTableFilename = szTableFilename;
 
@@ -88,6 +88,8 @@ int VPApp::Run()
 		{
 			m_vpinball.DoPlay(m_vpinball.m_povEdit);
 		}
+
+		m_vpinball.MainMsgLoop();
 	}
 
 	return 0;

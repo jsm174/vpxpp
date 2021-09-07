@@ -7,8 +7,8 @@
 #include "Collection.h"
 #include "EditableRegistry.h"
 
-#include "extern.h"
 #include "Player.h"
+#include "extern.h"
 
 PinTable::PinTable()
 {
@@ -1372,5 +1372,4 @@ void PinTable::Play(const bool cameraMode)
 {
 	g_pplayer = new Player(cameraMode, this);
 	g_pplayer->Create();
-
 }

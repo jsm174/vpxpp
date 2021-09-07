@@ -1,4 +1,6 @@
 #include "VPinball.h"
+#include "Player.h"
+#include "extern.h"
 
 bool VPinball::m_firstRun = true;
 
@@ -113,13 +115,25 @@ void VPinball::LoadFileName(const std::string& szFileName, const bool updateEdit
 
 void VPinball::DoPlay(const bool _cameraMode)
 {
-   // TODO: NumVideoBytes = 0;
-   // CComObject<PinTable> * const ptCur = GetActiveTable();
-   // if (ptCur) 
-   // {
-   //   ptCur->Play(_cameraMode);
-   // }
+	// TODO: NumVideoBytes = 0;
+	// CComObject<PinTable> * const ptCur = GetActiveTable();
+	// if (ptCur)
+	// {
+	//   ptCur->Play(_cameraMode);
+	// }
 
-   PinTable* pPinTable = m_vtable[0];
-   pPinTable->Play(_cameraMode);
+	PinTable* pPinTable = m_vtable[0];
+	pPinTable->Play(_cameraMode);
+}
+
+void VPinball::MainMsgLoop()
+{
+	for (;;)
+	{
+		if (!g_pplayer || !g_pplayer->m_pWindow)
+		{
+			break;
+		}
+		g_pplayer->Render();
+	}
 }

@@ -19,6 +19,8 @@ public:
 
 	void DoPlay(const bool _cameraMode);
 
+	void MainMsgLoop();
+
 	bool m_povEdit;
 
 	std::vector<PinTable*> m_vtable;
