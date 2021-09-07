@@ -1,7 +1,7 @@
 #include "PinTable.h"
 #include "RegUtil.h"
-
 #include "cmath.h"
+
 #include <iostream>
 
 #include "Collection.h"
@@ -246,6 +246,11 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 						--i2;
 					}
 				}
+			}
+
+			for (size_t i = 0; i < m_vimage.size(); ++i)
+			{
+				m_vimage[i]->DumpBaseTexture();
 			}
 
 			// TODO: ::SendMessage(hwndProgressBar, PBM_SETPOS, cloadeditems, 0);
@@ -741,7 +746,7 @@ void PinTable::ReadInfoValue(POLE::Storage* pStorage, const char* pName, char** 
 	delete pStream;
 }
 
-Material* PinTable::GetMaterial(const std::string& szName)
+Material* PinTable::GetMaterial(const std::string& szName) const
 {
 	if (szName.empty())
 	{
@@ -772,6 +777,36 @@ Material* PinTable::GetMaterial(const std::string& szName)
 	}
 
 	// TODO: return &m_vpinball->m_dummyMaterial;
+}
+
+Texture* PinTable::GetImage(const std::string& szName) const
+{
+	if (szName.empty())
+	{
+		return NULL;
+	}
+
+	if (!m_textureMap.empty())
+	{
+		std::unordered_map<const char*, Texture*, StringHashFunctor, StringComparator>::const_iterator
+			it = m_textureMap.find(szName.c_str());
+		if (it != m_textureMap.end())
+		{
+			return it->second;
+		}
+
+		return NULL;
+	}
+
+	for (size_t i = 0; i < m_vimage.size(); i++)
+	{
+		if (!strcasecmp(m_vimage[i]->m_szName.c_str(), szName.c_str()))
+		{
+			return m_vimage[i];
+		}
+	}
+
+	return NULL;
 }
 
 HRESULT PinTable::InitVBA(bool fNew, int id, wchar_t* const wzName)

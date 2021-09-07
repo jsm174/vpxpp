@@ -39,6 +39,7 @@ bool Texture::LoadToken(const int id, BiffReader* const pBiffReader)
 	{
 	case FID(NAME):
 		pBiffReader->GetString(m_szName);
+
 		break;
 	case FID(PATH):
 		pBiffReader->GetString(m_szPath);
@@ -91,7 +92,9 @@ bool Texture::LoadToken(const int id, BiffReader* const pBiffReader)
 			{
 				unsigned int o = i * lpitch + 3;
 				for (int l = 0; l < m_width; l++, o += 4)
+				{
 					pch[o] = 0xff;
+				}
 			}
 		}
 
@@ -206,6 +209,7 @@ freeimage_fallback:
 	}
 	const FREE_IMAGE_FORMAT fif = FreeImage_GetFileTypeFromMemory(hmem, 0);
 	FIBITMAP* const dib = FreeImage_LoadFromMemory(fif, hmem, 0);
+
 	FreeImage_CloseMemory(hmem);
 	if (!dib)
 	{
@@ -224,4 +228,79 @@ void Texture::SetSizeFrom(const BaseTexture* const tex)
 	m_height = tex->height();
 	m_realWidth = tex->m_realWidth;
 	m_realHeight = tex->m_realHeight;
+}
+
+bool Texture::IsHDR() const
+{
+	if (m_pdsBuffer == NULL)
+	{
+		return false;
+	}
+
+	return (m_pdsBuffer->m_format == RGB_FP);
+}
+
+void Texture::DumpBaseTexture()
+{
+	size_t i = m_szPath.rfind('\\', m_szPath.length());
+
+	if (i == std::string::npos)
+	{
+		return;
+	}
+
+	std::string filename = "texture_";
+	filename.append(m_szPath.substr(i + 1, m_szPath.length() - i));
+
+	FIBITMAP* dib;
+
+	if (m_pdsBuffer->m_format == RGBA)
+	{
+		dib = FreeImage_ConvertFromRawBits(
+			(BYTE*)&m_pdsBuffer->m_data[0],
+			m_pdsBuffer->m_realWidth,
+			m_pdsBuffer->m_realHeight,
+			m_pdsBuffer->pitch(),
+			32,
+			FI_RGBA_RED_MASK,
+			FI_RGBA_BLUE_MASK,
+			FI_RGBA_GREEN_MASK,
+			true);
+	}
+	else
+	{
+		dib = FreeImage_ConvertFromRawBitsEx(
+			true,
+			(BYTE*)&m_pdsBuffer->m_data[0],
+			FIT_RGBF,
+			m_pdsBuffer->m_realWidth,
+			m_pdsBuffer->m_realHeight,
+			m_pdsBuffer->pitch(),
+			96,
+			0,
+			0,
+			0,
+			true);
+	}
+
+	if (IsHDR())
+	{
+		FreeImage_Save(FIF_HDR, dib, filename.c_str());
+	}
+	else if (filename.find(".bmp") != std::string::npos)
+	{
+		FreeImage_Save(FIF_BMP, dib, filename.c_str());
+	}
+	else if (filename.find(".jpg") != std::string::npos)
+	{
+		FIBITMAP* tempDib = FreeImage_ConvertTo24Bits(dib);
+		FreeImage_Save(FIF_JPEG, tempDib, filename.c_str());
+		FreeImage_Unload(tempDib);
+	}
+	else if (filename.find(".png") != std::string::npos)
+	{
+		FreeImage_Save(FIF_PNG, dib, filename.c_str());
+	}
+
+	FreeImage_Unload(dib);
 }

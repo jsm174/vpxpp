@@ -25,6 +25,8 @@ Player::~Player()
 
 void Player::Create()
 {
+	m_hasWindow = false;
+
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
@@ -68,6 +70,10 @@ void Player::Create()
 				glfwDestroyWindow(m_pWindow);
 				m_pWindow = NULL;
 			}
+			else
+			{
+				m_hasWindow = true;
+			}
 		}
 	}
 }
@@ -84,8 +90,17 @@ void Player::Render()
 		glfwDestroyWindow(m_pWindow);
 		m_pWindow = NULL;
 
+		m_hasWindow = false;
+
 		return;
 	}
 
+	RenderDynamics();
+
 	glfwPollEvents();
+}
+
+void Player::RenderDynamics()
+{
+	m_pin3d.RenderPlayfieldGraphics(false);
 }

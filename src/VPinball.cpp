@@ -130,7 +130,7 @@ void VPinball::MainMsgLoop()
 {
 	for (;;)
 	{
-		if (!g_pplayer || !g_pplayer->m_pWindow)
+		if (!g_pplayer || !g_pplayer->m_hasWindow)
 		{
 			break;
 		}

@@ -24,6 +24,9 @@ public:
 	void FreeStuff();
 
 	void SetSizeFrom(const BaseTexture* const tex);
+	bool IsHDR() const;
+	
+	void DumpBaseTexture();
 
 	int m_width;
 	int m_height;

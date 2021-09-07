@@ -138,6 +138,9 @@ add_executable(vpxpp
 	src/Player.h
 	src/Player.cpp
 
+	src/Pin3D.h
+	src/Pin3D.cpp
+
 	ext/pole/pole.cpp
 	ext/stb/stb_image.h
 

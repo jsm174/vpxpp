@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PinTable.h"
+#include "Pin3D.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -14,12 +15,17 @@ public:
 	virtual ~Player();
 
 	bool m_cameraMode;
-	PinTable* m_ptable;
+	bool m_hasWindow;
 
-	GLFWwindow* m_pWindow;
+	PinTable* m_ptable;
+    Pin3D m_pin3d;
 
 	void Create();
 	void Render();
 
+	void RenderDynamics();
+	
 private:
+
+	GLFWwindow* m_pWindow;
 };

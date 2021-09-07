@@ -60,7 +60,8 @@ public:
 
 	void Play(const bool cameraMode);
 
-	Material* GetMaterial(const std::string& szName);
+	Material* GetMaterial(const std::string& szName) const;
+	Texture* GetImage(const std::string &szName) const;
 
 	void GetUniqueName(const ItemTypeEnum type, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;
 	void GetUniqueName(const wchar_t* const prefix, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;

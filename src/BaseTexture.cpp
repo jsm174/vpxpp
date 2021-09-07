@@ -162,7 +162,8 @@ BaseTexture* BaseTexture::CreateFromFreeImage(FIBITMAP* dib)
 
 	const BYTE* const __restrict psrc = FreeImage_GetBits(dibConv);
 	BYTE* const __restrict pdst = tex->data();
-	const int pitchdst = tex->pitch(), pitchsrc = FreeImage_GetPitch(dibConv);
+	const int pitchdst = tex->pitch();
+	const int pitchsrc = FreeImage_GetPitch(dibConv);
 	const int height = tex->height();
 	const int pitch = MIN(pitchsrc, pitchdst);
 
@@ -170,6 +171,7 @@ BaseTexture* BaseTexture::CreateFromFreeImage(FIBITMAP* dib)
 	{
 		memcpy(pdst + (height - y - 1) * pitchdst, psrc + y * pitchsrc, pitch);
 	}
+
 
 	if (dibConv != dibResized)
 	{
