@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.20) 
 
 project(vpxpp VERSION 0.0.1)
 
@@ -15,18 +15,22 @@ add_compile_definitions(
 	V8_COMPRESS_POINTERS
 )
 
-find_package(Vulkan REQUIRED)
 find_package(V8 REQUIRED)
 find_package(nlohmann_json 3.2.0 REQUIRED)
-find_package(glfw3 3.3 REQUIRED)
 find_package(FreeImage REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(bgfx REQUIRED)
 
 include_directories(
 	math
 	src
 	ext/pole
 	ext/stb
+	ext/imgui
+	ext/imgui/backends
+	ext/bgfx_imgui
 	${V8_INCLUDE_DIR}
+	${SDL2_INCLUDE_DIRS}
 )
 
 add_executable(vpxpp
@@ -40,9 +44,9 @@ add_executable(vpxpp
 	
 	src/def.h
 	src/def.cpp
-  
-        src/extern.h
-        src/extern.cpp
+
+	src/extern.h
+	src/extern.cpp
 
 	src/misc.h
 	src/physconst.h
@@ -141,23 +145,44 @@ add_executable(vpxpp
 	src/Pin3D.h
 	src/Pin3D.cpp
 
-	ext/pole/pole.cpp
-	ext/stb/stb_image.h
+	src/VPinball.h
+	src/VPinball.cpp
 
-        src/VPinball.h
-        src/VPinball.cpp
+	src/VPApp.h
+	src/VPApp.cpp
 
-        src/VPApp.h
-        src/VPApp.cpp
+        src/BgfxWindow.h
+        src/BgfxWindow.cpp
 
 	src/main.cpp
+
+	ext/pole/pole.cpp
+
+	ext/stb/stb_image.h
+
+	ext/imgui/imconfig.h
+	ext/imgui/imgui.h
+	ext/imgui/imgui.cpp
+	ext/imgui/imgui_draw.cpp
+	ext/imgui/imgui_tables.cpp
+	ext/imgui/imgui_widgets.cpp
+	ext/imgui/imgui_internal.h
+	ext/imgui/imgui_demo.cpp
+
+	ext/imgui/backends/imgui_impl_sdl.h 
+	ext/imgui/backends/imgui_impl_sdl.cpp
+	
+	ext/bgfx_imgui/imgui_impl_bgfx.h
+	ext/bgfx_imgui/imgui_impl_bgfx.cpp
+	ext/bgfx_imgui/fs_ocornut_imgui.bin.h
+	ext/bgfx_imgui/vs_ocornut_imgui.bin.h
 )
 
 target_link_libraries(vpxpp PRIVATE
 	${V8_BASE_LIBRARY}
 	${V8_LIBPLATFORM_LIBRARY}
+	${SDL2_LIBRARIES}
 	nlohmann_json::nlohmann_json
-        glfw
-        Vulkan::Vulkan
-        FreeImage::FreeImage
+	bgfx::bgfx
+	FreeImage::FreeImage
 )

@@ -1,16 +1,14 @@
 #pragma once
 
-#include "PinTable.h"
 #include "Pin3D.h"
+#include "PinTable.h"
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#include "BgfxWindow.h"
 
-class Player
+class Player : public BgfxWindow
 {
-public:
-	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+public:
 	Player(const bool cameraMode, PinTable* const ptable);
 	virtual ~Player();
 
@@ -18,14 +16,7 @@ public:
 	bool m_hasWindow;
 
 	PinTable* m_ptable;
-    Pin3D m_pin3d;
+	Pin3D m_pin3d;
 
-	void Create();
-	void Render();
-
-	void RenderDynamics();
-	
-private:
-
-	GLFWwindow* m_pWindow;
+	virtual void Render();
 };

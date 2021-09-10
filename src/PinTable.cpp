@@ -1406,5 +1406,5 @@ void PinTable::visit(int indent, POLE::Storage* storage, std::string path)
 void PinTable::Play(const bool cameraMode)
 {
 	g_pplayer = new Player(cameraMode, this);
-	g_pplayer->Create();
+	g_pplayer->Create(1024, 768);
 }

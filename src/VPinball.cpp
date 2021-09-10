@@ -128,12 +128,7 @@ void VPinball::DoPlay(const bool _cameraMode)
 
 void VPinball::MainMsgLoop()
 {
-	for (;;)
-	{
-		if (!g_pplayer || !g_pplayer->m_hasWindow)
-		{
-			break;
-		}
-		g_pplayer->Render();
+	if (g_pplayer) {
+		g_pplayer->Run();
 	}
 }
