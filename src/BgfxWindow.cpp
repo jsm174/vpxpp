@@ -1,10 +1,6 @@
 #include "BgfxWindow.h"
 
 #include <SDL2/SDL_syswm.h>
-#include <bgfx/platform.h>
-#include <bx/math.h>
-#include <bx/string.h>
-#include <bx/timer.h>
 
 #include "imgui_impl_bgfx.h"
 #include "imgui_impl_sdl.h"
@@ -115,6 +111,7 @@ bool BgfxWindow::Create(int width, int height)
 	init.resolution.height = m_height;
 	init.resolution.reset = BGFX_RESET_VSYNC;
 	init.platformData = platformData;
+	init.callback = &m_callback;
 	
 	if (!bgfx::init(init)) {
 		SDL_DestroyWindow(m_pWindow);

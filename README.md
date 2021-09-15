@@ -20,6 +20,14 @@ cmake --build build/Release
 build/Release/vpxpp tables/blankTable.vpx
 ```
 
+## Done
+
+- Table loading 
+
+## To Do
+
+- Everything
+
 ## Why work on this?
 
 I've been thinking about this project for well over a decade, so realistically it will probably go nowhere. 

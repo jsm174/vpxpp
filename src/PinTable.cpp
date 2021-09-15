@@ -70,7 +70,7 @@ PinTable::~PinTable()
 
 HRESULT PinTable::LoadGameFromFilename(const std::string& szFilename)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT hr = E_FAIL;
 
 	if (szFilename.empty())
 	{
@@ -84,6 +84,8 @@ HRESULT PinTable::LoadGameFromFilename(const std::string& szFilename)
 
 		if (pStorage->open())
 		{
+			visit(0, pStorage, "/");
+
 			hr = LoadGameFromStorage(pStorage);
 		}
 
@@ -95,242 +97,281 @@ HRESULT PinTable::LoadGameFromFilename(const std::string& szFilename)
 
 HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 {
-	visit(0, pStorage, "/");
-
 	int loadFileVersion = CURRENT_FILE_FORMAT_VERSION;
 
-	POLE::Stream* pGameStream = new POLE::Stream(pStorage, "GameStg/GameData");
+	HRESULT hr;
 
-	HRESULT hr = S_OK;
-
-	if (!pGameStream->fail())
+	if (pStorage->exists("GameStg"))
 	{
-		POLE::Stream* pstmVersion = new POLE::Stream(pStorage, "GameStg/Version");
-		if (!pstmVersion->fail())
+		if (pStorage->exists("GameStg/GameData"))
 		{
-			pstmVersion->read((unsigned char*)&loadFileVersion, sizeof(int));
+			POLE::Stream* pGameDataStream = new POLE::Stream(pStorage, "GameStg/GameData");
 
-			if (loadFileVersion > CURRENT_FILE_FORMAT_VERSION)
+			if (pStorage->exists("GameStg/Version"))
 			{
-				printf("This table was saved with version %i.%02i and is newer than the supported version %i.%02i! You might get problems loading/playing it!", loadFileVersion / 100, loadFileVersion % 100, CURRENT_FILE_FORMAT_VERSION / 100, CURRENT_FILE_FORMAT_VERSION % 100);
-			}
-		}
+				POLE::Stream* pVersionStream = new POLE::Stream(pStorage, "GameStg/Version");
 
-		delete pstmVersion;
+				pVersionStream->read((unsigned char*)&loadFileVersion, sizeof(int));
 
-		LoadInfo(pStorage, loadFileVersion);
-		LoadCustomInfo(pStorage, loadFileVersion);
-
-		int csubobj = 0;
-		int csounds = 0;
-		int ctextures = 0;
-		int cfonts = 0;
-		int ccollection = 0;
-
-		if (LoadData(pGameStream, csubobj, csounds, ctextures, cfonts, ccollection, loadFileVersion) == S_OK)
-		{
-			const int ctotalitems = csubobj + csounds + ctextures + cfonts;
-
-			int cloadeditems = 0;
-
-			for (int i = 0; i < csubobj; i++)
-			{
-				std::string szStmName = "GameStg/GameItem" + std::to_string(i);
-
-				POLE::Stream* pItemStream = new POLE::Stream(pStorage, szStmName);
-
-				if (!pItemStream->fail())
+				if (loadFileVersion > CURRENT_FILE_FORMAT_VERSION)
 				{
-					ItemTypeEnum type;
-					pItemStream->read((unsigned char*)&type, sizeof(int));
+					printf("This table was saved with version %i.%02i and is newer than the supported version %i.%02i! You might get problems loading/playing it!", loadFileVersion / 100, loadFileVersion % 100, CURRENT_FILE_FORMAT_VERSION / 100, CURRENT_FILE_FORMAT_VERSION % 100);
+				}
 
-					IEditable* const pEditable = EditableRegistry::Create(type);
+				delete pVersionStream;
 
-					int id = 0; // VBA id for this item
-					hr = pEditable->InitLoad(pItemStream, this, &id, loadFileVersion);
-					pEditable->InitVBA(false, id, NULL);
+				if (pStorage->exists("TableInfo"))
+				{
+					hr = LoadInfo(pStorage, loadFileVersion);
 
-					delete pItemStream;
-					pItemStream = NULL;
-
-					if (hr != S_OK)
+					if (pStorage->exists("GameStg/CustomInfoTags"))
 					{
-						break;
-					}
-
-					m_vedit.push_back(pEditable);
-
-					std::cout << szStmName << " = " << type << " " << ITEMTYPEENUM_STRING[type] << std::endl;
-				}
-				else
-				{
-					delete pItemStream;
-					pItemStream = NULL;
-				}
-
-				cloadeditems++;
-			}
-
-			for (int i = 0; i < csounds; i++)
-			{
-				std::string szStmName = "GameStg/Sound" + std::to_string(i);
-
-				POLE::Stream* pItemStream = new POLE::Stream(pStorage, szStmName);
-
-				if (!pItemStream->fail())
-				{
-					LoadSoundFromStream(pItemStream, loadFileVersion);
-
-					delete pItemStream;
-					pItemStream = NULL;
-
-					std::cout << szStmName << std::endl;
-				}
-				else
-				{
-					delete pItemStream;
-				}
-
-				cloadeditems++;
-			}
-
-			m_vimage.empty();
-			m_vimage.resize(ctextures);
-
-			{
-				for (int i = 0; i < ctextures; i++)
-				{
-					std::string szStmName = "GameStg/Image" + std::to_string(i);
-
-					POLE::Stream* pItemStream = new POLE::Stream(pStorage, szStmName);
-
-					if (!pItemStream->fail())
-					{
-						hr = LoadImageFromStream(pItemStream, i, loadFileVersion);
-
-						if (hr != S_OK)
-						{
-							return hr;
-						}
-
-						delete pItemStream;
-						pItemStream = NULL;
-
-						std::cout << szStmName << std::endl;
+						hr = LoadCustomInfo(pStorage, loadFileVersion);
 					}
 					else
 					{
-						delete pItemStream;
+						hr = E_FAIL;
 					}
-
-					cloadeditems++;
 				}
-			}
-
-			for (size_t i = 0; i < m_vimage.size(); ++i)
-			{
-				if (!m_vimage[i] || m_vimage[i]->m_pdsBuffer == NULL)
+				else
 				{
-					m_vimage.erase(m_vimage.begin() + i);
-					--i;
+					hr = E_FAIL;
 				}
-			}
 
-			for (size_t i = 0; i < m_vimage.size() - 1; ++i)
-			{
-				for (size_t i2 = i + 1; i2 < m_vimage.size(); ++i2)
+				int csubobj = 0;
+				int csounds = 0;
+				int ctextures = 0;
+				int cfonts = 0;
+				int ccollection = 0;
+
+				hr = LoadData(pGameDataStream, csubobj, csounds, ctextures, cfonts, ccollection, loadFileVersion);
+
+				if (hr == S_OK)
 				{
-					if (m_vimage[i]->m_szName == m_vimage[i2]->m_szName && m_vimage[i]->m_szPath == m_vimage[i2]->m_szPath)
+					const int ctotalitems = csubobj + csounds + ctextures + cfonts;
+
+					int cloadeditems = 0;
+
+					for (int i = 0; i < csubobj; i++)
 					{
-						m_vimage.erase(m_vimage.begin() + i2);
-						--i2;
+						std::string szStmName = "GameStg/GameItem" + std::to_string(i);
+
+						if (pStorage->exists(szStmName))
+						{
+							POLE::Stream* pGameItemStream = new POLE::Stream(pStorage, szStmName);
+
+							ItemTypeEnum type;
+							pGameItemStream->read((unsigned char*)&type, sizeof(int));
+
+							IEditable* const pEditable = EditableRegistry::Create(type);
+
+							int id = 0;
+							hr = pEditable->InitLoad(pGameItemStream, this, &id, loadFileVersion);
+							pEditable->InitVBA(false, id, NULL);
+
+							delete pGameItemStream;
+							pGameItemStream = NULL;
+
+							if (hr != S_OK)
+							{
+								break;
+							}
+
+							m_vedit.push_back(pEditable);
+
+							std::cout << szStmName << " = " << type << " " << ITEMTYPEENUM_STRING[type] << std::endl;
+						}
+						else
+						{
+							hr = E_FAIL;
+						}
+
+						cloadeditems++;
+
+						// TODO: ::SendMessage(hwndProgressBar, PBM_SETPOS, cloadeditems, 0);
+					}
+
+					for (int i = 0; i < csounds; i++)
+					{
+						std::string szStmName = "GameStg/Sound" + std::to_string(i);
+
+						if (pStorage->exists(szStmName))
+						{
+							POLE::Stream* pSoundStream = new POLE::Stream(pStorage, szStmName);
+
+							LoadSoundFromStream(pSoundStream, loadFileVersion);
+
+							delete pSoundStream;
+							pSoundStream = NULL;
+
+							std::cout << szStmName << std::endl;
+						}
+						else
+						{
+							hr = E_FAIL;
+						}
+
+						cloadeditems++;
+
+						// TODO: ::SendMessage(hwndProgressBar, PBM_SETPOS, cloadeditems, 0);
+					}
+
+					assert(m_vimage.empty());
+					m_vimage.resize(ctextures);
+
+					{
+						for (int i = 0; i < ctextures; i++)
+						{
+							std::string szStmName = "GameStg/Image" + std::to_string(i);
+
+							if (pStorage->exists(szStmName))
+							{
+								POLE::Stream* pImageStream = new POLE::Stream(pStorage, szStmName);
+
+								hr = LoadImageFromStream(pImageStream, i, loadFileVersion);
+
+								delete pImageStream;
+								pImageStream = NULL;
+
+								if (hr != S_OK)
+								{
+									return hr;
+								}
+
+								std::cout << szStmName << std::endl;
+							}
+							else
+							{
+								hr = E_FAIL;
+							}
+
+							cloadeditems++;
+						}
+					}
+
+					for (size_t i = 0; i < m_vimage.size(); ++i)
+					{
+						if (!m_vimage[i] || m_vimage[i]->m_pdsBuffer == NULL)
+						{
+							m_vimage.erase(m_vimage.begin() + i);
+							--i;
+						}
+					}
+
+					for (size_t i = 0; i < m_vimage.size() - 1; ++i)
+					{
+						for (size_t i2 = i + 1; i2 < m_vimage.size(); ++i2)
+						{
+							if (m_vimage[i]->m_szName == m_vimage[i2]->m_szName && m_vimage[i]->m_szPath == m_vimage[i2]->m_szPath)
+							{
+								m_vimage.erase(m_vimage.begin() + i2);
+								--i2;
+							}
+						}
+					}
+
+					// TODO: ::SendMessage(hwndProgressBar, PBM_SETPOS, cloadeditems, 0);
+
+					for (int i = 0; i < cfonts; i++)
+					{
+						std::string szStmName = "GameStg/Font" + std::to_string(i);
+
+						if (pStorage->exists(szStmName))
+						{
+							POLE::Stream* pFontStream = new POLE::Stream(pStorage, szStmName);
+
+							PinFont* const pPinFont = new PinFont();
+							pPinFont->LoadFromStream(pFontStream, loadFileVersion);
+							m_vfont.push_back(pPinFont);
+							pPinFont->Register();
+
+							delete pFontStream;
+							pFontStream = NULL;
+
+							std::cout << szStmName << std::endl;
+						}
+						else
+						{
+							hr = E_FAIL;
+						}
+
+						cloadeditems++;
+
+						// TODO: ::SendMessage(hwndProgressBar, PBM_SETPOS, cloadeditems, 0);
+					}
+
+					for (int i = 0; i < ccollection; i++)
+					{
+						std::string szStmName = "GameStg/Collection" + std::to_string(i);
+
+						if (pStorage->exists(szStmName))
+						{
+							POLE::Stream* pCollectionStream = new POLE::Stream(pStorage, szStmName);
+
+							// TODO: CComObject<Collection>* pcol;
+							// CComObject<Collection>::CreateInstance(&pcol);
+							// pcol->AddRef();
+							// pcol->LoadData(pstmItem, this, loadFileVersion);
+							// m_vcollection.push_back(pcol);
+							// m_pcv->AddItem((IScriptable*)pcol, false);
+
+							Collection* pCollection = new Collection();
+							pCollection->LoadData(pCollectionStream, this, loadFileVersion);
+							m_vcollection.push_back(pCollection);
+
+							delete pCollectionStream;
+							pCollectionStream = NULL;
+
+							std::cout << szStmName << std::endl;
+						}
+						else
+						{
+							hr = E_FAIL;
+						}
+
+						cloadeditems++;
+						// TODO: ::SendMessage(hwndProgressBar, PBM_SETPOS, cloadeditems, 0);
+					}
+
+					for (size_t i = 0; i < m_vedit.size(); i++)
+					{
+						IEditable* const piedit = m_vedit[i];
+						piedit->InitPostLoad();
 					}
 				}
 			}
-
-			for (size_t i = 0; i < m_vimage.size(); ++i)
+			else
 			{
-				m_vimage[i]->DumpBaseTexture();
+				hr = E_FAIL;
 			}
 
-			// TODO: ::SendMessage(hwndProgressBar, PBM_SETPOS, cloadeditems, 0);
+			delete pGameDataStream;
 
-			for (int i = 0; i < cfonts; i++)
+			if (loadFileVersion < 1030)
 			{
-				std::string szStmName = "GameStg/Font" + std::to_string(i);
-
-				POLE::Stream* pItemStream = new POLE::Stream(pStorage, szStmName);
-
-				if (!pItemStream->fail())
+				for (size_t i = 0; i < m_materials.size(); ++i)
 				{
-					PinFont* const ppf = new PinFont();
-					ppf->LoadFromStream(pItemStream, loadFileVersion);
-					m_vfont.push_back(ppf);
-					ppf->Register();
-
-					delete pItemStream;
-					pItemStream = NULL;
-
-					std::cout << szStmName << std::endl;
+					m_materials[i]->m_fGlossyImageLerp = 1.f;
 				}
-
-				cloadeditems++;
 			}
 
-			for (int i = 0; i < ccollection; i++)
+			if (loadFileVersion < 1040)
 			{
-				std::string szStmName = "GameStg/Collection" + std::to_string(i);
-
-				POLE::Stream* pItemStream = new POLE::Stream(pStorage, szStmName);
-
-				if (!pItemStream->fail())
+				for (size_t i = 0; i < m_materials.size(); ++i)
 				{
-					// TODO: CComObject<Collection>* pcol;
-					// CComObject<Collection>::CreateInstance(&pcol);
-					// pcol->AddRef();
-					// pcol->LoadData(pstmItem, this, loadFileVersion);
-					// m_vcollection.push_back(pcol);
-					// m_pcv->AddItem((IScriptable*)pcol, false);
-
-					Collection* pCollection = new Collection();
-					pCollection->LoadData(pItemStream, this, loadFileVersion);
-					m_vcollection.push_back(pCollection);
-
-					delete pItemStream;
-					pItemStream = NULL;
-
-					std::cout << szStmName << std::endl;
+					m_materials[i]->m_fThickness = 0.05f;
 				}
-
-				cloadeditems++;
-
-				for (size_t i = 0; i < m_vedit.size(); i++)
-				{
-					IEditable* const piedit = m_vedit[i];
-					piedit->InitPostLoad();
-				}
-				// TODO: ::SendMessage(hwndProgressBar, PBM_SETPOS, cloadeditems, 0);
 			}
 		}
-
-		if (loadFileVersion < 1030)
+		else
 		{
-			for (size_t i = 0; i < m_materials.size(); ++i)
-			{
-				m_materials[i]->m_fGlossyImageLerp = 1.f;
-			}
-		}
-
-		if (loadFileVersion < 1040)
-		{
-			for (size_t i = 0; i < m_materials.size(); ++i)
-			{
-				m_materials[i]->m_fThickness = 0.05f;
-			}
+			hr = E_FAIL;
 		}
 	}
-
-	delete pGameStream;
+	else
+	{
+		hr = E_FAIL;
+	}
 
 	if (m_pbTempScreenshot)
 	{
@@ -435,7 +476,22 @@ HRESULT PinTable::LoadInfo(POLE::Storage* pStorage, int version)
 		m_numTimesSaved = 0;
 	}
 
-	// TODO: LOAD SCREENSHOT
+	RegUtil* pRegUtil = RegUtil::SharedInstance();
+	pRegUtil->SaveValue("Version", m_szTableName, m_szVersion);
+
+	if (pStorage->exists("TableInfo/Screenshot"))
+	{
+		POLE::Stream* pStream = new POLE::Stream(pStorage, "TableInfo/Screenshot");
+
+		m_pbTempScreenshot = new PinBinary();
+		m_pbTempScreenshot->m_cdata = pStream->size();
+		m_pbTempScreenshot->m_pData = new char[m_pbTempScreenshot->m_cdata];
+
+		BiffReader biffReader(pStream, this, NULL, version);
+		biffReader.ReadBytes(m_pbTempScreenshot->m_pData, m_pbTempScreenshot->m_cdata);
+
+		delete pStream;
+	}
 
 	return S_OK;
 }
@@ -545,7 +601,7 @@ HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileV
 
 	if (pStream->read((unsigned char*)&len, sizeof(int)) == 0)
 	{
-		return S_FALSE;
+		return E_FAIL;
 	}
 
 	PinSound* const pPinSound = new PinSound();
@@ -554,7 +610,7 @@ HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileV
 	if (pStream->read((unsigned char*)pTmp, len) == 0)
 	{
 		delete pPinSound;
-		return S_FALSE;
+		return E_FAIL;
 	}
 
 	pTmp[len] = 0;
@@ -564,7 +620,7 @@ HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileV
 	if (pStream->read((unsigned char*)&len, sizeof(int)) == 0)
 	{
 		delete pPinSound;
-		return S_FALSE;
+		return E_FAIL;
 	}
 
 	pTmp = new char[len + 1];
@@ -572,7 +628,7 @@ HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileV
 	if (pStream->read((unsigned char*)pTmp, len) == 0)
 	{
 		delete pPinSound;
-		return S_FALSE;
+		return E_FAIL;
 	}
 
 	pTmp[len] = 0;
@@ -582,7 +638,7 @@ HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileV
 	if (pStream->read((unsigned char*)&len, sizeof(int)) == 0)
 	{
 		delete pPinSound;
-		return S_FALSE;
+		return E_FAIL;
 	}
 
 	pTmp = new char[len + 1];
@@ -590,7 +646,7 @@ HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileV
 	if (pStream->read((unsigned char*)pTmp, len) == 0)
 	{
 		delete pPinSound;
-		return S_FALSE;
+		return E_FAIL;
 	}
 
 	delete[] pTmp;
@@ -600,14 +656,14 @@ HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileV
 		if (pStream->read((unsigned char*)(&pPinSound->m_wfx), sizeof(pPinSound->m_wfx)) == 0)
 		{
 			delete pPinSound;
-			return S_FALSE;
+			return E_FAIL;
 		}
 	}
 
 	if (pStream->read((unsigned char*)(&pPinSound->m_cdata), sizeof(int)) == 0)
 	{
 		delete pPinSound;
-		return S_FALSE;
+		return E_FAIL;
 	}
 
 	pPinSound->m_pData = new char[pPinSound->m_cdata];
@@ -615,7 +671,7 @@ HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileV
 	if (pStream->read((unsigned char*)(pPinSound->m_pData), pPinSound->m_cdata) == 0)
 	{
 		delete pPinSound;
-		return S_FALSE;
+		return E_FAIL;
 	}
 
 	if (loadFileVersion >= NEW_SOUND_FORMAT_VERSION)
@@ -623,31 +679,31 @@ HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileV
 		if (pStream->read((unsigned char*)(&pPinSound->m_outputTarget), sizeof(char)) == 0)
 		{
 			delete pPinSound;
-			return S_FALSE;
+			return E_FAIL;
 		}
 
 		if (pStream->read((unsigned char*)(&pPinSound->m_volume), sizeof(int)) == 0)
 		{
 			delete pPinSound;
-			return S_FALSE;
+			return E_FAIL;
 		}
 
 		if (pStream->read((unsigned char*)(&pPinSound->m_balance), sizeof(int)) == 0)
 		{
 			delete pPinSound;
-			return S_FALSE;
+			return E_FAIL;
 		}
 
 		if (pStream->read((unsigned char*)(&pPinSound->m_fade), sizeof(int)) == 0)
 		{
 			delete pPinSound;
-			return S_FALSE;
+			return E_FAIL;
 		}
 
 		if (pStream->read((unsigned char*)(&pPinSound->m_volume), sizeof(int)) == 0)
 		{
 			delete pPinSound;
-			return S_FALSE;
+			return E_FAIL;
 		}
 	}
 	else
@@ -657,7 +713,7 @@ HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileV
 		if (pStream->read((unsigned char*)&toBackglassOutput, sizeof(bool)) == 0)
 		{
 			delete pPinSound;
-			return S_FALSE;
+			return E_FAIL;
 		}
 
 		/* TODO: pPinSound->m_outputTarget = (StrStrI(pPinSound->m_szName.c_str(), "bgout_") != NULL) || (_stricmp(pPinSound->m_szPath.c_str(), "* Backglass Output *") == 0) // legacy behavior, where the BG selection was encoded into the strings directly
@@ -679,7 +735,7 @@ HRESULT PinTable::LoadSoundFromStream(POLE::Stream* pStream, const int loadFileV
 		if (m_vsound[i]->m_szName == pPinSound->m_szName && m_vsound[i]->m_szPath == pPinSound->m_szPath)
 		{
 			delete pPinSound;
-			return S_FALSE;
+			return E_FAIL;
 		}
 	}
 
