@@ -90,6 +90,9 @@ bool BgfxWindow::Create(int width, int height)
 
 	if (!SDL_GetWindowWMInfo(m_pWindow, &wmi))
 	{
+		SDL_DestroyWindow(m_pWindow);
+		m_pWindow = nullptr;
+
 		return false;
 	}
 
@@ -107,12 +110,18 @@ bool BgfxWindow::Create(int width, int height)
 #endif
 
 	bgfx::Init init;
-	init.type = bgfx::RendererType::Vulkan;
+	init.type = bgfx::RendererType::Count;
 	init.resolution.width = m_width;
 	init.resolution.height = m_height;
 	init.resolution.reset = BGFX_RESET_VSYNC;
 	init.platformData = platformData;
-	bgfx::init(init);
+	
+	if (!bgfx::init(init)) {
+		SDL_DestroyWindow(m_pWindow);
+		m_pWindow = nullptr;
+
+		return false;
+	}
 
 	bgfx::setDebug(BGFX_DEBUG_TEXT | BGFX_DEBUG_STATS);
 
@@ -125,13 +134,18 @@ bool BgfxWindow::Create(int width, int height)
 
 	ImGui_Implbgfx_Init(0);
 
-	if (init.type == bgfx::RendererType::Vulkan)
-	{
-		ImGui_ImplSDL2_InitForVulkan(m_pWindow);
-	}
-	else if (init.type == bgfx::RendererType::Metal)
-	{
-		ImGui_ImplSDL2_InitForMetal(m_pWindow);
+	switch(bgfx::getRendererType()) {
+		case bgfx::RendererType::Vulkan:
+			ImGui_ImplSDL2_InitForVulkan(m_pWindow);
+			break;
+		case bgfx::RendererType::Metal:
+			ImGui_ImplSDL2_InitForMetal(m_pWindow);
+			break;
+		default:
+			SDL_DestroyWindow(m_pWindow);
+			m_pWindow = nullptr;
+
+			return false;
 	}
 
 	return true;
@@ -231,7 +245,7 @@ void BgfxWindow::Destroy()
 	bgfx::shutdown();
 
 	SDL_DestroyWindow(m_pWindow);
-	SDL_Quit();
-
 	m_pWindow = nullptr;
+
+	SDL_Quit();
 }
