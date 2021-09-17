@@ -27,11 +27,38 @@ __forceinline float clamp(const float x, const float min, const float max);
 
 typedef float D3DVALUE;
 
+typedef struct
+{
+	long left;
+	long top;
+	long right;
+	long bottom;
+} RECT;
+
+typedef struct
+{
+	union
+	{
+		struct
+		{
+			float _11, _12, _13, _14;
+			float _21, _22, _23, _24;
+			float _31, _32, _33, _34;
+			float _41, _42, _43, _44;
+		};
+		float m[4][4];
+	};
+} D3DMATRIX;
+
+#define ANGTORAD(x) ((x) *(float)(M_PI/180.0))
+
 #define MAXNAMEBUFFER 32
 #define MAXSTRING 1024
 
 #define EDITOR_BG_WIDTH 1000
 #define EDITOR_BG_HEIGHT 750
+
+#define DEFAULT_PLAYER_WIDTH 1024
 
 class Vertex3D_NoTex2
 {

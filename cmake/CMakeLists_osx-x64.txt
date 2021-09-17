@@ -34,10 +34,35 @@ include_directories(
 )
 
 add_executable(vpxpp
-	math/vector.h
-
 	math/cmath.h
 	math/cmath.cpp
+
+	math/Vertex2D.h
+	math/Vertex2D.cpp
+
+	math/Vertex3Ds.h
+	math/Vertex3Ds.cpp
+
+	math/Vertex4D.h
+	math/Vertex4D.cpp
+
+	math/Matrix3.h
+	math/Matrix3.cpp
+
+	math/Matrix3D.h
+	math/Matrix3D.cpp
+
+	math/Bool2.h
+	math/Bool2.cpp
+
+	math/Bool4.h
+	math/Bool4.cpp
+
+	math/Int2.h
+	math/Int2.cpp
+	
+	math/Short2.h
+	math/Short2.cpp
 
 	src/LZWReader.h
 	src/LZWReader.cpp
@@ -145,14 +170,17 @@ add_executable(vpxpp
 	src/Pin3D.h
 	src/Pin3D.cpp
 
+	src/PinProjection.h
+	src/PinProjection.cpp
+
 	src/VPinball.h
 	src/VPinball.cpp
 
 	src/VPApp.h
 	src/VPApp.cpp
 
-        src/BgfxWindow.h
-        src/BgfxWindow.cpp
+	src/BgfxWindow.h
+	src/BgfxWindow.cpp
 
 	src/main.cpp
 

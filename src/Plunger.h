@@ -4,7 +4,7 @@
 #include "IEditable.h"
 #include "IScriptable.h"
 #include "ISelect.h"
-#include "vector.h"
+#include "Vertex2D.h"
 
 #include "PinTable.h"
 #include "RenderDevice.h"

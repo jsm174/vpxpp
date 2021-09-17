@@ -17,7 +17,6 @@
 #include "hash.h"
 #include "misc.h"
 #include "physconst.h"
-#include "vector.h"
 
 #include <unordered_map>
 #include <vector>

@@ -315,6 +315,18 @@ typedef enum
 	RGB_FP
 } TextureFormat;
 
+typedef enum
+{
+	Defaults = -1,
+	Disabled = 0,
+	Fast_FXAA = 1,
+	Standard_FXAA = 2,
+	Quality_FXAA = 3,
+	Fast_NFAA = 4,
+	Standard_DLAA = 5,
+	Quality_SMAA = 6,
+} FXAASettings;
+
 #pragma pack(push, 1)
 typedef struct tWAVEFORMATEX
 {

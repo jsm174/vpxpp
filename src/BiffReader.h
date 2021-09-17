@@ -4,7 +4,8 @@
 #include "misc.h"
 #include "pole.h"
 
-#include "vector.h"
+#include "Vertex2D.h"
+#include "Vertex3Ds.h"
 
 class ILoadable;
 

@@ -58,6 +58,10 @@ PinTable::PinTable()
 
 	m_pCodeViewer = new CodeViewer();
 
+	m_globalEmissionScale = 1.0f;
+	m_pbTempScreenshot = NULL;
+	m_numMaterials = 0;
+
 	m_3DZPD = 0.5f;
 	m_3DmaxSeparation = 0.03f;
 	m_3DOffset = 0.0f;

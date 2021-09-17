@@ -4,7 +4,7 @@
 #include "IEditable.h"
 #include "IScriptable.h"
 #include "ISelect.h"
-#include "vector.h"
+#include "Vertex2D.h"
 
 #include "BiffReader.h"
 #include "PinTable.h"
@@ -13,7 +13,8 @@
 class DispReelData : public BaseProperty
 {
 public:
-	Vertex2D m_v1, m_v2;
+	Vertex2D m_v1;
+	Vertex2D m_v2;
 	int m_imagesPerGridRow;
 	int m_reelcount;
 	float m_width, m_height;
