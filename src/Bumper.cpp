@@ -249,6 +249,11 @@ bool Bumper::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+IEditable* Bumper::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
+}
+
 void Bumper::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

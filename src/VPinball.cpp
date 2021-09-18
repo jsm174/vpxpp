@@ -32,7 +32,7 @@ void VPinball::LoadFileName(const std::string& szFileName, const bool updateEdit
 	// TODO: PinTableMDI* const mdiTable = new PinTableMDI(this);
 	// TODO: CComObject<PinTable>* const pPinTable = mdiTable->GetTable();
 
-	PinTable* pPinTable = new PinTable();
+	PinTable* pPinTable = new PinTable(this);
 	const HRESULT hr = pPinTable->LoadGameFromFilename(szFileName);
 
 	if (hr != S_OK)

@@ -158,6 +158,11 @@ bool LightSeq::LoadToken(const int id, BiffReader* const pbr)
 	return true;
 }
 
+IEditable* LightSeq::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
+}
+
 void LightSeq::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

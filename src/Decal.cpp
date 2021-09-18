@@ -236,6 +236,11 @@ bool Decal::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+IEditable* Decal::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
+}
+
 void Decal::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

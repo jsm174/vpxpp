@@ -58,6 +58,7 @@ public:
 	virtual HRESULT InitPostLoad();
 	void SetDefaults(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+	virtual IEditable* GetIEditable();
 
 	virtual void WriteRegDefaults();
 

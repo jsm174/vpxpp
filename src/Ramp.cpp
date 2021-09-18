@@ -1,5 +1,6 @@
 #include "Ramp.h"
 #include "RegUtil.h"
+#include "DragPoint.h"
 
 const ItemTypeEnum Ramp::ItemType = eItemRamp;
 const int Ramp::TypeNameID = 145;
@@ -279,12 +280,17 @@ bool Ramp::LoadToken(const int id, BiffReader* const pBiffReader)
 		break;
 	default:
 	{
-		// TODO: LoadPointToken(id, pBiffReader, pBiffReader->m_version);
+		LoadPointToken(id, pBiffReader, pBiffReader->m_version);
 		ISelect::LoadToken(id, pBiffReader);
 		break;
 	}
 	}
 	return true;
+}
+
+IEditable* Ramp::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
 }
 
 void Ramp::WriteRegDefaults()
@@ -319,3 +325,256 @@ void Ramp::WriteRegDefaults()
 	pRegUtil->SaveValueFloat(strKeyName, "WireDistanceX", m_d.m_wireDistanceX);
 	pRegUtil->SaveValueFloat(strKeyName, "WireDistanceY", m_d.m_wireDistanceY);
 }
+
+void Ramp::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)
+{
+	float* rgheight1;
+	int cvertex;
+	const Vertex2D* const rgvLocal = GetRampVertex(cvertex, &rgheight1, NULL, NULL, NULL, HIT_SHAPE_DETAIL_LEVEL, true);
+
+	Vertex3Ds bbox_min(FLT_MAX, FLT_MAX, FLT_MAX);
+	Vertex3Ds bbox_max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	for (int i = 0; i < cvertex; i++)
+	{
+		{
+			const Vertex3Ds pv(rgvLocal[i].x, rgvLocal[i].y, rgheight1[i] + (float)(2.0 * PHYS_SKIN)); // leave room for ball //!! use ballsize
+			bbox_min.x = min(bbox_min.x, pv.x);
+			bbox_min.y = min(bbox_min.y, pv.y);
+			bbox_min.z = min(bbox_min.z, pv.z);
+			bbox_max.x = max(bbox_max.x, pv.x);
+			bbox_max.y = max(bbox_max.y, pv.y);
+			bbox_max.z = max(bbox_max.z, pv.z);
+		}
+
+		const Vertex3Ds pv(rgvLocal[cvertex * 2 - i - 1].x, rgvLocal[cvertex * 2 - i - 1].y, rgheight1[i] + (float)(2.0 * PHYS_SKIN)); // leave room for ball //!! use ballsize
+		bbox_min.x = min(bbox_min.x, pv.x);
+		bbox_min.y = min(bbox_min.y, pv.y);
+		bbox_min.z = min(bbox_min.z, pv.z);
+		bbox_max.x = max(bbox_max.x, pv.x);
+		bbox_max.y = max(bbox_max.y, pv.y);
+		bbox_max.z = max(bbox_max.z, pv.z);
+	}
+
+	delete[] rgvLocal;
+	delete[] rgheight1;
+
+	for (int i = 0; i < 8; i++)
+	{
+		const Vertex3Ds pv(
+			(i & 1) ? bbox_min.x : bbox_max.x,
+			(i & 2) ? bbox_min.y : bbox_max.y,
+			(i & 4) ? bbox_min.z : bbox_max.z);
+
+		pvvertex3D.push_back(pv);
+	}
+}
+
+void Ramp::AssignHeightToControlPoint(const RenderVertex3D &v, const float height)
+{
+   for (size_t i = 0; i < m_vdpoint.size(); i++)
+   {
+      if (m_vdpoint[i]->m_v.x == v.x && m_vdpoint[i]->m_v.y == v.y) {
+         m_vdpoint[i]->m_calcHeight = height;
+	  }
+   }
+}
+
+//
+// license:GPLv3+
+// Ported at: VisualPinball.Engine/VPT/Ramp/RampMeshGenerator.cs
+//
+
+Vertex2D* Ramp::GetRampVertex(int& pcvertex, float** const ppheight, bool** const ppfCross, float** const ppratio, Vertex2D** const pMiddlePoints, const float _accuracy, const bool inc_width)
+{
+	std::vector<RenderVertex3D> vvertex;
+	GetCentralCurve(vvertex, _accuracy);
+
+	const int cvertex = (int)vvertex.size();
+	pcvertex = cvertex;
+	Vertex2D* const rgvLocal = new Vertex2D[cvertex * 2];
+
+	if (ppheight)
+	{
+		*ppheight = new float[cvertex];
+	}
+
+	if (ppfCross)
+	{
+		*ppfCross = new bool[cvertex];
+	}
+
+	if (ppratio)
+	{
+		*ppratio = new float[cvertex];
+	}
+
+	if (pMiddlePoints)
+	{
+		*pMiddlePoints = new Vertex2D[cvertex];
+	}
+
+	float totallength = 0;
+	const float bottomHeight = m_d.m_heightbottom + m_ptable->m_tableheight;
+	const float topHeight = m_d.m_heighttop + m_ptable->m_tableheight;
+
+	for (int i = 0; i < (cvertex - 1); i++)
+	{
+		const RenderVertex3D& v1 = vvertex[i];
+		const RenderVertex3D& v2 = vvertex[i + 1];
+
+		const float dx = v1.x - v2.x;
+		const float dy = v1.y - v2.y;
+		const float length = sqrtf(dx * dx + dy * dy);
+
+		totallength += length;
+	}
+
+	float currentlength = 0;
+	for (int i = 0; i < cvertex; i++)
+	{
+		const RenderVertex3D& vprev = vvertex[(i > 0) ? i - 1 : i];
+		const RenderVertex3D& vnext = vvertex[(i < (cvertex - 1)) ? i + 1 : i];
+		const RenderVertex3D& vmiddle = vvertex[i];
+
+		if (ppfCross)
+		{
+			(*ppfCross)[i] = vmiddle.controlPoint;
+		}
+
+		Vertex2D vnormal;
+		{
+			Vertex2D v1normal(vprev.y - vmiddle.y, vmiddle.x - vprev.x);
+			Vertex2D v2normal(vmiddle.y - vnext.y, vnext.x - vmiddle.x);
+
+			if (i == (cvertex - 1))
+			{
+				v1normal.Normalize();
+				vnormal = v1normal;
+			}
+			else if (i == 0)
+			{
+				v2normal.Normalize();
+				vnormal = v2normal;
+			}
+			else
+			{
+				v1normal.Normalize();
+				v2normal.Normalize();
+
+				if (fabsf(v1normal.x - v2normal.x) < 0.0001f && fabsf(v1normal.y - v2normal.y) < 0.0001f)
+				{
+					vnormal = v1normal;
+				}
+				else
+				{
+					const float A = vprev.y - vmiddle.y;
+					const float B = vmiddle.x - vprev.x;
+
+					const float C = A * (v1normal.x - vprev.x) + B * (v1normal.y - vprev.y);
+
+					const float D = vnext.y - vmiddle.y;
+					const float E = vmiddle.x - vnext.x;
+
+					const float F = D * (v2normal.x - vnext.x) + E * (v2normal.y - vnext.y);
+
+					const float det = A * E - B * D;
+					const float inv_det = (det != 0.0f) ? 1.0f / det : 0.0f;
+
+					const float intersectx = (B * F - E * C) * inv_det;
+					const float intersecty = (C * D - A * F) * inv_det;
+
+					vnormal.x = vmiddle.x - intersectx;
+					vnormal.y = vmiddle.y - intersecty;
+				}
+			}
+		}
+
+		{
+			const float dx = vprev.x - vmiddle.x;
+			const float dy = vprev.y - vmiddle.y;
+			const float length = sqrtf(dx * dx + dy * dy);
+
+			currentlength += length;
+		}
+
+		const float percentage = currentlength / totallength;
+		float widthcur = percentage * (m_d.m_widthtop - m_d.m_widthbottom) + m_d.m_widthbottom;
+		if (ppheight)
+		{
+			(*ppheight)[i] = vmiddle.z + percentage * (topHeight - bottomHeight) + bottomHeight;
+		}
+
+		AssignHeightToControlPoint(vvertex[i], vmiddle.z + percentage * (topHeight - bottomHeight) + bottomHeight);
+		if (ppratio)
+		{
+			(*ppratio)[i] = 1.0f - percentage;
+		}
+
+		if (isHabitrail() && m_d.m_type != RampType1Wire)
+		{
+			widthcur = m_d.m_wireDistanceX;
+			if (inc_width)
+			{
+				widthcur += 20.0f;
+			}
+		}
+		else if (m_d.m_type == RampType1Wire)
+		{
+			widthcur = m_d.m_wireDiameter;
+		}
+
+		if (pMiddlePoints)
+		{
+			(*pMiddlePoints)[i] = Vertex2D(vmiddle.x, vmiddle.y) + vnormal;
+		}
+		rgvLocal[i] = Vertex2D(vmiddle.x, vmiddle.y) + (widthcur * 0.5f) * vnormal;
+		rgvLocal[cvertex * 2 - i - 1] = Vertex2D(vmiddle.x, vmiddle.y) - (widthcur * 0.5f) * vnormal;
+	}
+
+	return rgvLocal;
+}
+
+template <typename T>
+void Ramp::GetCentralCurve(std::vector<T>& vv, const float _accuracy) const
+{
+	float accuracy;
+
+	if (_accuracy != -1.f)
+	{
+		accuracy = _accuracy;
+	}
+	else
+	{
+		const Material* const mat = m_ptable->GetMaterial(m_d.m_szMaterial);
+		if (!mat->m_bOpacityActive)
+		{
+			accuracy = 10.f;
+		}
+		else
+		{
+			accuracy = (float)m_ptable->GetDetailLevel();
+		}
+	}
+
+	accuracy = 4.0f * powf(10.0f, (10.0f - accuracy) * (float)(1.0 / 1.5));
+
+	IHaveDragPoints::GetRgVertex(vv, false, accuracy);
+}
+
+//
+// license:GPLv3+
+// Ported at: VisualPinball.Engine/VPT/Ramp/RampHitGenerator.cs
+//
+
+bool Ramp::isHabitrail() const
+{
+   return m_d.m_type == RampType4Wire
+       || m_d.m_type == RampType1Wire
+       || m_d.m_type == RampType2Wire
+       || m_d.m_type == RampType3WireLeft
+       || m_d.m_type == RampType3WireRight;
+}
+
+//
+// end of license:GPLv3+, back to 'old MAME'-like
+//

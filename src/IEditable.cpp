@@ -19,3 +19,7 @@ void IEditable::InitScript()
 
    GetPTable()->m_pcv->AddItem(GetScriptable(), false);*/
 }
+
+void IEditable::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)
+{
+}

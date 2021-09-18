@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IEditable.h"
+#include "IHaveDragPoints.h"
 #include "IScriptable.h"
 #include "ISelect.h"
 
@@ -37,7 +38,8 @@ public:
 
 class Flasher : public ISelect,
 				public IEditable,
-				public IScriptable
+				public IScriptable,
+				public IHaveDragPoints
 {
 public:
 	static const ItemTypeEnum ItemType;
@@ -61,6 +63,7 @@ public:
 	virtual HRESULT InitPostLoad();
 	virtual void SetDefaults(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+	virtual IEditable* GetIEditable();
 
 	virtual void WriteRegDefaults();
 

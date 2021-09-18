@@ -269,6 +269,8 @@ void BgfxWindow::fatal(const char* _filePath, uint16_t _line, bgfx::Fatal::Enum 
 			SDL_DestroyWindow(m_pWindow);
 			m_pWindow = nullptr;
 		}
+
+		exit(0);
 	}
 }
 

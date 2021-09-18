@@ -1,13 +1,5 @@
 #include "Matrix3D.h"
 
-Matrix3D Matrix3D::ComputeLaybackTransform(const float layback)
-{
-	Matrix3D matTrans;
-	matTrans.SetIdentity();
-	matTrans._32 = -tanf(0.5f * ANGTORAD(layback));
-	return matTrans;
-}
-
 Matrix3D::Matrix3D()
 {
 }
@@ -293,4 +285,12 @@ void Matrix3D::MultiplyVector(const VecIn& vIn, VecOut& vOut) const
 	vOut.x = xp * inv_wp;
 	vOut.y = yp * inv_wp;
 	vOut.z = zp * inv_wp;
+}
+
+Matrix3D ComputeLaybackTransform(const float layback)
+{
+	Matrix3D matTrans;
+	matTrans.SetIdentity();
+	matTrans._32 = -tanf(0.5f * ANGTORAD(layback));
+	return matTrans;
 }

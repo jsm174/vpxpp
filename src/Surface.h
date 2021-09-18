@@ -2,9 +2,11 @@
 
 #include "BaseProperty.h"
 #include "IEditable.h"
+#include "IHaveDragPoints.h"
 #include "IScriptable.h"
 #include "ISelect.h"
 #include "Vertex2D.h"
+#include "Vertex3Ds.h"
 
 #include "BiffReader.h"
 #include "PinTable.h"
@@ -40,7 +42,8 @@ public:
 
 class Surface : public ISelect,
 				public IEditable,
-				public IScriptable
+				public IScriptable,
+				public IHaveDragPoints
 {
 public:
 	static const ItemTypeEnum ItemType;
@@ -65,8 +68,11 @@ public:
 	virtual void SetDefaults(bool fromMouseClick);
 	virtual void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+	virtual IEditable* GetIEditable();
 
 	virtual void WriteRegDefaults();
+
+	virtual void GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D);
 
 	SurfaceData m_d;
 

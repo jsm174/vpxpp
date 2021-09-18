@@ -275,12 +275,17 @@ bool Light::LoadToken(const int id, BiffReader* const pBiffReader)
 		break;
 	default:
 	{
-		// TODO: LoadPointToken(id, pBiffReader, pBiffReader->m_version);
+		LoadPointToken(id, pBiffReader, pBiffReader->m_version);
 		ISelect::LoadToken(id, pBiffReader);
 		break;
 	}
 	}
 	return true;
+}
+
+IEditable* Light::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
 }
 
 void Light::WriteRegDefaults()

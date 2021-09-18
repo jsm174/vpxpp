@@ -2,13 +2,18 @@
 
 #include "BaseProperty.h"
 #include "IEditable.h"
+#include "IHaveDragPoints.h"
 #include "IScriptable.h"
 #include "ISelect.h"
+#include "Vertex2D.h"
+#include "Vertex3Ds.h"
 
 #include "BiffReader.h"
 #include "PinTable.h"
 #include "RenderDevice.h"
 #include "Timer.h"
+
+#include "RenderVertex.h"
 
 class RubberData : public BaseProperty
 {
@@ -26,8 +31,9 @@ public:
 };
 
 class Rubber : public ISelect,
-               public IEditable,
-               public IScriptable
+			   public IEditable,
+			   public IScriptable,
+			   public IHaveDragPoints
 {
 public:
 	static const ItemTypeEnum ItemType;
@@ -52,12 +58,18 @@ public:
 	virtual void SetDefaults(bool fromMouseClick);
 	virtual void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+	virtual IEditable* GetIEditable();
 
 	virtual void WriteRegDefaults();
+
+	virtual void GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D);
 
 	RubberData m_d;
 
 private:
+	Vertex2D* GetSplineVertex(int& pcvertex, bool** const ppfCross, Vertex2D** const pMiddlePoints, const float _accuracy = -1.f);
+	void GetCentralCurve(std::vector<RenderVertex>& vv, const float _accuracy) const;
+
 	PinTable* m_ptable;
 
 	VertexBuffer* m_dynamicVertexBuffer;

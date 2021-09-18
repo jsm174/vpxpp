@@ -224,6 +224,11 @@ bool Gate::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+IEditable* Gate::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
+}
+
 void Gate::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

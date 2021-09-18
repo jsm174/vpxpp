@@ -64,6 +64,18 @@ add_executable(vpxpp
 	math/Short2.h
 	math/Short2.cpp
 
+	src/RenderVertex.h
+	src/RenderVertex.cpp
+
+	src/RenderVertex3D.h
+	src/RenderVertex3D.cpp
+
+	src/DragPoint.h
+	src/DragPoint.cpp
+
+	src/IHaveDragPoints.h
+	src/IHaveDragPoints.cpp
+
 	src/LZWReader.h
 	src/LZWReader.cpp
 	

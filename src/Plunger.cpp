@@ -266,6 +266,11 @@ bool Plunger::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+IEditable* Plunger::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
+}
+
 void Plunger::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

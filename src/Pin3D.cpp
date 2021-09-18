@@ -19,7 +19,7 @@ HRESULT Pin3D::InitPin3D(const bool fullScreen, const int width, const int heigh
 
 void Pin3D::InitLayout(const bool FSS_mode, const float xpixoff, const float ypixoff)
 {
-/* 	const float rotation = ANGTORAD(g_pplayer->m_ptable->m_BG_rotation[g_pplayer->m_ptable->m_BG_current_set]);
+ 	const float rotation = ANGTORAD(g_pplayer->m_ptable->m_BG_rotation[g_pplayer->m_ptable->m_BG_current_set]);
 	float inclination = ANGTORAD(g_pplayer->m_ptable->m_BG_inclination[g_pplayer->m_ptable->m_BG_current_set]);
 	const float FOV = (g_pplayer->m_ptable->m_BG_FOV[g_pplayer->m_ptable->m_BG_current_set] < 1.0f) ? 1.0f : g_pplayer->m_ptable->m_BG_FOV[g_pplayer->m_ptable->m_BG_current_set];
 
@@ -29,6 +29,7 @@ void Pin3D::InitLayout(const bool FSS_mode, const float xpixoff, const float ypi
 		g_pplayer->m_ptable->m_vedit[i]->GetBoundingVertices(vvertex3D);
 	}
 
+/*
 	m_proj.m_rcviewport.left = 0;
 	m_proj.m_rcviewport.top = 0;
 	m_proj.m_rcviewport.right = m_viewPort.Width;

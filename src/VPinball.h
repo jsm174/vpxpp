@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PinTable.h"
+#include "Material.h"
 #include "misc.h"
 
 #include <string>
@@ -24,6 +25,8 @@ public:
 	bool m_povEdit;
 
 	std::vector<PinTable*> m_vtable;
+
+	Material m_dummyMaterial;
 
 private:
 };

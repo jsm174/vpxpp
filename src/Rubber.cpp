@@ -250,12 +250,17 @@ bool Rubber::LoadToken(const int id, BiffReader* const pBiffReader)
 		break;
 	default:
 	{
-		// TODO: LoadPointToken(id, pBiffReader, pBiffReader->m_version);
+		LoadPointToken(id, pBiffReader, pBiffReader->m_version);
 		ISelect::LoadToken(id, pBiffReader);
 		break;
 	}
 	}
 	return true;
+}
+
+IEditable* Rubber::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
 }
 
 void Rubber::WriteRegDefaults()
@@ -283,4 +288,181 @@ void Rubber::WriteRegDefaults()
 	pRegUtil->SaveValueFloat(strKeyName, "RotY", m_d.m_rotY);
 	pRegUtil->SaveValueFloat(strKeyName, "RotZ", m_d.m_rotZ);
 	pRegUtil->SaveValueBool(strKeyName, "ReflectionEnabled", m_d.m_reflectionEnabled);
+}
+
+void Rubber::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)
+{
+	int cvertex;
+	const Vertex2D* const rgvLocal = GetSplineVertex(cvertex, NULL, NULL);
+
+	Vertex3Ds bbox_min(FLT_MAX, FLT_MAX, FLT_MAX);
+	Vertex3Ds bbox_max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	for (int i = 0; i < cvertex; i++)
+	{
+		{
+			const Vertex3Ds pv(rgvLocal[i].x, rgvLocal[i].y, m_d.m_height + (float)(2.0 * PHYS_SKIN)); // leave room for ball //!! use ballsize
+			bbox_min.x = min(bbox_min.x, pv.x);
+			bbox_min.y = min(bbox_min.y, pv.y);
+			bbox_min.z = min(bbox_min.z, pv.z);
+			bbox_max.x = max(bbox_max.x, pv.x);
+			bbox_max.y = max(bbox_max.y, pv.y);
+			bbox_max.z = max(bbox_max.z, pv.z);
+		}
+
+		const Vertex3Ds pv(rgvLocal[cvertex * 2 - i - 1].x, rgvLocal[cvertex * 2 - i - 1].y, m_d.m_height + (float)(2.0 * PHYS_SKIN)); // leave room for ball //!! use ballsize
+		bbox_min.x = min(bbox_min.x, pv.x);
+		bbox_min.y = min(bbox_min.y, pv.y);
+		bbox_min.z = min(bbox_min.z, pv.z);
+		bbox_max.x = max(bbox_max.x, pv.x);
+		bbox_max.y = max(bbox_max.y, pv.y);
+		bbox_max.z = max(bbox_max.z, pv.z);
+	}
+
+	delete[] rgvLocal;
+
+	for (int i = 0; i < 8; i++)
+	{
+		const Vertex3Ds pv(
+			(i & 1) ? bbox_min.x : bbox_max.x,
+			(i & 2) ? bbox_min.y : bbox_max.y,
+			(i & 4) ? bbox_min.z : bbox_max.z);
+
+		pvvertex3D.push_back(pv);
+	}
+}
+
+//
+// license:GPLv3+
+// Ported at: VisualPinball.Engine/Math/DragPoint.cs
+//
+
+Vertex2D* Rubber::GetSplineVertex(int& pcvertex, bool** const ppfCross, Vertex2D** const pMiddlePoints, const float _accuracy)
+{
+	std::vector<RenderVertex> vvertex;
+	GetCentralCurve(vvertex, _accuracy);
+
+	const int cvertex = (int)vvertex.size();
+	Vertex2D* const rgvLocal = new Vertex2D[(cvertex + 1) * 2];
+
+	if (pMiddlePoints)
+	{
+		*pMiddlePoints = new Vertex2D[cvertex + 1];
+	}
+
+	if (ppfCross)
+	{
+		*ppfCross = new bool[cvertex + 1];
+	}
+
+	for (int i = 0; i < cvertex; i++)
+	{
+		const RenderVertex& vprev = vvertex[(i > 0) ? i - 1 : cvertex - 1];
+		const RenderVertex& vnext = vvertex[(i < (cvertex - 1)) ? i + 1 : 0];
+		const RenderVertex& vmiddle = vvertex[i];
+
+		if (ppfCross)
+			(*ppfCross)[i] = vmiddle.controlPoint;
+
+		Vertex2D vnormal;
+		{
+			Vertex2D v1normal(vprev.y - vmiddle.y, vmiddle.x - vprev.x);
+			Vertex2D v2normal(vmiddle.y - vnext.y, vnext.x - vmiddle.x);
+
+			if (cvertex == 2 && i == (cvertex - 1))
+			{
+				v1normal.Normalize();
+				vnormal = v1normal;
+			}
+			else if (cvertex == 2 && i == 0)
+			{
+				v2normal.Normalize();
+				vnormal = v2normal;
+			}
+			else
+			{
+				v1normal.Normalize();
+				v2normal.Normalize();
+
+				if (fabsf(v1normal.x - v2normal.x) < 0.0001f && fabsf(v1normal.y - v2normal.y) < 0.0001f)
+				{
+					vnormal = v1normal;
+				}
+				else
+				{
+					const float A = vprev.y - vmiddle.y;
+					const float B = vmiddle.x - vprev.x;
+
+					const float C = A * (v1normal.x - vprev.x) + B * (v1normal.y - vprev.y);
+
+					const float D = vnext.y - vmiddle.y;
+					const float E = vmiddle.x - vnext.x;
+
+					const float F = D * (v2normal.x - vnext.x) + E * (v2normal.y - vnext.y);
+
+					const float det = A * E - B * D;
+					const float inv_det = (det != 0.0f) ? 1.0f / det : 0.0f;
+
+					const float intersectx = (B * F - E * C) * inv_det;
+					const float intersecty = (C * D - A * F) * inv_det;
+
+					vnormal.x = vmiddle.x - intersectx;
+					vnormal.y = vmiddle.y - intersecty;
+				}
+			}
+		}
+
+		const float widthcur = (float)m_d.m_thickness;
+
+		if (pMiddlePoints)
+		{
+			(*pMiddlePoints)[i] = vmiddle;
+		}
+
+		rgvLocal[i] = vmiddle + (widthcur * 0.5f) * vnormal;
+		rgvLocal[(cvertex + 1) * 2 - i - 1] = vmiddle - (widthcur * 0.5f) * vnormal;
+
+		if (i == 0)
+		{
+			rgvLocal[cvertex] = rgvLocal[0];
+			rgvLocal[(cvertex + 1) * 2 - cvertex - 1] = rgvLocal[(cvertex + 1) * 2 - 1];
+		}
+	}
+
+	if (ppfCross)
+	{
+		(*ppfCross)[cvertex] = vvertex[0].controlPoint;
+	}
+
+	if (pMiddlePoints)
+	{
+		(*pMiddlePoints)[cvertex] = (*pMiddlePoints)[0];
+	}
+
+	pcvertex = cvertex + 1;
+	return rgvLocal;
+}
+
+void Rubber::GetCentralCurve(std::vector<RenderVertex>& vv, const float _accuracy) const
+{
+	float accuracy;
+
+	if (_accuracy != -1.f)
+	{
+		accuracy = _accuracy;
+	}
+	else
+	{
+		if (m_d.m_staticRendering)
+		{
+			accuracy = 10.f;
+		}
+		else
+		{
+			accuracy = (float)m_ptable->GetDetailLevel();
+		}
+
+		accuracy = 4.0f * powf(10.0f, (10.0f - accuracy) * (float)(1.0 / 1.5));
+	}
+
+	IHaveDragPoints::GetRgVertex(vv, true, accuracy);
 }

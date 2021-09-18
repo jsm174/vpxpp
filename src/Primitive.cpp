@@ -510,6 +510,11 @@ bool Primitive::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+IEditable* Primitive::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
+}
+
 void Primitive::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

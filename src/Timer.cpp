@@ -125,6 +125,11 @@ bool Timer::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+IEditable* Timer::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
+}
+
 void Timer::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

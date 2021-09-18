@@ -11,11 +11,10 @@ public:
 	ISelect();
 
 	virtual PinTable* GetPTable() = 0;
-	//virtual const PinTable* GetPTable() const = 0;
 
 	void GetTypeNameForType(const ItemTypeEnum type, wchar_t* const buf) const;
 
-	virtual bool LoadToken(const int id, BiffReader* const pbr);
+	virtual bool LoadToken(const int id, BiffReader* const pBiffReader);
 
 	std::string m_layerName;
 

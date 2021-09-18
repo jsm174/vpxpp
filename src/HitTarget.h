@@ -61,6 +61,7 @@ public:
 	virtual void SetDefaults(bool fromMouseClick);
 	void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+	virtual IEditable* GetIEditable();
 
 	virtual void WriteRegDefaults();
 

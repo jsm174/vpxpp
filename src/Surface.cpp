@@ -376,12 +376,17 @@ bool Surface::LoadToken(const int id, BiffReader* const pBiffReader)
 		break;
 	default:
 	{
-		// TODO: LoadPointToken(id, pBiffReader, pBiffReader->m_version);
+		LoadPointToken(id, pBiffReader, pBiffReader->m_version);
 		ISelect::LoadToken(id, pBiffReader);
 		break;
 	}
 	}
 	return true;
+}
+
+IEditable* Surface::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
 }
 
 void Surface::WriteRegDefaults()
@@ -416,4 +421,17 @@ void Surface::WriteRegDefaults()
 	pRegUtil->SaveValueInt(strKeyName, "DisableLighting", (tmp == 1) ? 0 : tmp); // backwards compatible saving
 	pRegUtil->SaveValueFloat(strKeyName, "DisableLightingBelow", m_d.m_disableLightingBelow);
 	pRegUtil->SaveValueBool(strKeyName, "ReflectionEnabled", m_d.m_reflectionEnabled);
+}
+
+void Surface::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)
+{
+	for (int i = 0; i < 8; i++)
+	{
+		const Vertex3Ds pv(
+			(i & 1) ? m_ptable->m_right : m_ptable->m_left,
+			(i & 2) ? m_ptable->m_bottom : m_ptable->m_top,
+			(i & 4) ? m_d.m_heighttop : m_d.m_heightbottom);
+
+		pvvertex3D.push_back(pv);
+	}
 }

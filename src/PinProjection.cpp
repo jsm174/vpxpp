@@ -92,7 +92,7 @@ void PinProjection::FitCameraToVertices(std::vector<Vertex3Ds>& pvvertex3D, floa
 	float maxxintercept = -FLT_MAX;
 	float minxintercept = FLT_MAX;
 
-	Matrix3D laybackTrans = Matrix3D::ComputeLaybackTransform(layback);
+	Matrix3D laybackTrans = ComputeLaybackTransform(layback);
 
 	for (size_t i = 0; i < pvvertex3D.size(); ++i)
 	{

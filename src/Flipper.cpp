@@ -235,7 +235,7 @@ bool Flipper::LoadToken(const int id, BiffReader* const pBiffReader)
 	case FID(NAME):
 		pBiffReader->GetWideString(m_wzName, sizeof(m_wzName) / sizeof(wchar_t));
 		break;
-	case FID(RTHK): //!! deprecated, remove
+	case FID(RTHK):
 	{
 		int rt;
 		pBiffReader->GetInt(rt);
@@ -245,7 +245,7 @@ bool Flipper::LoadToken(const int id, BiffReader* const pBiffReader)
 	case FID(RTHF):
 		pBiffReader->GetFloat(m_d.m_rubberthickness);
 		break;
-	case FID(RHGT): //!! deprecated, remove
+	case FID(RHGT):
 	{
 		int rh;
 		pBiffReader->GetInt(rh);
@@ -255,7 +255,7 @@ bool Flipper::LoadToken(const int id, BiffReader* const pBiffReader)
 	case FID(RHGF):
 		pBiffReader->GetFloat(m_d.m_rubberheight);
 		break;
-	case FID(RWDT): //!! deprecated, remove
+	case FID(RWDT):
 	{
 		int rw;
 		pBiffReader->GetInt(rw);
@@ -312,6 +312,11 @@ bool Flipper::LoadToken(const int id, BiffReader* const pBiffReader)
 		break;
 	}
 	return true;
+}
+
+IEditable* Flipper::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
 }
 
 void Flipper::WriteRegDefaults()

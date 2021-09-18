@@ -2,14 +2,18 @@
 
 #include "BaseProperty.h"
 #include "IEditable.h"
+#include "IHaveDragPoints.h"
 #include "IScriptable.h"
 #include "ISelect.h"
 #include "Vertex2D.h"
+#include "Vertex3Ds.h"
 
 #include "BiffReader.h"
 #include "PinTable.h"
 #include "RenderDevice.h"
 #include "Timer.h"
+
+#include "RenderVertex3D.h"
 
 class RampData : public BaseProperty
 {
@@ -37,7 +41,8 @@ public:
 
 class Ramp : public ISelect,
 			 public IEditable,
-			 public IScriptable
+			 public IScriptable,
+			 public IHaveDragPoints
 {
 public:
 	static const ItemTypeEnum ItemType;
@@ -62,12 +67,22 @@ public:
 	virtual void SetDefaults(bool fromMouseClick);
 	virtual void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+	virtual IEditable* GetIEditable();
 
 	virtual void WriteRegDefaults();
+
+	virtual void GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D);
+
+	void AssignHeightToControlPoint(const RenderVertex3D& v, const float height);
 
 	RampData m_d;
 
 private:
+	Vertex2D* GetRampVertex(int& pcvertex, float** const ppheight, bool** const ppfCross, float** const ppratio, Vertex2D** const pMiddlePoints, const float _accuracy, const bool inc_width);
+
+	template <typename T>
+	void GetCentralCurve(std::vector<T>& vv, const float _accuracy = -1.f) const;
+
 	PinTable* m_ptable;
 
 	int m_rampVertex;
@@ -89,5 +104,5 @@ private:
 
 	// TODO: PropertyPane *m_propPhysics;
 
-	// TODO: bool isHabitrail() const;
+	bool isHabitrail() const;
 };

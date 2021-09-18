@@ -277,6 +277,11 @@ bool HitTarget::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+IEditable* HitTarget::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
+}
+
 void HitTarget::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

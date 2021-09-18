@@ -10,8 +10,10 @@
 #include "Player.h"
 #include "extern.h"
 
-PinTable::PinTable()
+PinTable::PinTable(VPinball* pVPinball)
 {
+	m_vpinball = pVPinball;
+
 	m_renderDecals = true;
 	m_renderEMReels = true;
 
@@ -810,10 +812,9 @@ Material* PinTable::GetMaterial(const std::string& szName) const
 {
 	if (szName.empty())
 	{
-		// TODO: return &m_vpinball->m_dummyMaterial;
+		return &m_vpinball->m_dummyMaterial;
 	}
 
-	// during playback, we use the hashtable for lookup
 	if (!m_materialMap.empty())
 	{
 		std::unordered_map<const char*, Material*, StringHashFunctor, StringComparator>::const_iterator
@@ -824,7 +825,7 @@ Material* PinTable::GetMaterial(const std::string& szName) const
 		}
 		else
 		{
-			// TODO:   return &m_vpinball->m_dummyMaterial;
+			return &m_vpinball->m_dummyMaterial;
 		}
 	}
 
@@ -836,7 +837,7 @@ Material* PinTable::GetMaterial(const std::string& szName) const
 		}
 	}
 
-	// TODO: return &m_vpinball->m_dummyMaterial;
+	return &m_vpinball->m_dummyMaterial;
 }
 
 Texture* PinTable::GetImage(const std::string& szName) const
@@ -1382,6 +1383,11 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 	return true;
 }
 
+IEditable* PinTable::GetIEditable()
+{
+	return (IEditable*)this;
+}
+
 void PinTable::GetUniqueName(const ItemTypeEnum type, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const
 {
 	wchar_t wzRoot[256];
@@ -1467,4 +1473,9 @@ void PinTable::Play(const bool cameraMode)
 {
 	g_pplayer = new Player(cameraMode, this);
 	g_pplayer->Create(1024, 768);
+}
+
+int PinTable::GetDetailLevel() const
+{
+	return m_overwriteGlobalDetailLevel ? m_userDetailLevel : m_globalDetailLevel;
 }

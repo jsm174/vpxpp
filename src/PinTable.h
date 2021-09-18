@@ -29,12 +29,14 @@ struct LightSource
 	Vertex3Ds pos;
 };
 
+class VPinball;
+
 class PinTable : public ISelect,
 				 public IScriptable,
 				 public IEditable
 {
 public:
-	PinTable();
+	PinTable(VPinball* pVPinball);
 	virtual ~PinTable();
 
 	void InitTablePostLoad();
@@ -56,11 +58,14 @@ public:
 	virtual void SetDefaults(bool fromMouseClick);
 	virtual void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+	virtual IEditable* GetIEditable();
 
 	void Play(const bool cameraMode);
 
+	int GetDetailLevel() const;
+
 	Material* GetMaterial(const std::string& szName) const;
-	Texture* GetImage(const std::string &szName) const;
+	Texture* GetImage(const std::string& szName) const;
 
 	void GetUniqueName(const ItemTypeEnum type, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;
 	void GetUniqueName(const wchar_t* const prefix, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;
@@ -182,6 +187,7 @@ public:
 	std::vector<std::string> m_vCustomInfoTag;
 	std::vector<std::string> m_vCustomInfoContent;
 
+	int m_globalDetailLevel;
 	int m_userDetailLevel;
 	bool m_overwriteGlobalDetailLevel;
 
@@ -220,4 +226,6 @@ private:
 
 	std::unordered_map<const char*, Texture*, StringHashFunctor, StringComparator> m_textureMap;
 	std::unordered_map<const char*, Material*, StringHashFunctor, StringComparator> m_materialMap;
+
+	VPinball* m_vpinball;
 };

@@ -5,8 +5,6 @@
 class Matrix3D : public D3DMATRIX
 {
 public:
-   static Matrix3D ComputeLaybackTransform(float layback);
-
 	Matrix3D();
 	Matrix3D(const float Scale);
 
@@ -37,4 +35,6 @@ public:
 	void Invert();
 	void Transpose();
 };
+
+Matrix3D ComputeLaybackTransform(float layback);
 

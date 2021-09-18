@@ -255,6 +255,11 @@ bool Textbox::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+IEditable* Textbox::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
+}
+
 void Textbox::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

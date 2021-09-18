@@ -1,9 +1,9 @@
 #pragma once
 
 #include "BaseProperty.h"
-#include "ISelect.h"
 #include "IEditable.h"
 #include "IScriptable.h"
+#include "ISelect.h"
 #include "Vertex2D.h"
 
 #include "BiffReader.h"
@@ -35,8 +35,8 @@ public:
 };
 
 class Bumper : public ISelect,
-               public IEditable,
-               public IScriptable
+			   public IEditable,
+			   public IScriptable
 {
 public:
 	static const ItemTypeEnum ItemType;
@@ -61,6 +61,7 @@ public:
 	virtual void SetDefaults(bool fromMouseClick);
 	virtual void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+	virtual IEditable* GetIEditable();
 
 	virtual void WriteRegDefaults();
 

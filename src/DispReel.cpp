@@ -235,6 +235,11 @@ bool DispReel::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+IEditable* DispReel::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
+}
+
 void DispReel::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

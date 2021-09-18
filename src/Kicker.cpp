@@ -202,6 +202,11 @@ bool Kicker::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+IEditable* Kicker::GetIEditable()
+{
+	return static_cast<IEditable*>(this);
+}
+
 void Kicker::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

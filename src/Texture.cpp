@@ -23,6 +23,7 @@ Texture::~Texture()
 
 HRESULT Texture::SaveToStream(POLE::Stream* pStream, PinTable* pPinTable)
 {
+	return S_OK;
 }
 
 HRESULT Texture::LoadFromStream(POLE::Stream* pStream, int version, PinTable* pPinTable)
