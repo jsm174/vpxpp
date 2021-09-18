@@ -314,16 +314,10 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 						{
 							POLE::Stream* pCollectionStream = new POLE::Stream(pStorage, szStmName);
 
-							// TODO: CComObject<Collection>* pcol;
-							// CComObject<Collection>::CreateInstance(&pcol);
-							// pcol->AddRef();
-							// pcol->LoadData(pstmItem, this, loadFileVersion);
-							// m_vcollection.push_back(pcol);
-							// m_pcv->AddItem((IScriptable*)pcol, false);
-
 							Collection* pCollection = new Collection();
 							pCollection->LoadData(pCollectionStream, this, loadFileVersion);
 							m_vcollection.push_back(pCollection);
+							// m_pcv->AddItem((IScriptable*)pcol, false);
 
 							delete pCollectionStream;
 							pCollectionStream = NULL;

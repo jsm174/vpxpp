@@ -19,7 +19,7 @@ HRESULT Pin3D::InitPin3D(const bool fullScreen, const int width, const int heigh
 
 void Pin3D::InitLayout(const bool FSS_mode, const float xpixoff, const float ypixoff)
 {
- 	const float rotation = ANGTORAD(g_pplayer->m_ptable->m_BG_rotation[g_pplayer->m_ptable->m_BG_current_set]);
+	const float rotation = ANGTORAD(g_pplayer->m_ptable->m_BG_rotation[g_pplayer->m_ptable->m_BG_current_set]);
 	float inclination = ANGTORAD(g_pplayer->m_ptable->m_BG_inclination[g_pplayer->m_ptable->m_BG_current_set]);
 	const float FOV = (g_pplayer->m_ptable->m_BG_FOV[g_pplayer->m_ptable->m_BG_current_set] < 1.0f) ? 1.0f : g_pplayer->m_ptable->m_BG_FOV[g_pplayer->m_ptable->m_BG_current_set];
 
@@ -29,7 +29,6 @@ void Pin3D::InitLayout(const bool FSS_mode, const float xpixoff, const float ypi
 		g_pplayer->m_ptable->m_vedit[i]->GetBoundingVertices(vvertex3D);
 	}
 
-/*
 	m_proj.m_rcviewport.left = 0;
 	m_proj.m_rcviewport.top = 0;
 	m_proj.m_rcviewport.right = m_viewPort.Width;
@@ -37,13 +36,6 @@ void Pin3D::InitLayout(const bool FSS_mode, const float xpixoff, const float ypi
 
 	const float aspect = ((float)m_viewPort.Width) / ((float)m_viewPort.Height); //(float)(4.0/3.0);
 
-	// next 4 def values for layout portrait(game vert) in landscape(screen horz)
-	// for FSS, force an offset to camy which drops the table down 1/3 of the way.
-	// some values to camy have been commented out because I found the default value
-	// better and just modify the camz and keep the table design inclination
-	// within 50-60 deg and 40-50 FOV in editor.
-	// these values were tested against all known video modes upto 1920x1080
-	// in landscape and portrait on the display
 	const float camx = m_cam.x;
 	const float camy = m_cam.y + (FSS_mode ? 500.0f : 0.f);
 	float camz = m_cam.z;
@@ -51,8 +43,8 @@ void Pin3D::InitLayout(const bool FSS_mode, const float xpixoff, const float ypi
 
 	if (FSS_mode)
 	{
-		const int width = GetSystemMetrics(SM_CXSCREEN);
-		const int height = GetSystemMetrics(SM_CYSCREEN);
+		const int width = 1024; // TODO: GetSystemMetrics(SM_CXSCREEN);
+		const int height = 768; // TODO: GetSystemMetrics(SM_CYSCREEN);
 
 		if ((m_viewPort.Width > m_viewPort.Height) && (height < width))
 		{
@@ -107,10 +99,11 @@ void Pin3D::InitLayout(const bool FSS_mode, const float xpixoff, const float ypi
 	m_proj.m_matWorld.SetIdentity();
 
 	m_proj.m_matView.RotateXMatrix((float)M_PI);
+
 	m_proj.ScaleView(g_pplayer->m_ptable->m_BG_scalex[g_pplayer->m_ptable->m_BG_current_set], g_pplayer->m_ptable->m_BG_scaley[g_pplayer->m_ptable->m_BG_current_set], 1.0f);
 
 	m_proj.TranslateView(g_pplayer->m_ptable->m_BG_xlatex[g_pplayer->m_ptable->m_BG_current_set] - m_proj.m_vertexcamera.x + camx, g_pplayer->m_ptable->m_BG_xlatey[g_pplayer->m_ptable->m_BG_current_set] - m_proj.m_vertexcamera.y + camy, -m_proj.m_vertexcamera.z + camz);
-	
+
 	if (g_pplayer->m_cameraMode && (g_pplayer->m_ptable->m_BG_current_set == 0 || g_pplayer->m_ptable->m_BG_current_set == 2))
 	{
 		m_proj.RotateView(inclination, 0, rotation);
@@ -129,8 +122,10 @@ void Pin3D::InitLayout(const bool FSS_mode, const float xpixoff, const float ypi
 	{
 		m_proj.m_rzfar += 10.f;
 	}
+
 	D3DXMATRIX proj;
 	D3DXMatrixPerspectiveFovLH(&proj, ANGTORAD(FOV), aspect, m_proj.m_rznear, m_proj.m_rzfar);
+
 	memcpy(m_proj.m_matProj.m, proj.m, sizeof(float) * 4 * 4);
 
 	if (xpixoff != 0.f || ypixoff != 0.f)
@@ -140,13 +135,13 @@ void Pin3D::InitLayout(const bool FSS_mode, const float xpixoff, const float ypi
 		projTrans.Multiply(m_proj.m_matProj, m_proj.m_matProj);
 	}
 
-	m_pd3dPrimaryDevice->SetTransform(TRANSFORMSTATE_PROJECTION, &m_proj.m_matProj);
-	m_pd3dPrimaryDevice->SetTransform(TRANSFORMSTATE_VIEW, &m_proj.m_matView);
-	m_pd3dPrimaryDevice->SetTransform(TRANSFORMSTATE_WORLD, &m_proj.m_matWorld);
+	// TODO: m_pd3dPrimaryDevice->SetTransform(TRANSFORMSTATE_PROJECTION, &m_proj.m_matProj);
+	// TODO: m_pd3dPrimaryDevice->SetTransform(TRANSFORMSTATE_VIEW, &m_proj.m_matView);
+	// TODO: m_pd3dPrimaryDevice->SetTransform(TRANSFORMSTATE_WORLD, &m_proj.m_matWorld);
 
 	m_proj.CacheTransform();
 
-	InitLights(); */
+	// TODO: InitLights();
 }
 
 void Pin3D::RenderPlayfieldGraphics(const bool depth_only)
@@ -163,4 +158,42 @@ void Pin3D::RenderPlayfieldGraphics(const bool depth_only)
 		{
 		}
 	}
+}
+
+// https://github.com/wine-mirror/wine/blob/master/dlls/d3dx9_36/math.c#L479
+
+D3DXMATRIX* D3DXMatrixPerspectiveFovLH(D3DXMATRIX* pout, float fovy, float aspect, float zn, float zf)
+{
+	D3DXMatrixIdentity(pout);
+	pout->m[0][0] = 1.0f / (aspect * tanf(fovy / 2.0f));
+	pout->m[1][1] = 1.0f / tanf(fovy / 2.0f);
+	pout->m[2][2] = zf / (zf - zn);
+	pout->m[2][3] = 1.0f;
+	pout->m[3][2] = (zf * zn) / (zn - zf);
+	pout->m[3][3] = 0.0f;
+	return pout;
+}
+
+// https://github.com/wine-mirror/wine/blob/master/include/d3dx9math.inl#L1192
+
+D3DXMATRIX* D3DXMatrixIdentity(D3DXMATRIX* pout)
+{
+    if ( !pout ) return NULL;
+    (*pout).m[0][1] = 0.0f;
+    (*pout).m[0][2] = 0.0f;
+    (*pout).m[0][3] = 0.0f;
+    (*pout).m[1][0] = 0.0f;
+    (*pout).m[1][2] = 0.0f;
+    (*pout).m[1][3] = 0.0f;
+    (*pout).m[2][0] = 0.0f;
+    (*pout).m[2][1] = 0.0f;
+    (*pout).m[2][3] = 0.0f;
+    (*pout).m[3][0] = 0.0f;
+    (*pout).m[3][1] = 0.0f;
+    (*pout).m[3][2] = 0.0f;
+    (*pout).m[0][0] = 1.0f;
+    (*pout).m[1][1] = 1.0f;
+    (*pout).m[2][2] = 1.0f;
+    (*pout).m[3][3] = 1.0f;
+	return pout;
 }
