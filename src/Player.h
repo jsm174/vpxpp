@@ -27,8 +27,14 @@ public:
 	int m_sharpen;
 	bool m_AA;
 	bool m_disableAO;
+
+	bool m_disableDWM;
+
 	bool m_ss_refl;
+
 	int m_stereo3D;
+
+	int m_BWrendering;
 
 	int m_width;
 	int m_height;

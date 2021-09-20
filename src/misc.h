@@ -11,6 +11,33 @@ typedef int COLORREF;
 typedef int64_t LONGLONG;
 typedef unsigned int UINT;
 
+typedef enum _D3DTRANSFORMSTATETYPE
+{
+	D3DTS_VIEW = 2,
+	D3DTS_PROJECTION = 3,
+	D3DTS_TEXTURE0 = 16,
+	D3DTS_TEXTURE1 = 17,
+	D3DTS_TEXTURE2 = 18,
+	D3DTS_TEXTURE3 = 19,
+	D3DTS_TEXTURE4 = 20,
+	D3DTS_TEXTURE5 = 21,
+	D3DTS_TEXTURE6 = 22,
+	D3DTS_TEXTURE7 = 23,
+
+	D3DTS_FORCE_DWORD = 0x7fffffff
+} D3DTRANSFORMSTATETYPE;
+
+#define D3DTS_WORLDMATRIX(index) (D3DTRANSFORMSTATETYPE)(index + 256)
+
+#define D3DTS_WORLD D3DTS_WORLDMATRIX(0)
+
+enum TransformStateType
+{
+	TRANSFORMSTATE_WORLD = D3DTS_WORLD,
+	TRANSFORMSTATE_VIEW = D3DTS_VIEW,
+	TRANSFORMSTATE_PROJECTION = D3DTS_PROJECTION
+};
+
 typedef union _LARGE_INTEGER
 {
 	struct
@@ -26,76 +53,80 @@ typedef union _LARGE_INTEGER
 	LONGLONG QuadPart;
 } LARGE_INTEGER, *PLARGE_INTEGER;
 
-typedef struct {
-  DWORD X;
-  DWORD Y;
-  DWORD Width;
-  DWORD Height;
-  float MinZ;
-  float MaxZ;
+typedef struct
+{
+	DWORD X;
+	DWORD Y;
+	DWORD Width;
+	DWORD Height;
+	float MinZ;
+	float MaxZ;
 } D3DVIEWPORT9;
 
 typedef D3DVIEWPORT9 ViewPort;
 
-typedef struct _D3DMATRIX {
-    union {
-        struct {
-            float        _11, _12, _13, _14;
-            float        _21, _22, _23, _24;
-            float        _31, _32, _33, _34;
-            float        _41, _42, _43, _44;
-        };
-        float m[4][4];
-    };
+typedef struct _D3DMATRIX
+{
+	union
+	{
+		struct
+		{
+			float _11, _12, _13, _14;
+			float _21, _22, _23, _24;
+			float _31, _32, _33, _34;
+			float _41, _42, _43, _44;
+		};
+		float m[4][4];
+	};
 } D3DMATRIX;
 
-typedef struct D3DXFLOAT16 {
-  WORD Value;
+typedef struct D3DXFLOAT16
+{
+	WORD Value;
 } D3DXFLOAT16, *LPD3DXFLOAT16;
 
 typedef struct D3DXMATRIX : public D3DMATRIX
 {
 public:
-    D3DXMATRIX() {};
-    D3DXMATRIX( const float * );
-    D3DXMATRIX( const D3DMATRIX& );
-    D3DXMATRIX( const D3DXFLOAT16 * );
-    D3DXMATRIX( float _11, float _12, float _13, float _14,
-                float _21, float _22, float _23, float _24,
-                float _31, float _32, float _33, float _34,
-                float _41, float _42, float _43, float _44 );
+	D3DXMATRIX(){};
+	D3DXMATRIX(const float*);
+	D3DXMATRIX(const D3DMATRIX&);
+	D3DXMATRIX(const D3DXFLOAT16*);
+	D3DXMATRIX(float _11, float _12, float _13, float _14,
+			   float _21, float _22, float _23, float _24,
+			   float _31, float _32, float _33, float _34,
+			   float _41, float _42, float _43, float _44);
 
+	// access grants
+	float& operator()(UINT Row, UINT Col);
+	float operator()(UINT Row, UINT Col) const;
 
-    // access grants
-    float& operator () ( UINT Row, UINT Col );
-    float  operator () ( UINT Row, UINT Col ) const;
+	// casting operators
+	operator float*();
+	operator const float*() const;
 
-    // casting operators
-    operator float* ();
-    operator const float* () const;
+	// assignment operators
+	D3DXMATRIX& operator*=(const D3DXMATRIX&);
+	D3DXMATRIX& operator+=(const D3DXMATRIX&);
+	D3DXMATRIX& operator-=(const D3DXMATRIX&);
+	D3DXMATRIX& operator*=(float);
+	D3DXMATRIX& operator/=(float);
 
-    // assignment operators
-    D3DXMATRIX& operator *= ( const D3DXMATRIX& );
-    D3DXMATRIX& operator += ( const D3DXMATRIX& );
-    D3DXMATRIX& operator -= ( const D3DXMATRIX& );
-    D3DXMATRIX& operator *= ( float );
-    D3DXMATRIX& operator /= ( float );
+	// unary operators
+	D3DXMATRIX operator+() const;
+	D3DXMATRIX operator-() const;
 
-    // unary operators
-    D3DXMATRIX operator + () const;
-    D3DXMATRIX operator - () const;
+	// binary operators
+	D3DXMATRIX operator*(const D3DXMATRIX&) const;
+	D3DXMATRIX operator+(const D3DXMATRIX&) const;
+	D3DXMATRIX operator-(const D3DXMATRIX&) const;
+	D3DXMATRIX operator*(float) const;
+	D3DXMATRIX operator/(float) const;
 
-    // binary operators
-    D3DXMATRIX operator * ( const D3DXMATRIX& ) const;
-    D3DXMATRIX operator + ( const D3DXMATRIX& ) const;
-    D3DXMATRIX operator - ( const D3DXMATRIX& ) const;
-    D3DXMATRIX operator * ( float ) const;
-    D3DXMATRIX operator / ( float ) const;
+	friend D3DXMATRIX operator*(float, const D3DXMATRIX&);
 
-    friend D3DXMATRIX operator * ( float, const D3DXMATRIX& );
-
-    bool operator == ( const D3DXMATRIX& ) const;
-    bool operator != ( const D3DXMATRIX& ) const;
+	bool operator==(const D3DXMATRIX&) const;
+	bool operator!=(const D3DXMATRIX&) const;
 
 } D3DXMATRIX, *LPD3DXMATRIX;
 

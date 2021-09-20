@@ -1,60 +1,34 @@
 #pragma once
 
-class VertexBuffer // TODO: public IDirect3DVertexBuffer9
+#include "IndexBuffer.h"
+#include "TextureManager.h"
+#include "VertexBuffer.h"
+
+class RenderDevice
 {
 public:
-	enum LockFlags
+	enum RenderStates
 	{
-		WRITEONLY = 0, // in DX9, this is specified during VB creation
-		               // TODO: NOOVERWRITE = D3DLOCK_NOOVERWRITE,    // meaning: no recently drawn vertices are overwritten. only works with dynamic VBs.
-		               // it's only needed for VBs which are locked several times per frame
-		               // TODO: DISCARDCONTENTS = D3DLOCK_DISCARD     // discard previous contents; only works with dynamic VBs
 	};
 
-	void lock(const unsigned int offsetToLock, const unsigned int sizeToLock, void** dataBuffer, const unsigned int flags);
+	RenderDevice(/*const HWND hwnd,*/ const int width, const int height, const bool fullscreen, const int colordepth, int VSync, const bool useAA, const bool stereo3D, const unsigned int FXAA, const bool sharpen, const bool ss_refl, /*const bool useNvidiaApi,*/ const bool disable_dwm, const int BWrendering);
+	~RenderDevice();
 
-	void unlock()
-	{
-		// TODO: CHECKD3D(this->Unlock());
-	}
+	void BeginScene();
+	void EndScene();
 
-	void release()
-	{
-		// TODO: SAFE_RELEASE_NO_CHECK_NO_SET(this);
-	}
+	int m_width;
+	int m_height;
+	bool m_fullscreen;
+	int m_colorDepth;
+	int m_vsync;
+	bool m_useAA;
+	bool m_stereo3D;
+	bool m_ssRefl;
+	bool m_disableDwm;
+	bool m_sharpen;
+	unsigned int m_FXAA;
+	int m_BWrendering;
 
-private:
-	VertexBuffer();
-};
-
-class IndexBuffer // TODO: public public IDirect3DIndexBuffer9
-{
-public:
-	enum Format
-	{
-		FMT_INDEX16 = 0, // TODO: D3DFMT_INDEX16,
-		FMT_INDEX32 = 1  // TODO: D3DFMT_INDEX32
-	};
-	enum LockFlags
-	{
-		WRITEONLY = 0, // in DX9, this is specified during VB creation
-		               // TODO: NOOVERWRITE = //D3DLOCK_NOOVERWRITE,  // meaning: no recently drawn vertices are overwritten. only works with dynamic VBs.
-		               // it's only needed for VBs which are locked several times per frame
-		               // TODO: DISCARD = D3DLOCK_DISCARD           // discard previous contents; only works with dynamic VBs
-	};
-
-	void lock(const unsigned int offsetToLock, const unsigned int sizeToLock, void** dataBuffer, const unsigned int flags);
-
-	void unlock()
-	{
-		// TODO: CHECKD3D(this->Unlock());
-	}
-
-	void release()
-	{
-		// TODO: SAFE_RELEASE_NO_CHECK_NO_SET(this);
-	}
-
-private:
-	IndexBuffer();
+	TextureManager m_texMan;
 };

@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "RegUtil.h"
 
+#include <iostream>
+
 Player::Player(const bool cameraMode, PinTable* const pPinTable)
 {
 	m_cameraMode = cameraMode;
@@ -15,6 +17,11 @@ Player::Player(const bool cameraMode, PinTable* const pPinTable)
 	m_disableAO = pRegUtil->LoadValueBoolWithDefault("Player", "DisableAO", false);
 	m_ss_refl = pRegUtil->LoadValueBoolWithDefault("Player", "SSRefl", false);
 	m_stereo3D = pRegUtil->LoadValueIntWithDefault("Player", "Stereo3D", 0);
+
+	m_disableDWM = pRegUtil->LoadValueBoolWithDefault("Player", "DisableDWM", false);
+	m_BWrendering = pRegUtil->LoadValueIntWithDefault("Player", "BWRendering", 0);
+
+	// TODO: Below comes from precreate
 
 	m_fullScreen = pRegUtil->LoadValueBoolWithDefault("Player", "FullScreen", false);
 
@@ -64,8 +71,14 @@ HRESULT Player::Init()
 										 !m_disableAO,
 										 ss_refl);
 
+	if (hr != S_OK)
+	{
+		std::cout << "InitPin3D Error" << std::endl;
 
-   	m_pin3d.InitLayout(m_ptable->m_BG_enable_FSS);
+		return hr;
+	}
+
+	m_pin3d.InitLayout(m_ptable->m_BG_enable_FSS);
 
 	InitStatic();
 
@@ -79,8 +92,7 @@ void Player::InitStatic()
 
 void Player::Render()
 {
- 	RenderDynamics();
-	    
+	RenderDynamics();
 
 	BgfxWindow::Render();
 }
@@ -89,7 +101,7 @@ void Player::RenderStaticMirror(const bool onlyBalls)
 {
 }
 
-void Player::RenderDynamics() 
+void Player::RenderDynamics()
 {
 	m_pin3d.RenderPlayfieldGraphics(true);
 }

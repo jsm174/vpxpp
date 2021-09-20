@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PinProjection.h"
+#include "RenderDevice.h"
 #include "Vertex3Ds.h"
 #include "misc.h"
 
@@ -9,6 +10,8 @@ class Pin3D
 public:
 	Pin3D();
 	virtual ~Pin3D();
+
+	RenderDevice* m_pd3dPrimaryDevice;
 
 	void RenderPlayfieldGraphics(const bool depth_only);
 
@@ -23,6 +26,7 @@ public:
 	ViewPort m_viewPort;
 
 private:
+	HRESULT InitPrimary(const bool fullScreen, const int colordepth, int& refreshrate, const int VSync, const bool useAA, const bool stereo3D, const unsigned int FXAA, const bool sharpen, const bool useAO, const bool ss_refl);
 };
 
 D3DXMATRIX* D3DXMatrixPerspectiveFovLH(D3DXMATRIX* pout, float fovy, float aspect, float zn, float zf);

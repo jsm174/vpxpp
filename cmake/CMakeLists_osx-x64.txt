@@ -64,6 +64,12 @@ add_executable(vpxpp
 	math/Short2.h
 	math/Short2.cpp
 
+	src/VertexBuffer.h
+	src/VertexBuffer.cpp
+
+	src/IndexBuffer.h
+	src/IndexBuffer.cpp
+	
 	src/RenderVertex.h
 	src/RenderVertex.cpp
 
@@ -93,6 +99,10 @@ add_executable(vpxpp
 	src/BaseProperty.h
 
 	src/RenderDevice.h
+	src/RenderDevice.cpp
+
+	src/TextureManager.h
+	src/TextureManager.cpp
 
 	src/ILoadable.h
 

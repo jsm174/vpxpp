@@ -1,19 +1,61 @@
 #include "Pin3D.h"
 #include "Material.h"
 #include "Player.h"
+#include "RegUtil.h"
 #include "Texture.h"
 #include "extern.h"
 
 Pin3D::Pin3D()
 {
+	m_pd3dPrimaryDevice = NULL;
 }
 
 Pin3D::~Pin3D()
 {
+	// TODO: m_pd3dPrimaryDevice->SetZBuffer(NULL);
+	// TODO: m_pd3dPrimaryDevice->FreeShader();
+}
+
+HRESULT Pin3D::InitPrimary(const bool fullScreen, const int colordepth, int& refreshrate, const int VSync, const bool useAA, const bool stereo3D, const unsigned int FXAA, const bool sharpen, const bool useAO, const bool ss_refl)
+{
+	RegUtil* pRegUtil = RegUtil::SharedInstance();
+
+	const int display = g_pvp->m_primaryDisplay ? 0 : pRegUtil->LoadValueIntWithDefault("Player", "Display", 0);
+
+	// TODO: std::vector<DisplayConfig> displays;
+	// getDisplayList(displays);
+
+	// int adapter = 0;
+
+	// for (std::vector<DisplayConfig>::iterator dispConf = displays.begin(); dispConf != displays.end(); ++dispConf)
+	// {
+	// 	if (display == dispConf->display)
+	// 	{
+	// 		adapter = dispConf->adapter;
+	// 	}
+	// }
+
+	m_pd3dPrimaryDevice = new RenderDevice(/*g_pplayer->GetHwnd(),*/ m_viewPort.Width, m_viewPort.Height, fullScreen, colordepth, VSync, useAA, stereo3D, FXAA, sharpen, ss_refl, /*g_pplayer->m_useNvidiaApi,*/ g_pplayer->m_disableDWM, g_pplayer->m_BWrendering);
+
+	return S_OK;
 }
 
 HRESULT Pin3D::InitPin3D(const bool fullScreen, const int width, const int height, const int colordepth, int& refreshrate, const int VSync, const bool useAA, const bool stereo3D, const unsigned int FXAA, const bool sharpen, const bool useAO, const bool ss_refl)
 {
+	m_viewPort.X = 0;
+	m_viewPort.Y = 0;
+	m_viewPort.Width = width;
+	m_viewPort.Height = height;
+	m_viewPort.MinZ = 0.0f;
+	m_viewPort.MaxZ = 1.0f;
+
+	HRESULT hr = InitPrimary(fullScreen, colordepth, refreshrate, VSync, useAA, stereo3D, FXAA, sharpen, useAO, ss_refl);
+
+	if (hr != S_OK)
+	{
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
@@ -178,22 +220,23 @@ D3DXMATRIX* D3DXMatrixPerspectiveFovLH(D3DXMATRIX* pout, float fovy, float aspec
 
 D3DXMATRIX* D3DXMatrixIdentity(D3DXMATRIX* pout)
 {
-    if ( !pout ) return NULL;
-    (*pout).m[0][1] = 0.0f;
-    (*pout).m[0][2] = 0.0f;
-    (*pout).m[0][3] = 0.0f;
-    (*pout).m[1][0] = 0.0f;
-    (*pout).m[1][2] = 0.0f;
-    (*pout).m[1][3] = 0.0f;
-    (*pout).m[2][0] = 0.0f;
-    (*pout).m[2][1] = 0.0f;
-    (*pout).m[2][3] = 0.0f;
-    (*pout).m[3][0] = 0.0f;
-    (*pout).m[3][1] = 0.0f;
-    (*pout).m[3][2] = 0.0f;
-    (*pout).m[0][0] = 1.0f;
-    (*pout).m[1][1] = 1.0f;
-    (*pout).m[2][2] = 1.0f;
-    (*pout).m[3][3] = 1.0f;
+	if (!pout)
+		return NULL;
+	(*pout).m[0][1] = 0.0f;
+	(*pout).m[0][2] = 0.0f;
+	(*pout).m[0][3] = 0.0f;
+	(*pout).m[1][0] = 0.0f;
+	(*pout).m[1][2] = 0.0f;
+	(*pout).m[1][3] = 0.0f;
+	(*pout).m[2][0] = 0.0f;
+	(*pout).m[2][1] = 0.0f;
+	(*pout).m[2][3] = 0.0f;
+	(*pout).m[3][0] = 0.0f;
+	(*pout).m[3][1] = 0.0f;
+	(*pout).m[3][2] = 0.0f;
+	(*pout).m[0][0] = 1.0f;
+	(*pout).m[1][1] = 1.0f;
+	(*pout).m[2][2] = 1.0f;
+	(*pout).m[3][3] = 1.0f;
 	return pout;
 }

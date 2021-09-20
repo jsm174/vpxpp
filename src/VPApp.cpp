@@ -22,6 +22,8 @@
 #include "Timer.h"
 #include "Trigger.h"
 
+#include "extern.h"
+
 std::map<ItemTypeEnum, EditableInfo> EditableRegistry::m_map;
 
 VPApp::VPApp()
@@ -70,6 +72,8 @@ void VPApp::InitVPX()
 	EditableRegistry::RegisterEditable<Timer>();
 	EditableRegistry::RegisterEditable<Trigger>();
 	EditableRegistry::RegisterEditable<HitTarget>();
+
+	g_pvp = &m_vpinball;
 
 	if (m_file)
 	{
