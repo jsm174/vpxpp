@@ -224,6 +224,11 @@ bool Gate::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Gate::GetItemType() const
+{
+	return eItemGate;
+}
+
 IEditable* Gate::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -258,6 +263,14 @@ void Gate::WriteRegDefaults()
 	pRegUtil->SaveValueInt("DefaultProps\\Gate", "GateType", m_d.m_type);
 }
 
+void Gate::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Gate::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Gate::RenderStatic()
 {
 }
@@ -268,4 +281,9 @@ void Gate::RenderDynamic()
 
 void Gate::RenderSetup()
 {
+}
+
+ItemTypeEnum Gate::HitableGetItemType() const
+{
+	return eItemGate;
 }

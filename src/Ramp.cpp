@@ -288,6 +288,11 @@ bool Ramp::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Ramp::GetItemType() const
+{
+	return eItemRamp;
+}
+
 IEditable* Ramp::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -331,6 +336,14 @@ void Ramp::WriteRegDefaults()
 	pRegUtil->SaveValueFloat(strKeyName, "WireDistanceY", m_d.m_wireDistanceY);
 }
 
+void Ramp::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Ramp::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Ramp::RenderStatic()
 {
 }
@@ -341,6 +354,11 @@ void Ramp::RenderDynamic()
 
 void Ramp::RenderSetup()
 {
+}
+
+ItemTypeEnum Ramp::HitableGetItemType() const
+{
+	return eItemRamp;
 }
 
 void Ramp::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)

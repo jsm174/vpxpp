@@ -246,6 +246,11 @@ bool Flasher::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Flasher::GetItemType() const
+{
+	return eItemFlasher;
+}
+
 IEditable* Flasher::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -280,6 +285,14 @@ void Flasher::WriteRegDefaults()
 	pRegUtil->SaveValueInt("DefaultProps\\Flasher", "FilterAmount", m_d.m_filterAmount);
 }
 
+void Flasher::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Flasher::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Flasher::RenderStatic()
 {
 }
@@ -290,4 +303,9 @@ void Flasher::RenderDynamic()
 
 void Flasher::RenderSetup()
 {
+}
+
+ItemTypeEnum Flasher::HitableGetItemType() const
+{
+	return eItemFlasher;
 }

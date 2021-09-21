@@ -1377,6 +1377,11 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 	return true;
 }
 
+ItemTypeEnum PinTable::GetItemType() const
+{
+	return eItemTable;
+}
+
 IEditable* PinTable::GetIEditable()
 {
 	return (IEditable*)this;

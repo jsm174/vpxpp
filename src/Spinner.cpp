@@ -198,6 +198,11 @@ bool Spinner::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Spinner::GetItemType() const
+{
+	return eItemSpinner;
+}
+
 IEditable* Spinner::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -229,6 +234,14 @@ void Spinner::WriteRegDefaults()
 	pRegUtil->SaveValueBool("DefaultProps\\Spinner", "ReflectionEnabled", m_d.m_reflectionEnabled);
 }
 
+void Spinner::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Spinner::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Spinner::RenderStatic()
 {
 }
@@ -239,4 +252,9 @@ void Spinner::RenderDynamic()
 
 void Spinner::RenderSetup()
 {
+}
+
+ItemTypeEnum Spinner::HitableGetItemType() const
+{
+	return eItemSpinner;
 }

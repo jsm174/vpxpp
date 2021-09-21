@@ -384,6 +384,11 @@ bool Surface::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Surface::GetItemType() const
+{
+	return eItemSurface;
+}
+
 IEditable* Surface::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -428,6 +433,14 @@ void Surface::WriteRegDefaults()
 	pRegUtil->SaveValueBool(strKeyName, "ReflectionEnabled", m_d.m_reflectionEnabled);
 }
 
+void Surface::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Surface::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Surface::RenderStatic()
 {
 }
@@ -438,6 +451,11 @@ void Surface::RenderDynamic()
 
 void Surface::RenderSetup()
 {
+}
+
+ItemTypeEnum Surface::HitableGetItemType() const
+{
+	return eItemSurface;
 }
 
 void Surface::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)

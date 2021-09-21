@@ -255,6 +255,11 @@ bool Textbox::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Textbox::GetItemType() const
+{
+	return eItemTextbox;
+}
+
 IEditable* Textbox::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -304,6 +309,14 @@ void Textbox::WriteRegDefaults()
 	pRegUtil->SaveValue("DefaultProps\\TextBox", "Text", m_d.m_sztext);
 }
 
+void Textbox::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Textbox::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Textbox::RenderStatic()
 {
 }
@@ -314,4 +327,9 @@ void Textbox::RenderDynamic()
 
 void Textbox::RenderSetup()
 {
+}
+
+ItemTypeEnum Textbox::HitableGetItemType() const
+{
+	return eItemTextbox;
 }

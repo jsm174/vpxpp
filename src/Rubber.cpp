@@ -258,6 +258,11 @@ bool Rubber::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Rubber::GetItemType() const
+{
+	return eItemRubber;
+}
+
 IEditable* Rubber::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -295,6 +300,14 @@ void Rubber::WriteRegDefaults()
 	pRegUtil->SaveValueBool(strKeyName, "ReflectionEnabled", m_d.m_reflectionEnabled);
 }
 
+void Rubber::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Rubber::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Rubber::RenderStatic()
 {
 }
@@ -305,6 +318,11 @@ void Rubber::RenderDynamic()
 
 void Rubber::RenderSetup()
 {
+}
+
+ItemTypeEnum Rubber::HitableGetItemType() const
+{
+	return eItemRubber;
 }
 
 void Rubber::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)

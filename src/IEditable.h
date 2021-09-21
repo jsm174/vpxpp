@@ -21,6 +21,8 @@ public:
 	virtual PinTable* GetPTable() = 0;
 	virtual IHitable* GetIHitable();
 
+	virtual ItemTypeEnum GetItemType() const = 0;
+
 	void InitScript();
 
 	virtual void GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D);

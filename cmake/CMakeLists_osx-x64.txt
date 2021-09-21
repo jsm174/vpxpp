@@ -64,6 +64,15 @@ add_executable(vpxpp
 	math/Short2.h
 	math/Short2.cpp
 
+	src/AnimObject.h
+	src/AnimObject.cpp
+	
+	src/DispReelAnimObject.h
+	src/DispReelAnimObject.cpp
+	
+	src/LightSeqAnimObject.h
+	src/LightSeqAnimObject.cpp
+	
 	src/VertexBuffer.h
 	src/VertexBuffer.cpp
 

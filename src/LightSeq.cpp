@@ -158,6 +158,11 @@ bool LightSeq::LoadToken(const int id, BiffReader* const pbr)
 	return true;
 }
 
+ItemTypeEnum LightSeq::GetItemType() const
+{
+	return eItemLightSeq;
+}
+
 IEditable* LightSeq::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -182,6 +187,14 @@ void LightSeq::WriteRegDefaults()
 	pRegUtil->SaveValueInt("DefaultProps\\LightSequence", "TimerInterval", m_d.m_tdr.m_TimerInterval);
 }
 
+void LightSeq::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void LightSeq::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void LightSeq::RenderStatic()
 {
 }
@@ -192,4 +205,9 @@ void LightSeq::RenderDynamic()
 
 void LightSeq::RenderSetup()
 {
+}
+
+ItemTypeEnum LightSeq::HitableGetItemType() const
+{
+	return eItemLightSeq;
 }

@@ -11,6 +11,8 @@
 #include "PinTable.h"
 #include "Timer.h"
 
+#include "DispReelAnimObject.h"
+
 class DispReelData : public BaseProperty
 {
 public:
@@ -60,23 +62,18 @@ public:
 	virtual HRESULT InitPostLoad();
 	void SetDefaults(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+	virtual ItemTypeEnum GetItemType() const;
 	virtual IEditable* GetIEditable();
 	virtual IHitable* GetIHitable();
 	virtual void WriteRegDefaults();
+	virtual void GetHitShapes(std::vector<HitObject*>& pvho);
+	virtual void GetHitShapesDebug(std::vector<HitObject*>& pvho);
 	virtual void RenderStatic();
 	virtual void RenderDynamic();
 	virtual void RenderSetup();
+	virtual ItemTypeEnum HitableGetItemType() const;
 
-	class DispReelAnimObject // TODO: : public AnimObject
-	{
-	public:
-		virtual void Animate()
-		{
-			// TODO: m_pDispReel->Animate();
-		}
-
-		DispReel* m_pDispReel;
-	} m_dispreelanim;
+	DispReelAnimObject m_dispreelanim;
 
 	DispReelData m_d;
 

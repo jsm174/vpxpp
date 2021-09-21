@@ -2,11 +2,11 @@
 
 #include "misc.h"
 
+#include "AnimObject.h"
+#include "BgfxWindow.h"
 #include "IHitable.h"
 #include "Pin3D.h"
 #include "PinTable.h"
-
-#include "BgfxWindow.h"
 
 class Player : public BgfxWindow
 {
@@ -22,6 +22,8 @@ public:
 
 	PinTable* m_ptable;
 	Pin3D m_pin3d;
+
+	std::vector<AnimObject*> m_vanimate;
 
 	int m_VSync;
 	int m_FXAA;
@@ -51,5 +53,6 @@ private:
 	void InitStatic();
 	void RenderStaticMirror(const bool onlyBalls);
 
+	std::vector<HitObject*> m_vho;
 	std::vector<IHitable*> m_vhitables;
 };

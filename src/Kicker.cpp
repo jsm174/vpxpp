@@ -202,6 +202,11 @@ bool Kicker::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Kicker::GetItemType() const
+{
+	return eItemKicker;
+}
+
 IEditable* Kicker::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -230,6 +235,14 @@ void Kicker::WriteRegDefaults()
 	pRegUtil->SaveValueBool("DefaultProps\\Kicker", "Legacy", m_d.m_legacyMode);
 }
 
+void Kicker::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Kicker::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Kicker::PreRenderStatic(RenderDevice* pd3dDevice)
 {
 }
@@ -244,4 +257,9 @@ void Kicker::RenderDynamic()
 
 void Kicker::RenderSetup()
 {
+}
+
+ItemTypeEnum Kicker::HitableGetItemType() const
+{
+	return eItemKicker;
 }

@@ -249,6 +249,11 @@ bool Bumper::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Bumper::GetItemType() const
+{
+	return eItemBumper;
+}
+
 IEditable* Bumper::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -280,6 +285,14 @@ void Bumper::WriteRegDefaults()
 	pRegUtil->SaveValue("DefaultProps\\Bumper", "Surface", m_d.m_szSurface);
 }
 
+void Bumper::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Bumper::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Bumper::RenderStatic()
 {
 }
@@ -290,4 +303,9 @@ void Bumper::RenderDynamic()
 
 void Bumper::RenderSetup()
 {
+}
+
+ItemTypeEnum Bumper::HitableGetItemType() const
+{
+	return eItemBumper;
 }

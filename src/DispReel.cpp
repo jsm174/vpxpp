@@ -235,6 +235,11 @@ bool DispReel::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum DispReel::GetItemType() const
+{
+	return eItemDispReel;
+}
+
 IEditable* DispReel::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -267,6 +272,14 @@ void DispReel::WriteRegDefaults()
 	pRegUtil->SaveValueInt("DefaultProps\\EMReel", "TimerInterval", m_d.m_tdr.m_TimerInterval);
 }
 
+void DispReel::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void DispReel::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void DispReel::RenderStatic()
 {
 }
@@ -277,6 +290,11 @@ void DispReel::RenderDynamic()
 
 void DispReel::RenderSetup()
 {
+}
+
+ItemTypeEnum DispReel::HitableGetItemType() const
+{
+	return eItemDispReel;
 }
 
 float DispReel::getBoxWidth() const

@@ -314,6 +314,11 @@ bool Flipper::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Flipper::GetItemType() const
+{
+	return eItemFlipper;
+}
+
 IEditable* Flipper::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -360,6 +365,14 @@ void Flipper::WriteRegDefaults()
 	pRegUtil->SaveValueBool(regKey, "ReflectionEnabled", m_d.m_reflectionEnabled);
 }
 
+void Flipper::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Flipper::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Flipper::RenderStatic()
 {
 }
@@ -370,4 +383,9 @@ void Flipper::RenderDynamic()
 
 void Flipper::RenderSetup()
 {
+}
+
+ItemTypeEnum Flipper::HitableGetItemType() const
+{
+	return eItemFlipper;
 }

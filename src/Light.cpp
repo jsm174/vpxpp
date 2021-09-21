@@ -283,6 +283,11 @@ bool Light::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Light::GetItemType() const
+{
+	return eItemLight;
+}
+
 IEditable* Light::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -322,6 +327,14 @@ void Light::WriteRegDefaults()
 	pRegUtil->SaveValueFloat("DefaultProps\\Light", "BulbHaloHeight", m_d.m_bulbHaloHeight);
 }
 
+void Light::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Light::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Light::RenderStatic()
 {
 }
@@ -332,4 +345,9 @@ void Light::RenderDynamic()
 
 void Light::RenderSetup()
 {
+}
+
+ItemTypeEnum Light::HitableGetItemType() const
+{
+	return eItemLight;
 }

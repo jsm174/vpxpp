@@ -236,6 +236,11 @@ bool Decal::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Decal::GetItemType() const
+{
+	return eItemDecal;
+}
+
 IEditable* Decal::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -291,6 +296,14 @@ void Decal::WriteRegDefaults()
 	// }
 }
 
+void Decal::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Decal::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Decal::RenderStatic()
 {
 }
@@ -301,4 +314,9 @@ void Decal::RenderDynamic()
 
 void Decal::RenderSetup()
 {
+}
+
+ItemTypeEnum Decal::HitableGetItemType() const
+{
+	return eItemDecal;
 }

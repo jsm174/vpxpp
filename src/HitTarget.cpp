@@ -277,6 +277,11 @@ bool HitTarget::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum HitTarget::GetItemType() const
+{
+	return eItemHitTarget;
+}
+
 IEditable* HitTarget::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -326,6 +331,14 @@ void HitTarget::WriteRegDefaults()
 	pRegUtil->SaveValueInt(strKeyName, "RaiseDelay", m_d.m_raiseDelay);
 }
 
+void HitTarget::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void HitTarget::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void HitTarget::RenderStatic()
 {
 }
@@ -336,4 +349,9 @@ void HitTarget::RenderDynamic()
 
 void HitTarget::RenderSetup()
 {
+}
+
+ItemTypeEnum HitTarget::HitableGetItemType() const
+{
+	return eItemHitTarget;
 }

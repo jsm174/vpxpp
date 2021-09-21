@@ -266,6 +266,11 @@ bool Plunger::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Plunger::GetItemType() const
+{
+	return eItemPlunger;
+}
+
 IEditable* Plunger::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -312,6 +317,14 @@ void Plunger::WriteRegDefaults()
 	pRegUtil->SaveValueBool("DefaultProps\\Plunger", "ReflectionEnabled", m_d.m_reflectionEnabled);
 }
 
+void Plunger::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Plunger::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Plunger::RenderStatic()
 {
 }
@@ -322,4 +335,9 @@ void Plunger::RenderDynamic()
 
 void Plunger::RenderSetup()
 {
+}
+
+ItemTypeEnum Plunger::HitableGetItemType() const
+{
+	return eItemPlunger;
 }

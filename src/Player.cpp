@@ -1,4 +1,6 @@
 #include "Player.h"
+#include "DispReel.h"
+#include "LightSeq.h"
 #include "RegUtil.h"
 
 #include <iostream>
@@ -87,6 +89,28 @@ HRESULT Player::Init()
 
 		if (ph)
 		{
+			const size_t currentsize = m_vho.size();
+			ph->GetHitShapes(m_vho);
+			const size_t newsize = m_vho.size();
+			for (size_t hitloop = currentsize; hitloop < newsize; hitloop++)
+			{
+				// TODO: m_vho[hitloop]->m_pfedebug = pe->GetIFireEvents();
+			}
+
+			// TODO: ph->GetTimers(m_vht);
+
+			m_vhitables.push_back(ph);
+
+			if (pe->GetItemType() == eItemDispReel)
+			{
+				DispReel* const dispReel = (DispReel*)pe;
+				m_vanimate.push_back(&dispReel->m_dispreelanim);
+			}
+			else if (pe->GetItemType() == eItemLightSeq)
+			{
+				LightSeq* const lightseq = (LightSeq*)pe;
+				m_vanimate.push_back(&lightseq->m_lightseqanim);
+			}
 		}
 	}
 

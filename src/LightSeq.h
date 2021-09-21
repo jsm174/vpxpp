@@ -10,6 +10,8 @@
 #include "PinTable.h"
 #include "Timer.h"
 
+#include "LightSeqAnimObject.h"
+
 class LightSeqData
 {
 public:
@@ -73,22 +75,18 @@ public:
 	virtual HRESULT InitPostLoad();
 	virtual void SetDefaults(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+	virtual ItemTypeEnum GetItemType() const;
 	virtual IEditable* GetIEditable();
 	virtual IHitable* GetIHitable();
 	virtual void WriteRegDefaults();
+	virtual void GetHitShapes(std::vector<HitObject*>& pvho);
+	virtual void GetHitShapesDebug(std::vector<HitObject*>& pvho);
 	virtual void RenderStatic();
 	virtual void RenderDynamic();
 	virtual void RenderSetup();
+	virtual ItemTypeEnum HitableGetItemType() const;
 
-	class LightSeqAnimObject // TODO: : public AnimObject
-	{
-	public:
-		virtual void Animate()
-		{
-			// TODO: m_pLightSeq->Animate();
-		}
-		LightSeq* m_pLightSeq;
-	} m_lightseqanim;
+	LightSeqAnimObject m_lightseqanim;
 
 	LightSeqData m_d;
 

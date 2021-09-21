@@ -206,6 +206,11 @@ bool Trigger::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Trigger::GetItemType() const
+{
+	return eItemTrigger;
+}
+
 IEditable* Trigger::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -236,6 +241,14 @@ void Trigger::WriteRegDefaults()
 	pRegUtil->SaveValueBool("DefaultProps\\Trigger", "ReflectionEnabled", m_d.m_reflectionEnabled);
 }
 
+void Trigger::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Trigger::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Trigger::RenderStatic()
 {
 }
@@ -246,4 +259,9 @@ void Trigger::RenderDynamic()
 
 void Trigger::RenderSetup()
 {
+}
+
+ItemTypeEnum Trigger::HitableGetItemType() const
+{
+	return eItemTrigger;
 }

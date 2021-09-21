@@ -58,12 +58,16 @@ public:
 	virtual void SetDefaults(bool fromMouseClick);
 	virtual void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
+	virtual ItemTypeEnum GetItemType() const;
 	virtual IEditable* GetIEditable();
 	virtual IHitable* GetIHitable();
 	virtual void WriteRegDefaults();
+	virtual void GetHitShapes(std::vector<HitObject*>& pvho);
+	virtual void GetHitShapesDebug(std::vector<HitObject*>& pvho);
 	virtual void RenderStatic();
 	virtual void RenderDynamic();
 	virtual void RenderSetup();
+	virtual ItemTypeEnum HitableGetItemType() const;
 
 	GateData m_d;
 

@@ -510,6 +510,11 @@ bool Primitive::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Primitive::GetItemType() const
+{
+	return eItemPrimitive;
+}
+
 IEditable* Primitive::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -570,6 +575,14 @@ void Primitive::WriteRegDefaults()
 	pRegUtil->SaveValueBool(strKeyName, "ObjectSpaceNormalMap", m_d.m_objectSpaceNormalMap);
 }
 
+void Primitive::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Primitive::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Primitive::RenderStatic()
 {
 }
@@ -580,4 +593,9 @@ void Primitive::RenderDynamic()
 
 void Primitive::RenderSetup()
 {
+}
+
+ItemTypeEnum Primitive::HitableGetItemType() const
+{
+	return eItemPrimitive;
 }

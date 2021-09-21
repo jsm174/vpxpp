@@ -125,6 +125,11 @@ bool Timer::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+ItemTypeEnum Timer::GetItemType() const
+{
+	return eItemTimer;
+}
+
 IEditable* Timer::GetIEditable()
 {
 	return static_cast<IEditable*>(this);
@@ -143,6 +148,14 @@ void Timer::WriteRegDefaults()
 	pRegUtil->SaveValueInt("DefaultProps\\Timer", "TimerInterval", m_d.m_tdr.m_TimerInterval);
 }
 
+void Timer::GetHitShapes(std::vector<HitObject*>& pvho)
+{
+}
+
+void Timer::GetHitShapesDebug(std::vector<HitObject*>& pvho)
+{
+}
+
 void Timer::RenderStatic()
 {
 }
@@ -153,4 +166,9 @@ void Timer::RenderDynamic()
 
 void Timer::RenderSetup()
 {
+}
+
+ItemTypeEnum Timer::HitableGetItemType() const
+{
+	return eItemTimer;
 }
