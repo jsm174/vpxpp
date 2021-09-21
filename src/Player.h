@@ -4,6 +4,7 @@
 
 #include "Pin3D.h"
 #include "PinTable.h"
+#include "Hitable.h"
 
 #include "BgfxWindow.h"
 
@@ -49,4 +50,7 @@ private:
 	void RenderDynamics();
 	void InitStatic();
 	void RenderStaticMirror(const bool onlyBalls);
+
+	std::vector< Hitable* > m_vhitables;
+
 };

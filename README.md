@@ -28,6 +28,10 @@ build/Release/vpxpp tables/blankTable.vpx
 
 - Everything
 
+## Help
+
+- So I'm to the point where I can start working on rendering the table. I'm not a 3D guy or a physics guy. I know a little OpenGL and not much DirectX. I was looking for a cross platform rendering library and settled on [bgfx](https://github.com/bkaradzic/bgfx). Visual Pinball uses Direct3D 9, so there is a ton of work that will be required to port it to bgfx. If you are interested in contributing, I would be extremely greatful! 
+
 ## Why work on this?
 
 I've been thinking about this project for well over a decade, so realistically it will probably go nowhere. 

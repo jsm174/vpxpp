@@ -14,6 +14,9 @@ public:
 	RenderDevice(/*const HWND hwnd,*/ const int width, const int height, const bool fullscreen, const int colordepth, int VSync, const bool useAA, const bool stereo3D, const unsigned int FXAA, const bool sharpen, const bool ss_refl, /*const bool useNvidiaApi,*/ const bool disable_dwm, const int BWrendering);
 	~RenderDevice();
 
+	void SetTransform(const TransformStateType, const D3DMATRIX*);
+	void GetTransform(const TransformStateType, D3DMATRIX*);
+
 	void BeginScene();
 	void EndScene();
 
@@ -31,4 +34,7 @@ public:
 	int m_BWrendering;
 
 	TextureManager m_texMan;
+
+private:
+	// TODO: IDirect3DDevice9* m_pD3DDevice;
 };

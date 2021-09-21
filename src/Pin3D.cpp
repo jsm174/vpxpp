@@ -5,6 +5,13 @@
 #include "Texture.h"
 #include "extern.h"
 
+#include <bgfx/bgfx.h>
+#include <bgfx/platform.h>
+#include <bimg/bimg.h>
+#include <bx/debug.h>
+#include <bx/file.h>
+#include <bx/string.h>
+
 Pin3D::Pin3D()
 {
 	m_pd3dPrimaryDevice = NULL;
@@ -55,6 +62,10 @@ HRESULT Pin3D::InitPin3D(const bool fullScreen, const int width, const int heigh
 	{
 		return E_FAIL;
 	}
+
+	InitPrimaryRenderState();
+
+	// TODOSetPrimaryRenderTarget(m_pddsStatic, m_pddsStaticZ);
 
 	return S_OK;
 }
@@ -177,9 +188,49 @@ void Pin3D::InitLayout(const bool FSS_mode, const float xpixoff, const float ypi
 		projTrans.Multiply(m_proj.m_matProj, m_proj.m_matProj);
 	}
 
-	// TODO: m_pd3dPrimaryDevice->SetTransform(TRANSFORMSTATE_PROJECTION, &m_proj.m_matProj);
-	// TODO: m_pd3dPrimaryDevice->SetTransform(TRANSFORMSTATE_VIEW, &m_proj.m_matView);
-	// TODO: m_pd3dPrimaryDevice->SetTransform(TRANSFORMSTATE_WORLD, &m_proj.m_matWorld);
+	m_pd3dPrimaryDevice->SetTransform(TRANSFORMSTATE_PROJECTION, &m_proj.m_matProj);
+	m_pd3dPrimaryDevice->SetTransform(TRANSFORMSTATE_VIEW, &m_proj.m_matView);
+	m_pd3dPrimaryDevice->SetTransform(TRANSFORMSTATE_WORLD, &m_proj.m_matWorld);
+
+	// Set view and projection matrix for view 1.
+
+	float tmpView[16];
+	tmpView[0] = m_proj.m_matView.m[0][1];
+	tmpView[1] = m_proj.m_matView.m[0][1];
+	tmpView[2] = m_proj.m_matView.m[0][2];
+	tmpView[3] = m_proj.m_matView.m[0][3];
+	tmpView[4] = m_proj.m_matView.m[1][0];
+	tmpView[5] = m_proj.m_matView.m[1][1];
+	tmpView[6] = m_proj.m_matView.m[1][2];
+	tmpView[7] = m_proj.m_matView.m[1][3];
+	tmpView[8] = m_proj.m_matView.m[2][0];
+	tmpView[9] = m_proj.m_matView.m[2][1];
+	tmpView[10] = m_proj.m_matView.m[2][2];
+	tmpView[11] = m_proj.m_matView.m[2][3];
+	tmpView[12] = m_proj.m_matView.m[3][0];
+	tmpView[13] = m_proj.m_matView.m[3][1];
+	tmpView[14] = m_proj.m_matView.m[3][2];
+	tmpView[15] = m_proj.m_matView.m[3][3];
+
+	float tmpProj[16];
+	tmpProj[0] = m_proj.m_matProj.m[0][0];
+	tmpProj[1] = m_proj.m_matProj.m[0][1];
+	tmpProj[2] = m_proj.m_matProj.m[0][2];
+	tmpProj[3] = m_proj.m_matProj.m[0][3];
+	tmpProj[4] = m_proj.m_matProj.m[1][0];
+	tmpProj[5] = m_proj.m_matProj.m[1][1];
+	tmpProj[6] = m_proj.m_matProj.m[1][2];
+	tmpProj[7] = m_proj.m_matProj.m[1][3];
+	tmpProj[8] = m_proj.m_matProj.m[2][0];
+	tmpProj[9] = m_proj.m_matProj.m[2][1];
+	tmpProj[10] = m_proj.m_matProj.m[2][2];
+	tmpProj[11] = m_proj.m_matProj.m[2][3];
+	tmpProj[12] = m_proj.m_matProj.m[3][0];
+	tmpProj[13] = m_proj.m_matProj.m[3][1];
+	tmpProj[14] = m_proj.m_matProj.m[3][2];
+	tmpProj[15] = m_proj.m_matProj.m[3][3];
+
+	bgfx::setViewTransform(0, tmpView, tmpProj);
 
 	m_proj.CacheTransform();
 
@@ -239,4 +290,39 @@ D3DXMATRIX* D3DXMatrixIdentity(D3DXMATRIX* pout)
 	(*pout).m[2][2] = 1.0f;
 	(*pout).m[3][3] = 1.0f;
 	return pout;
+}
+
+void Pin3D::InitRenderState(RenderDevice* const pd3dDevice)
+{
+/* TODO: DisableAlphaBlend();
+
+	pd3dDevice->SetRenderState(RenderDevice::LIGHTING, RenderDevice::RS_FALSE);
+
+	pd3dDevice->SetRenderState(RenderDevice::ZENABLE, RenderDevice::RS_TRUE);
+	pd3dDevice->SetRenderState(RenderDevice::ZWRITEENABLE, RenderDevice::RS_TRUE);
+	pd3dDevice->SetRenderState(RenderDevice::CULLMODE, RenderDevice::CULL_CCW);
+
+	pd3dDevice->SetRenderState(RenderDevice::CLIPPING, RenderDevice::RS_FALSE);
+	pd3dDevice->SetRenderState(RenderDevice::CLIPPLANEENABLE, 0);
+
+	pd3dDevice->SetTextureAddressMode(0, RenderDevice::TEX_CLAMP);
+	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	pd3dDevice->SetTextureStageState(0, D3DTSS_TEXCOORDINDEX, 0);
+	pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TFACTOR);
+	SetTextureFilter(pd3dDevice, 0, TEXTURE_MODE_TRILINEAR);
+
+	pd3dDevice->SetTextureAddressMode(4, RenderDevice::TEX_CLAMP);
+	SetTextureFilter(pd3dDevice, 4, TEXTURE_MODE_TRILINEAR); */
+}
+
+void Pin3D::InitPrimaryRenderState()
+{
+	InitRenderState(m_pd3dPrimaryDevice);
+}
+
+void Pin3D::DrawBackground()
+{
 }

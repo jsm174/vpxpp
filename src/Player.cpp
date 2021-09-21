@@ -80,6 +80,11 @@ HRESULT Player::Init()
 
 	m_pin3d.InitLayout(m_ptable->m_BG_enable_FSS);
 
+	for (size_t i = 0; i < m_ptable->m_vedit.size(); i++)
+	{
+		IEditable* const pe = m_ptable->m_vedit[i];
+	}
+
 	InitStatic();
 
 	return hr;
@@ -87,7 +92,11 @@ HRESULT Player::Init()
 
 void Player::InitStatic()
 {
-	//RenderStaticMirror
+	for (size_t i = 0; i < m_vhitables.size(); ++i)
+	{
+		Hitable* const pHitable = m_vhitables[i];
+		pHitable->RenderSetup();
+	}
 }
 
 void Player::Render()

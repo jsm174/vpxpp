@@ -19,6 +19,16 @@ RenderDevice::RenderDevice(/* TODO: const HWND hwnd,*/ const int width, const in
 {
 }
 
+void RenderDevice::SetTransform(const TransformStateType p1, const D3DMATRIX* p2)
+{
+	// TODO: CHECKD3D(m_pD3DDevice->SetTransform((D3DTRANSFORMSTATETYPE)p1, p2));
+}
+
+void RenderDevice::GetTransform(const TransformStateType p1, D3DMATRIX* p2)
+{
+	// TODO: CHECKD3D(m_pD3DDevice->GetTransform((D3DTRANSFORMSTATETYPE)p1, p2));
+}
+
 void RenderDevice::BeginScene()
 {
 	// TODO: CHECKD3D(m_pD3DDevice->BeginScene());
