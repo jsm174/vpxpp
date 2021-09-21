@@ -389,6 +389,11 @@ IEditable* Surface::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Surface::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Surface::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -421,6 +426,18 @@ void Surface::WriteRegDefaults()
 	pRegUtil->SaveValueInt(strKeyName, "DisableLighting", (tmp == 1) ? 0 : tmp); // backwards compatible saving
 	pRegUtil->SaveValueFloat(strKeyName, "DisableLightingBelow", m_d.m_disableLightingBelow);
 	pRegUtil->SaveValueBool(strKeyName, "ReflectionEnabled", m_d.m_reflectionEnabled);
+}
+
+void Surface::RenderStatic()
+{
+}
+
+void Surface::RenderDynamic()
+{
+}
+
+void Surface::RenderSetup()
+{
 }
 
 void Surface::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)

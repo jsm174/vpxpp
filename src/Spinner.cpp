@@ -203,6 +203,11 @@ IEditable* Spinner::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Spinner::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Spinner::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -222,4 +227,16 @@ void Spinner::WriteRegDefaults()
 	pRegUtil->SaveValue("DefaultProps\\Spinner", "Image", m_d.m_szImage);
 	pRegUtil->SaveValue("DefaultProps\\Spinner", "Surface", m_d.m_szSurface);
 	pRegUtil->SaveValueBool("DefaultProps\\Spinner", "ReflectionEnabled", m_d.m_reflectionEnabled);
+}
+
+void Spinner::RenderStatic()
+{
+}
+
+void Spinner::RenderDynamic()
+{
+}
+
+void Spinner::RenderSetup()
+{
 }

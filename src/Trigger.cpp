@@ -211,6 +211,11 @@ IEditable* Trigger::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Trigger::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Trigger::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -229,4 +234,16 @@ void Trigger::WriteRegDefaults()
 	pRegUtil->SaveValue("DefaultProps\\Trigger", "Surface", m_d.m_szSurface);
 	pRegUtil->SaveValueFloat("DefaultProps\\Trigger", "AnimSpeed", m_d.m_animSpeed);
 	pRegUtil->SaveValueBool("DefaultProps\\Trigger", "ReflectionEnabled", m_d.m_reflectionEnabled);
+}
+
+void Trigger::RenderStatic()
+{
+}
+
+void Trigger::RenderDynamic()
+{
+}
+
+void Trigger::RenderSetup()
+{
 }

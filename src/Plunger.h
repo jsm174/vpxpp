@@ -2,6 +2,7 @@
 
 #include "BaseProperty.h"
 #include "IEditable.h"
+#include "IHitable.h"
 #include "IScriptable.h"
 #include "ISelect.h"
 #include "Vertex2D.h"
@@ -44,6 +45,7 @@ public:
 
 class Plunger : public ISelect,
 				public IEditable,
+				public IHitable,
 				public IScriptable
 {
 public:
@@ -70,8 +72,11 @@ public:
 	void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
 	virtual IEditable* GetIEditable();
-
+	virtual IHitable* GetIHitable();
 	virtual void WriteRegDefaults();
+	virtual void RenderStatic();
+	virtual void RenderDynamic();
+	virtual void RenderSetup();
 
 	PlungerData m_d;
 

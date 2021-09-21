@@ -263,6 +263,11 @@ IEditable* Rubber::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Rubber::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Rubber::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -288,6 +293,18 @@ void Rubber::WriteRegDefaults()
 	pRegUtil->SaveValueFloat(strKeyName, "RotY", m_d.m_rotY);
 	pRegUtil->SaveValueFloat(strKeyName, "RotZ", m_d.m_rotZ);
 	pRegUtil->SaveValueBool(strKeyName, "ReflectionEnabled", m_d.m_reflectionEnabled);
+}
+
+void Rubber::RenderStatic()
+{
+}
+
+void Rubber::RenderDynamic()
+{
+}
+
+void Rubber::RenderSetup()
+{
 }
 
 void Rubber::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)

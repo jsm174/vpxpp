@@ -515,6 +515,11 @@ IEditable* Primitive::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Primitive::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Primitive::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -563,4 +568,16 @@ void Primitive::WriteRegDefaults()
 	pRegUtil->SaveValueBool(strKeyName, "BackfacesEnabled", m_d.m_backfacesEnabled);
 	pRegUtil->SaveValueBool(strKeyName, "DisplayTexture", m_d.m_displayTexture);
 	pRegUtil->SaveValueBool(strKeyName, "ObjectSpaceNormalMap", m_d.m_objectSpaceNormalMap);
+}
+
+void Primitive::RenderStatic()
+{
+}
+
+void Primitive::RenderDynamic()
+{
+}
+
+void Primitive::RenderSetup()
+{
 }

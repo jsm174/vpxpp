@@ -83,6 +83,11 @@ HRESULT Player::Init()
 	for (size_t i = 0; i < m_ptable->m_vedit.size(); i++)
 	{
 		IEditable* const pe = m_ptable->m_vedit[i];
+		IHitable* const ph = pe->GetIHitable();
+
+		if (ph)
+		{
+		}
 	}
 
 	InitStatic();
@@ -94,7 +99,7 @@ void Player::InitStatic()
 {
 	for (size_t i = 0; i < m_vhitables.size(); ++i)
 	{
-		Hitable* const pHitable = m_vhitables[i];
+		IHitable* const pHitable = m_vhitables[i];
 		pHitable->RenderSetup();
 	}
 }

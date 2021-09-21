@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IEditable.h"
+#include "IHitable.h"
 #include "IScriptable.h"
 #include "ISelect.h"
 #include "Vertex2D.h"
@@ -24,6 +25,7 @@ public:
 
 class Timer : public ISelect,
 			  public IEditable,
+			  public IHitable,
 			  public IScriptable
 {
 public:
@@ -47,11 +49,13 @@ public:
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
 	virtual HRESULT InitPostLoad();
 	virtual void SetDefaults(bool fromMouseClick);
-
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
 	virtual IEditable* GetIEditable();
-
+	virtual IHitable* GetIHitable();
 	virtual void WriteRegDefaults();
+	virtual void RenderStatic();
+	virtual void RenderDynamic();
+	virtual void RenderSetup();
 
 	TimerData m_d;
 

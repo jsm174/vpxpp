@@ -99,7 +99,7 @@ HRESULT Gate::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int ve
 
 HRESULT Gate::InitPostLoad()
 {
-   return S_OK;
+	return S_OK;
 }
 
 void Gate::SetDefaults(bool fromMouseClick)
@@ -229,6 +229,11 @@ IEditable* Gate::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Gate::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Gate::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -251,4 +256,16 @@ void Gate::WriteRegDefaults()
 	pRegUtil->SaveValueBool("DefaultProps\\Gate", "TwoWay", m_d.m_twoWay);
 	pRegUtil->SaveValueBool("DefaultProps\\Gate", "ReflectionEnabled", m_d.m_reflectionEnabled);
 	pRegUtil->SaveValueInt("DefaultProps\\Gate", "GateType", m_d.m_type);
+}
+
+void Gate::RenderStatic()
+{
+}
+
+void Gate::RenderDynamic()
+{
+}
+
+void Gate::RenderSetup()
+{
 }

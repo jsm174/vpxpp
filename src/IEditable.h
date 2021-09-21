@@ -6,6 +6,7 @@
 #include "Vertex3Ds.h"
 
 class PinTable;
+class IHitable;
 
 class IEditable
 {
@@ -18,6 +19,7 @@ public:
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName) = 0;
 
 	virtual PinTable* GetPTable() = 0;
+	virtual IHitable* GetIHitable();
 
 	void InitScript();
 

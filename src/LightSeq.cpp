@@ -163,6 +163,11 @@ IEditable* LightSeq::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* LightSeq::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void LightSeq::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -175,4 +180,16 @@ void LightSeq::WriteRegDefaults()
 	pRegUtil->SaveValueFloat("DefaultProps\\LightSequence", "CenterY", m_d.m_vCenter.y);
 	pRegUtil->SaveValueBool("DefaultProps\\LightSequence", "TimerEnabled", m_d.m_tdr.m_TimerEnabled);
 	pRegUtil->SaveValueInt("DefaultProps\\LightSequence", "TimerInterval", m_d.m_tdr.m_TimerInterval);
+}
+
+void LightSeq::RenderStatic()
+{
+}
+
+void LightSeq::RenderDynamic()
+{
+}
+
+void LightSeq::RenderSetup()
+{
 }

@@ -319,6 +319,11 @@ IEditable* Flipper::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Flipper::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Flipper::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -353,4 +358,16 @@ void Flipper::WriteRegDefaults()
 	pRegUtil->SaveValueBool(regKey, "Visible", m_d.m_visible);
 	pRegUtil->SaveValueBool(regKey, "Enabled", m_d.m_enabled);
 	pRegUtil->SaveValueBool(regKey, "ReflectionEnabled", m_d.m_reflectionEnabled);
+}
+
+void Flipper::RenderStatic()
+{
+}
+
+void Flipper::RenderDynamic()
+{
+}
+
+void Flipper::RenderSetup()
+{
 }

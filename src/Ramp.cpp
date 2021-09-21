@@ -1,6 +1,6 @@
 #include "Ramp.h"
-#include "RegUtil.h"
 #include "DragPoint.h"
+#include "RegUtil.h"
 
 const ItemTypeEnum Ramp::ItemType = eItemRamp;
 const int Ramp::TypeNameID = 145;
@@ -293,6 +293,11 @@ IEditable* Ramp::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Ramp::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Ramp::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -324,6 +329,18 @@ void Ramp::WriteRegDefaults()
 	pRegUtil->SaveValueFloat(strKeyName, "WireDiameter", m_d.m_wireDiameter);
 	pRegUtil->SaveValueFloat(strKeyName, "WireDistanceX", m_d.m_wireDistanceX);
 	pRegUtil->SaveValueFloat(strKeyName, "WireDistanceY", m_d.m_wireDistanceY);
+}
+
+void Ramp::RenderStatic()
+{
+}
+
+void Ramp::RenderDynamic()
+{
+}
+
+void Ramp::RenderSetup()
+{
 }
 
 void Ramp::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)
@@ -369,14 +386,15 @@ void Ramp::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)
 	}
 }
 
-void Ramp::AssignHeightToControlPoint(const RenderVertex3D &v, const float height)
+void Ramp::AssignHeightToControlPoint(const RenderVertex3D& v, const float height)
 {
-   for (size_t i = 0; i < m_vdpoint.size(); i++)
-   {
-      if (m_vdpoint[i]->m_v.x == v.x && m_vdpoint[i]->m_v.y == v.y) {
-         m_vdpoint[i]->m_calcHeight = height;
-	  }
-   }
+	for (size_t i = 0; i < m_vdpoint.size(); i++)
+	{
+		if (m_vdpoint[i]->m_v.x == v.x && m_vdpoint[i]->m_v.y == v.y)
+		{
+			m_vdpoint[i]->m_calcHeight = height;
+		}
+	}
 }
 
 //
@@ -568,11 +586,7 @@ void Ramp::GetCentralCurve(std::vector<T>& vv, const float _accuracy) const
 
 bool Ramp::isHabitrail() const
 {
-   return m_d.m_type == RampType4Wire
-       || m_d.m_type == RampType1Wire
-       || m_d.m_type == RampType2Wire
-       || m_d.m_type == RampType3WireLeft
-       || m_d.m_type == RampType3WireRight;
+	return m_d.m_type == RampType4Wire || m_d.m_type == RampType1Wire || m_d.m_type == RampType2Wire || m_d.m_type == RampType3WireLeft || m_d.m_type == RampType3WireRight;
 }
 
 //

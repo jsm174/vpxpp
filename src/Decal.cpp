@@ -89,9 +89,9 @@ HRESULT Decal::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int v
 
 HRESULT Decal::InitPostLoad()
 {
-   // TODO: EnsureSize();
+	// TODO: EnsureSize();
 
-   return S_OK;
+	return S_OK;
 }
 
 void Decal::SetDefaults(bool fromMouseClick)
@@ -241,6 +241,11 @@ IEditable* Decal::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Decal::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Decal::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -284,4 +289,16 @@ void Decal::WriteRegDefaults()
 	// 	SaveValueInt("DefaultProps\\Decal", "FontUnderline", fd.fUnderline);
 	// 	SaveValueInt("DefaultProps\\Decal", "FontStrikeThrough", fd.fStrikethrough);
 	// }
+}
+
+void Decal::RenderStatic()
+{
+}
+
+void Decal::RenderDynamic()
+{
+}
+
+void Decal::RenderSetup()
+{
 }

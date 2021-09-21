@@ -288,6 +288,11 @@ IEditable* Light::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Light::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Light::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -315,4 +320,16 @@ void Light::WriteRegDefaults()
 	pRegUtil->SaveValueFloat("DefaultProps\\Light", "ScaleBulbMesh", m_d.m_meshRadius);
 	pRegUtil->SaveValueFloat("DefaultProps\\Light", "BulbModulateVsAdd", m_d.m_modulate_vs_add);
 	pRegUtil->SaveValueFloat("DefaultProps\\Light", "BulbHaloHeight", m_d.m_bulbHaloHeight);
+}
+
+void Light::RenderStatic()
+{
+}
+
+void Light::RenderDynamic()
+{
+}
+
+void Light::RenderSetup()
+{
 }

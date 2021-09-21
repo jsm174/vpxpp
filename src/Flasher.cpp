@@ -113,7 +113,7 @@ HRESULT Flasher::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int
 
 HRESULT Flasher::InitPostLoad()
 {
-   return S_OK;
+	return S_OK;
 }
 
 void Flasher::SetDefaults(bool fromMouseClick)
@@ -199,7 +199,8 @@ bool Flasher::LoadToken(const int id, BiffReader* const pBiffReader)
 	{
 		int iTmp;
 		pBiffReader->GetInt(iTmp);
-		if (iTmp < 0) {
+		if (iTmp < 0)
+		{
 			iTmp = 0;
 		}
 		m_d.m_alpha = iTmp;
@@ -250,6 +251,11 @@ IEditable* Flasher::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Flasher::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Flasher::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -272,4 +278,16 @@ void Flasher::WriteRegDefaults()
 	pRegUtil->SaveValueInt("DefaultProps\\Flasher", "ImageMode", m_d.m_imagealignment);
 	pRegUtil->SaveValueInt("DefaultProps\\Flasher", "Filter", m_d.m_filter);
 	pRegUtil->SaveValueInt("DefaultProps\\Flasher", "FilterAmount", m_d.m_filterAmount);
+}
+
+void Flasher::RenderStatic()
+{
+}
+
+void Flasher::RenderDynamic()
+{
+}
+
+void Flasher::RenderSetup()
+{
 }

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "RenderDevice.h"
 #include "HitObject.h"
+#include "RenderDevice.h"
 #include "Vertex3Ds.h"
 
 #include <vector>
 
-class Hitable
+class IHitable
 {
 public:
 	// TODO: virtual void GetHitShapes(std::vector<HitObject*>& pvho) = 0;
@@ -15,8 +15,8 @@ public:
 	// TODO: virtual EventProxyBase* GetEventProxyBase() = 0;
 	// TODO: virtual void EndPlay() = 0;
 	virtual void PreRenderStatic(RenderDevice* pd3dDevice);
-	// TODO: virtual void RenderStatic() = 0;
-	// TODO: virtual void RenderDynamic() = 0;
+	virtual void RenderStatic() = 0;
+	virtual void RenderDynamic() = 0;
 	virtual void RenderSetup() = 0;
 	// TODO: virtual ItemTypeEnum HitableGetItemType() const = 0;
 

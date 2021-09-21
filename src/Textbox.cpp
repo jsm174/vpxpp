@@ -260,6 +260,11 @@ IEditable* Textbox::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Textbox::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Textbox::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -297,4 +302,16 @@ void Textbox::WriteRegDefaults()
 	// pRegUtil->SaveValueInt("DefaultProps\\TextBox", "FontStrikeThrough", fd.fStrikethrough);
 
 	pRegUtil->SaveValue("DefaultProps\\TextBox", "Text", m_d.m_sztext);
+}
+
+void Textbox::RenderStatic()
+{
+}
+
+void Textbox::RenderDynamic()
+{
+}
+
+void Textbox::RenderSetup()
+{
 }

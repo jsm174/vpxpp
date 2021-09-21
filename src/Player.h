@@ -2,9 +2,9 @@
 
 #include "misc.h"
 
+#include "IHitable.h"
 #include "Pin3D.h"
 #include "PinTable.h"
-#include "Hitable.h"
 
 #include "BgfxWindow.h"
 
@@ -51,6 +51,5 @@ private:
 	void InitStatic();
 	void RenderStaticMirror(const bool onlyBalls);
 
-	std::vector< Hitable* > m_vhitables;
-
+	std::vector<IHitable*> m_vhitables;
 };

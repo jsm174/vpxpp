@@ -115,12 +115,12 @@ add_executable(vpxpp
 	src/IEditable.h
 	src/IEditable.cpp
 
-	src/Hitable.h
-	src/Hitable.cpp
+	src/IHitable.h
+	src/IHitable.cpp
 
 	src/HitObject.h
 	src/HitObject.cpp
-	
+
 	src/EditableRegistry.h
 
 	src/Collection.h

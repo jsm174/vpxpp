@@ -282,6 +282,11 @@ IEditable* HitTarget::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* HitTarget::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void HitTarget::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -319,4 +324,16 @@ void HitTarget::WriteRegDefaults()
 	pRegUtil->SaveValueFloat(strKeyName, "DisableLightingBelow", m_d.m_disableLightingBelow);
 	pRegUtil->SaveValueBool(strKeyName, "ReflectionEnabled", m_d.m_reflectionEnabled);
 	pRegUtil->SaveValueInt(strKeyName, "RaiseDelay", m_d.m_raiseDelay);
+}
+
+void HitTarget::RenderStatic()
+{
+}
+
+void HitTarget::RenderDynamic()
+{
+}
+
+void HitTarget::RenderSetup()
+{
 }

@@ -71,7 +71,7 @@ HRESULT Bumper::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 
 HRESULT Bumper::InitPostLoad()
 {
-   return S_OK;
+	return S_OK;
 }
 
 HRESULT Bumper::InitVBA(bool fNew, int id, wchar_t* const wzName)
@@ -254,6 +254,11 @@ IEditable* Bumper::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Bumper::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Bumper::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -273,4 +278,16 @@ void Bumper::WriteRegDefaults()
 	pRegUtil->SaveValueBool("DefaultProps\\Bumper", "Collidable", m_d.m_collidable);
 	pRegUtil->SaveValueBool("DefaultProps\\Bumper", "ReflectionEnabled", m_d.m_reflectionEnabled);
 	pRegUtil->SaveValue("DefaultProps\\Bumper", "Surface", m_d.m_szSurface);
+}
+
+void Bumper::RenderStatic()
+{
+}
+
+void Bumper::RenderDynamic()
+{
+}
+
+void Bumper::RenderSetup()
+{
 }

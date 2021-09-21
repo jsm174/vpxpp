@@ -240,6 +240,11 @@ IEditable* DispReel::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* DispReel::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void DispReel::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -262,6 +267,18 @@ void DispReel::WriteRegDefaults()
 	pRegUtil->SaveValueInt("DefaultProps\\EMReel", "TimerInterval", m_d.m_tdr.m_TimerInterval);
 }
 
+void DispReel::RenderStatic()
+{
+}
+
+void DispReel::RenderDynamic()
+{
+}
+
+void DispReel::RenderSetup()
+{
+}
+
 float DispReel::getBoxWidth() const
 {
 	const float width = (float)m_d.m_reelcount * m_d.m_width + (float)m_d.m_reelcount * m_d.m_reelspacing + m_d.m_reelspacing;
@@ -270,7 +287,7 @@ float DispReel::getBoxWidth() const
 
 float DispReel::getBoxHeight() const
 {
-	const float height = m_d.m_height + m_d.m_reelspacing + m_d.m_reelspacing; 
+	const float height = m_d.m_height + m_d.m_reelspacing + m_d.m_reelspacing;
 
 	return height;
 }

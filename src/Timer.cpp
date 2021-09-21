@@ -130,10 +130,27 @@ IEditable* Timer::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Timer::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Timer::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
 
 	pRegUtil->SaveValueBool("DefaultProps\\Timer", "TimerEnabled", m_d.m_tdr.m_TimerEnabled);
 	pRegUtil->SaveValueInt("DefaultProps\\Timer", "TimerInterval", m_d.m_tdr.m_TimerInterval);
+}
+
+void Timer::RenderStatic()
+{
+}
+
+void Timer::RenderDynamic()
+{
+}
+
+void Timer::RenderSetup()
+{
 }

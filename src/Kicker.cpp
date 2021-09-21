@@ -207,6 +207,11 @@ IEditable* Kicker::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Kicker::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Kicker::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -223,4 +228,20 @@ void Kicker::WriteRegDefaults()
 	pRegUtil->SaveValue("DefaultProps\\Kicker", "Surface", m_d.m_szSurface);
 	pRegUtil->SaveValueBool("DefaultProps\\Kicker", "FallThrough", m_d.m_fallThrough);
 	pRegUtil->SaveValueBool("DefaultProps\\Kicker", "Legacy", m_d.m_legacyMode);
+}
+
+void Kicker::PreRenderStatic(RenderDevice* pd3dDevice)
+{
+}
+
+void Kicker::RenderStatic()
+{
+}
+
+void Kicker::RenderDynamic()
+{
+}
+
+void Kicker::RenderSetup()
+{
 }

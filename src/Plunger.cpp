@@ -271,6 +271,11 @@ IEditable* Plunger::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+IHitable* Plunger::GetIHitable()
+{
+	return static_cast<IHitable*>(this);
+}
+
 void Plunger::WriteRegDefaults()
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -305,4 +310,16 @@ void Plunger::WriteRegDefaults()
 	pRegUtil->SaveValueFloat("DefaultProps\\Plunger", "CustomSpringLoops", m_d.m_springLoops);
 	pRegUtil->SaveValueFloat("DefaultProps\\Plunger", "CustomSpringEndLoops", m_d.m_springEndLoops);
 	pRegUtil->SaveValueBool("DefaultProps\\Plunger", "ReflectionEnabled", m_d.m_reflectionEnabled);
+}
+
+void Plunger::RenderStatic()
+{
+}
+
+void Plunger::RenderDynamic()
+{
+}
+
+void Plunger::RenderSetup()
+{
 }
