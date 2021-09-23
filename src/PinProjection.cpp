@@ -1,5 +1,7 @@
 #include "PinProjection.h"
 
+#include "Inlines.h"
+
 void PinProjection::RotateView(float x, float y, float z)
 {
 	Matrix3D matRotateX, matRotateY, matRotateZ;

@@ -19,6 +19,8 @@ private:
 	bool m_play;
 	bool m_file;
 	bool m_loadFileResult;
+
 	std::string m_szTableFilename;
+
 	VPinball m_vpinball;
 };

@@ -1,6 +1,7 @@
 #include "Primitive.h"
 #include "RegUtil.h"
-#include "cmath.h"
+
+#include "Inlines.h"
 
 const int Primitive::Max_Primitive_Sides = 100;
 
@@ -198,7 +199,7 @@ void Primitive::SetDefaults(bool fromMouseClick)
 
 	m_d.m_collidable = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault(strKeyName, "Collidable", true) : true;
 	m_d.m_toy = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault(strKeyName, "IsToy", false) : false;
-	m_d.m_disableLightingTop = dequantizeUnsigned8(fromMouseClick ? pRegUtil->LoadValueIntWithDefault(strKeyName, "DisableLighting", 0) : 0); // stored as uchar for backward compatibility
+	m_d.m_disableLightingTop = dequantizeUnsigned<8>(fromMouseClick ? pRegUtil->LoadValueIntWithDefault(strKeyName, "DisableLighting", 0) : 0); // stored as uchar for backward compatibility
 	m_d.m_disableLightingBelow = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault(strKeyName, "DisableLightingBelow", 0.f) : 0.f;
 	m_d.m_reflectionEnabled = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault(strKeyName, "ReflectionEnabled", true) : true;
 	m_d.m_backfacesEnabled = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault(strKeyName, "BackfacesEnabled", false) : false;
@@ -328,7 +329,7 @@ bool Primitive::LoadToken(const int id, BiffReader* const pBiffReader)
 	{
 		int tmp;
 		pBiffReader->GetInt(tmp);
-		m_d.m_disableLightingTop = (tmp == 1) ? 1.f : dequantizeUnsigned8(tmp); // backwards compatible hacky loading!
+		m_d.m_disableLightingTop = (tmp == 1) ? 1.f : dequantizeUnsigned<8>(tmp); // backwards compatible hacky loading!
 		break;
 	}
 	case FID(DILB):
@@ -566,7 +567,7 @@ void Primitive::WriteRegDefaults()
 
 	pRegUtil->SaveValueBool(strKeyName, "Collidable", m_d.m_collidable);
 	pRegUtil->SaveValueBool(strKeyName, "IsToy", m_d.m_toy);
-	const int tmp = quantizeUnsigned8(clamp(m_d.m_disableLightingTop, 0.f, 1.f));
+	const int tmp = quantizeUnsigned<8>(clamp(m_d.m_disableLightingTop, 0.f, 1.f));
 	pRegUtil->SaveValueInt(strKeyName, "DisableLighting", (tmp == 1) ? 0 : tmp); // backwards compatible saving
 	pRegUtil->SaveValueFloat(strKeyName, "DisableLightingBelow", m_d.m_disableLightingBelow);
 	pRegUtil->SaveValueBool(strKeyName, "ReflectionEnabled", m_d.m_reflectionEnabled);

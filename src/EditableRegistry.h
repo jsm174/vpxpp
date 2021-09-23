@@ -1,10 +1,11 @@
 #pragma once
 
-#include <map>
-
 #include "IEditable.h"
 #include "ISelect.h"
 #include "PinTable.h"
+
+#include <assert.h>
+#include <map>
 
 typedef IEditable* (*CreateFuncType)();
 typedef IEditable* (*CreateAndInitFuncType)(PinTable* pPinTable, float x, float y);

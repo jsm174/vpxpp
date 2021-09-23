@@ -1,11 +1,23 @@
 #pragma once
 
+#include <map>
 #include <stdint.h>
 
+#ifndef _MSC_VER
 typedef uint32_t DWORD; // DWORD = unsigned 32 bit value
 typedef uint16_t WORD;	// WORD = unsigned 16 bit value
 typedef uint8_t BYTE;	// BYTE = unsigned 8 bit value
 typedef int32_t LONG;
+#else
+typedef unsigned char BYTE;
+typedef unsigned short WORD;
+typedef unsigned long DWORD;
+typedef long LONG;
+
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
+#endif
+
 typedef long HRESULT;
 typedef int COLORREF;
 typedef int64_t LONGLONG;
@@ -156,6 +168,8 @@ public:
 // TODO: #define MAX(a,b)        (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
+#define precise_divide(a, b) ((a) / (b))
+
 enum ItemTypeEnum
 {
 	eItemSurface,
@@ -185,31 +199,30 @@ enum ItemTypeEnum
 	eItemInvalid = 0xffffffff // Force enum to be 32 bits
 };
 
-static const char* ITEMTYPEENUM_STRING[eItemTypeCount] =
-	{
-		[eItemSurface] = "eItemSurface",
-		[eItemFlipper] = "eItemFlipper",
-		[eItemTimer] = "eItemTimer",
-		[eItemPlunger] = "eItemPlunger",
-		[eItemTextbox] = "eItemTextbox",
-		[eItemBumper] = "eItemBumper",
-		[eItemTrigger] = "eItemTrigger",
-		[eItemLight] = "eItemLight",
-		[eItemKicker] = "eItemKicker",
-		[eItemDecal] = "eItemDecal",
-		[eItemGate] = "eItemGate",
-		[eItemSpinner] = "eItemSpinner",
-		[eItemRamp] = "eItemRamp",
-		[eItemTable] = "eItemTable",
-		[eItemLightCenter] = "eItemLightCenter",
-		[eItemDragPoint] = "eItemDragPoint",
-		[eItemCollection] = "eItemCollection",
-		[eItemDispReel] = "eItemDispReel",
-		[eItemLightSeq] = "eItemLightSeq",
-		[eItemPrimitive] = "eItemPrimitive",
-		[eItemFlasher] = "eItemFlasher",
-		[eItemRubber] = "eItemRubber",
-		[eItemHitTarget] = "eItemHitTarget",
+static const std::map<ItemTypeEnum, const char*> ITEMTYPEENUM_STRING{
+	{eItemSurface, "eItemSurface"},
+	{eItemFlipper, "eItemFlipper"},
+	{eItemTimer, "eItemTimer"},
+	{eItemPlunger, "eItemPlunger"},
+	{eItemTextbox, "eItemTextbox"},
+	{eItemBumper, "eItemBumper"},
+	{eItemTrigger, "eItemTrigger"},
+	{eItemLight, "eItemLight"},
+	{eItemKicker, "eItemKicker"},
+	{eItemDecal, "eItemDecal"},
+	{eItemGate, "eItemGate"},
+	{eItemSpinner, "eItemSpinner"},
+	{eItemRamp, "eItemRamp"},
+	{eItemTable, "eItemTable"},
+	{eItemLightCenter, "eItemLightCenter"},
+	{eItemDragPoint, "eItemDragPoint"},
+	{eItemCollection, "eItemCollection"},
+	{eItemDispReel, "eItemDispReel"},
+	{eItemLightSeq, "eItemLightSeq"},
+	{eItemPrimitive, "eItemPrimitive"},
+	{eItemFlasher, "eItemFlasher"},
+	{eItemRubber, "eItemRubber"},
+	{eItemHitTarget, "eItemHitTarget"},
 };
 
 typedef enum

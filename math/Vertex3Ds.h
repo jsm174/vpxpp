@@ -1,11 +1,11 @@
 #pragma once
 
-#include <float.h>
-#include <math.h>
-
 #include "Vertex2D.h"
 
 #include "def.h"
+
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 class Vertex3Ds
 {

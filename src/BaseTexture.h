@@ -3,6 +3,8 @@
 #include "misc.h"
 
 #include "FreeImage.h"
+
+#include <string>
 #include <vector>
 
 class BaseTexture

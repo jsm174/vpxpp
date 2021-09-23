@@ -1,6 +1,7 @@
 #pragma once
 
 #include "misc.h"
+
 #include <nlohmann/json.hpp>
 #include <string>
 

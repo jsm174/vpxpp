@@ -2,6 +2,8 @@
 #include "DragPoint.h"
 #include "RegUtil.h"
 
+#include "Inlines.h"
+
 const ItemTypeEnum Ramp::ItemType = eItemRamp;
 const int Ramp::TypeNameID = 145;
 const int Ramp::ToolID = 146;

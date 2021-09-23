@@ -1,6 +1,8 @@
 #include "Rubber.h"
 #include "RegUtil.h"
 
+#include "Inlines.h"
+
 const ItemTypeEnum Rubber::ItemType = eItemRubber;
 const int Rubber::TypeNameID = 147;
 const int Rubber::ToolID = 32990;

@@ -1,5 +1,8 @@
 #include "BaseTexture.h"
 #include "RegUtil.h"
+
+#include "Inlines.h"
+
 #include "def.h"
 
 BaseTexture* BaseTexture::CreateFromFile(const std::string& szfile)
@@ -171,7 +174,6 @@ BaseTexture* BaseTexture::CreateFromFreeImage(FIBITMAP* dib)
 	{
 		memcpy(pdst + (height - y - 1) * pitchdst, psrc + y * pitchsrc, pitch);
 	}
-
 
 	if (dibConv != dibResized)
 	{

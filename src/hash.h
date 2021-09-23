@@ -1,5 +1,7 @@
 #pragma once
 
+#include "misc.h"
+
 inline unsigned long StringHash(const unsigned char* str)
 {
 	// TODO: MessageBox(0, str, 0, 0);

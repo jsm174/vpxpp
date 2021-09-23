@@ -1,14 +1,16 @@
 #include "PinTable.h"
 #include "RegUtil.h"
-#include "cmath.h"
 
-#include <iostream>
+#include "Inlines.h"
 
 #include "Collection.h"
 #include "EditableRegistry.h"
 
 #include "Player.h"
 #include "extern.h"
+
+#include <assert.h>
+#include <iostream>
 
 PinTable::PinTable(VPinball* pVPinball)
 {
@@ -185,7 +187,7 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 
 							m_vedit.push_back(pEditable);
 
-							std::cout << szStmName << " = " << type << " " << ITEMTYPEENUM_STRING[type] << std::endl;
+							std::cout << szStmName << " = " << type << " " << ITEMTYPEENUM_STRING.at(type) << std::endl;
 						}
 						else
 						{
@@ -1210,7 +1212,7 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 	{
 		int tmp;
 		pBiffReader->GetInt(tmp);
-		m_playfieldReflectionStrength = dequantizeUnsigned8(tmp);
+		m_playfieldReflectionStrength = dequantizeUnsigned<8>(tmp);
 		break;
 	}
 	case FID(BTRA):
@@ -1220,7 +1222,7 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 	{
 		int tmp;
 		pBiffReader->GetInt(tmp);
-		m_ballTrailStrength = dequantizeUnsigned8(tmp);
+		m_ballTrailStrength = dequantizeUnsigned<8>(tmp);
 		break;
 	}
 	case FID(BPRS):
@@ -1332,13 +1334,13 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 			pMaterial->m_cClearcoat = mats[i].cClearcoat;
 			pMaterial->m_fWrapLighting = mats[i].fWrapLighting;
 			pMaterial->m_fRoughness = mats[i].fRoughness;
-			pMaterial->m_fGlossyImageLerp = 1.0f - dequantizeUnsigned8(mats[i].fGlossyImageLerp);
-			pMaterial->m_fThickness = (mats[i].fThickness == 0) ? 0.05f : dequantizeUnsigned8(mats[i].fThickness);
+			pMaterial->m_fGlossyImageLerp = 1.0f - dequantizeUnsigned<8>(mats[i].fGlossyImageLerp);
+			pMaterial->m_fThickness = (mats[i].fThickness == 0) ? 0.05f : dequantizeUnsigned<8>(mats[i].fThickness);
 			pMaterial->m_fEdge = mats[i].fEdge;
 			pMaterial->m_fOpacity = mats[i].fOpacity;
 			pMaterial->m_bIsMetal = mats[i].bIsMetal;
 			pMaterial->m_bOpacityActive = !!(mats[i].bOpacityActive_fEdgeAlpha & 1);
-			pMaterial->m_fEdgeAlpha = dequantizeUnsigned7(mats[i].bOpacityActive_fEdgeAlpha >> 1);
+			pMaterial->m_fEdgeAlpha = dequantizeUnsigned<7>(mats[i].bOpacityActive_fEdgeAlpha >> 1);
 			pMaterial->m_szName = mats[i].szName;
 
 			m_materials.push_back(pMaterial);
