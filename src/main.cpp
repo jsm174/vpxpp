@@ -1,5 +1,6 @@
 #include "VPApp.h"
 
+#include <cxxopts.hpp>
 #include <iostream>
 
 #include "libplatform/libplatform.h"
@@ -56,20 +57,44 @@ void v8_test()
 
 int main(int argc, char** argv)
 {
-	std::string filename = "/Users/jmillard/git/vpxpp/tables/exampleTable.vpx";
-	//std::string filename = "/Users/jmillard/git/vpxpp/tables/blankTable.vpx";
-	//std::string filename = "/Users/jmillard/Desktop/Pinball/Terminator 2 (Williams 1991).vpx";
+	cxxopts::Options options("vpxpp", "Visual Pinball X Player +");
 
-	if (argc > 1)
+	options.add_options()("f,file", "VPX file", cxxopts::value<std::string>())("disable-player", "Disable player", cxxopts::value<bool>()->default_value("false"))("h,help", "Print usage");
+
+	auto result = options.parse(argc, argv);
+
+	if (result.count("help"))
 	{
-		filename = argv[1];
+		std::cout << options.help() << std::endl;
+		exit(0);
+	}
+
+	std::string filename;
+
+	if (result.count("filename"))
+	{
+		filename = result["file"].as<std::string>();
+	}
+
+	//filename = "/Users/jmillard/git/vpxpp/tables/exampleTable.vpx";
+	//filename = "/Users/jmillard/git/vpxpp/tables/exampleTable.vpx";
+	//filename = "/Users/jmillard/Desktop/Pinball/Terminator 2 (Williams 1991).vpx";
+
+	if (filename.empty())
+	{
+		std::cout << options.help() << std::endl;
+		exit(0);
 	}
 
 	VPApp vpApp;
 	vpApp.InitInstance(filename);
-	vpApp.Run();
+
+	if (!result["disable-player"].as<bool>())
+	{
+		vpApp.Run();
+	}
 
 	v8_test();
 
-	std::cout << "done" << std::endl;
+	return 0;
 }

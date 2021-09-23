@@ -5,6 +5,8 @@
 
 #include "Vertex3Ds.h"
 
+#include <vector>
+
 class PinTable;
 class IHitable;
 

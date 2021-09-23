@@ -43,6 +43,7 @@ SET(V8_LIBRARY_SEARCH_PATHS
   /opt/csw/lib
   /opt/lib
   /usr/freeware/lib64
+  ${V8_DIR}/windows/
 )
 
 FIND_PATH(V8_INCLUDE_DIR v8.h
@@ -58,15 +59,16 @@ FIND_PATH(V8_INCLUDE_DIR v8.h
   /opt/include
   /usr/freeware/include
   /devel
+  ${V8_DIR}/headers/
 )
 
 FIND_LIBRARY(V8_BASE_LIBRARY
-  NAMES libv8_base.a v8_base.a v8 v8_base libv8_base
+  NAMES libv8_base.a v8_base.a v8 v8_base libv8_base v8.dll
   PATHS ${V8_LIBRARY_SEARCH_PATHS}
 )
 
 FIND_LIBRARY(V8_LIBPLATFORM_LIBRARY
-  NAMES v8_libplatform libv8_libplatform
+  NAMES v8_libplatform libv8_libplatform v8_libplatform.dll
   PATHS ${V8_LIBRARY_SEARCH_PATHS}
 )
 
@@ -94,3 +96,19 @@ IF (NOT UNIX)
 ELSEIF(V8_LIBRARY AND V8_ICUUC_LIBRARY AND V8_ICUI18N_LIBRARY AND V8_INCLUDE_DIR)
   SET(V8_FOUND "YES")
 ENDIF(NOT UNIX)
+
+add_library(V8::BASE UNKNOWN IMPORTED) 
+set_target_properties(V8::BASE PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "${V8_INCLUDE_DIR}"
+  IMPORTED_LOCATION "${V8_BASE_LIBRARY}"
+)
+
+add_library(V8::PLATFORM UNKNOWN IMPORTED) 
+set_target_properties(V8::PLATFORM PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "${V8_INCLUDE_DIR}"
+  IMPORTED_LOCATION "${V8_LIBPLATFORM_LIBRARY}"
+)
+
+add_library(V8::V8 INTERFACE IMPORTED)
+set_property(TARGET V8::V8 PROPERTY
+  INTERFACE_LINK_LIBRARIES V8::BASE V8::PLATFORM)

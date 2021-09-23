@@ -30,7 +30,7 @@ void IHaveDragPoints::LoadPointToken(int id, BiffReader* pBiffReader, int versio
 		BiffReader biffReader(pBiffReader->m_pStream, pdp, NULL, version);
 		biffReader.Load();
 
-        int i = 5;
+		int i = 5;
 	}
 }
 
@@ -93,5 +93,5 @@ void IHaveDragPoints::GetRgVertex(std::vector<T>& vv, const bool loop, const flo
 	}
 }
 
-template void IHaveDragPoints::GetRgVertex<RenderVertex>(std::vector<RenderVertex>& vv, const bool loop, const float accuracy = 4.f) const;
-template void IHaveDragPoints::GetRgVertex<RenderVertex3D>(std::vector<RenderVertex3D>& vv, const bool loop = true, const float accuracy = 4.f) const;
+template void IHaveDragPoints::GetRgVertex<RenderVertex>(std::vector<RenderVertex>& vv, const bool loop, const float accuracy) const;
+template void IHaveDragPoints::GetRgVertex<RenderVertex3D>(std::vector<RenderVertex3D>& vv, const bool loop, const float accuracy) const;

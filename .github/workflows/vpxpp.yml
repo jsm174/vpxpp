@@ -7,9 +7,43 @@ defaults:
     shell: bash
 
 jobs:
+  deps: 
+    name: Dependencies
+    runs-on: windows-latest
+    steps:
+      - id: cache
+        uses: actions/cache@v2
+        with:
+          path: deps
+          key: vpxpp-deps-1
+      - if: steps.cache.outputs.cache-hit != 'true'
+        uses: lukka/run-vcpkg@v7.4
+        with:
+          vcpkgArguments: nlohmann-json sdl2 freeimage cxxopts
+          vcpkgTriplet: x64-windows
+          vcpkgDirectory: deps/vcpkg
+          vcpkgGitCommitId: 47d2378c8181ece05ffc51acd2ed60d97e3c9a64
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          curl -sL https://github.com/tbossi/v8-builder/releases/download/9.2.230.22/v8_engine_9.2.230.22.zip -o v8_engine_9.2.230.22.zip
+          7z x v8_engine_9.2.230.22.zip v8/headers v8/windows -odeps
+      - if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v2
+        with:
+          repository: bkaradzic/bgfx.cmake
+          ref: fd8982e40c44851666f925562f253fed859f6776
+          path: deps/bgfx.cmake
+          submodules: true
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          cd deps/bgfx.cmake
+          cmake -DCMAKE_INSTALL_PREFIX=./install -DBGFX_BUILD_EXAMPLES=OFF -DBGFX_BUILD_TOOLS=ON -DBGFX_INSTALL=ON -B build
+          cmake --build build --target install --config Release
+
   build:
     name: Build vpxpp-${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
+    needs: [ deps ]
     strategy:
       fail-fast: false
       matrix:
@@ -17,23 +51,39 @@ jobs:
           - os: macos-latest
             platform: osx-x64
             exe: vpxpp
+          - os: windows-latest
+            platform: win-x64
+            exe: vpxpp.exe
     steps:
-      - run: |
-          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then 
-             brew install jsm174/bgfx/vulkan-sdk jsm174/bgfx/bgfx
-             brew install v8 nlohmann-json sdl2 freeimage
-          fi
       - uses: actions/checkout@v2
+      - if: matrix.os == 'windows-latest'
+        uses: actions/cache@v2
+        with:
+          path: deps
+          key: vpxpp-deps-1
+      - run: |
+          ls -laR *
+      - if: matrix.os == 'macos-latest'
+        run: |
+          brew install nlohmann-json sdl2 freeimage v8 cxxopts
+          brew install jsm174/bgfx/bgfx jsm174/bgfx/vulkan-sdk
       - name: Build vpxpp-${{ matrix.platform }}
         run: |
           cp cmake/CMakeLists_${{ matrix.platform }}.txt CMakeLists.txt
-          cmake -DCMAKE_BUILD_TYPE=Release -B build/Release
-          cmake --build build/Release
+          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            CMAKE_PREFIX_PATH=./deps/bgfx.cmake/install \
+            V8_DIR=./deps/v8 \
+            cmake -DCMAKE_TOOLCHAIN_FILE=./deps/vcpkg/scripts/buildsystems/vcpkg.cmake -B build
+            cmake --build build --config Release
+          else
+            cmake -DCMAKE_BUILD_TYPE=Release -B build/Release
+            cmake --build build/Release
+          fi
       - run: |
-          build/Release/${{ matrix.exe }} tables/exampleTable.vpx
+          build/Release/${{ matrix.exe }} -f tables/exampleTable.vpx --disable-player
       - run: |
           mkdir tmp
-          cp build/Release/${{ matrix.exe }} tmp
+          cp -r build/Release tmp
       - uses: actions/upload-artifact@v2
         with:
           name: vpxpp-${{ matrix.platform }}

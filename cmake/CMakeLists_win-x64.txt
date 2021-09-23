@@ -15,10 +15,11 @@ add_compile_definitions(
 	V8_COMPRESS_POINTERS
 )
 
-find_package(nlohmann_json 3.2.0 REQUIRED)
+find_package(nlohmann_json REQUIRED)
 find_package(FreeImage REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(bgfx REQUIRED)
+find_package(cxxopts REQUIRED)
 find_package(V8 REQUIRED)
 find_package(cxxopts REQUIRED)
 
@@ -250,4 +251,13 @@ target_link_libraries(vpxpp PRIVATE
 	FreeImage::FreeImage
 	V8::V8
 	cxxopts::cxxopts
+)
+
+add_custom_command(TARGET vpxpp POST_BUILD 
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/v8.dll" "$<TARGET_FILE_DIR:vpxpp>"
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/v8_libplatform.dll" "$<TARGET_FILE_DIR:vpxpp>"
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/v8_libbase.dll" "$<TARGET_FILE_DIR:vpxpp>"  
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/icui18n.dll" "$<TARGET_FILE_DIR:vpxpp>" 
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/icuuc.dll" "$<TARGET_FILE_DIR:vpxpp>" 
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/zlib.dll" "$<TARGET_FILE_DIR:vpxpp>" 
 )

@@ -8,16 +8,55 @@ This is more of a side project to see if I can actually make a cross platform ve
 
 ## Setup
 
+MacOS:
+
 ```
+brew install nlohmann-json sdl2 freeimage v8 cxxopts jsm174/bgfx/bgfx
+git clone https://github.com/jsm174/vpxpp.git
+cd vpxpp
 cp cmake/CMakeLists_osx-x64.txt CMakeLists.txt
 cmake -DCMAKE_BUILD_TYPE=Release -B build/Release
 cmake --build build/Release
 ```
 
-## Usage
+Windows:
 
 ```
-build/Release/vpxpp tables/blankTable.vpx
+git clone https://github.com/jsm174/vpxpp.git
+cd vpxpp
+copy cmake\CMakeLists_win-x64.txt CMakeLists.txt
+mkdir deps
+cd deps
+git clone https://github.com/microsoft/vcpkg
+.\vcpkg\bootstrap-vcpkg.bat
+.\vcpkg\vcpkg install nlohmann-json sdl2 freeimage cxxopts --triplet=x64-windows
+curl -sL https://github.com/tbossi/v8-builder/releases/download/9.2.230.22/v8_engine_9.2.230.22.zip -o v8.zip
+tar -xf v8.zip
+git clone https://github.com/bkaradzic/bgfx.cmake
+cd bgfx.cmake
+git submodule update --init --recursive
+cmake -DCMAKE_INSTALL_PREFIX=./install -DBGFX_BUILD_EXAMPLES=OFF -DBGFX_BUILD_TOOLS=ON -DBGFX_INSTALL=ON -B build
+cmake --build build --target install --config Release
+cd ..
+cd ..
+set CMAKE_PREFIX_PATH=./deps/bgfx.cmake/install
+set V8_DIR=./deps/v8
+cmake -DCMAKE_TOOLCHAIN_FILE=./deps/vcpkg/scripts/buildsystems/vcpkg.cmake -B build
+cmake --build build --config Release
+```
+
+## Usage
+
+MacOS:
+
+```
+build/Release/vpxpp -f tables/blankTable.vpx
+```
+
+Windows:
+
+```
+build\Release\vpxpp.exe -f tables/blankTable.vpx
 ```
 
 ## Done

@@ -122,13 +122,17 @@ void VPinball::DoPlay(const bool _cameraMode)
 	//   ptCur->Play(_cameraMode);
 	// }
 
-	PinTable* pPinTable = m_vtable[0];
-	pPinTable->Play(_cameraMode);
+	if (m_vtable.size() > 0)
+	{
+		PinTable* pPinTable = m_vtable[0];
+		pPinTable->Play(_cameraMode);
+	}
 }
 
 void VPinball::MainMsgLoop()
 {
-	if (g_pplayer) {
+	if (g_pplayer)
+	{
 		g_pplayer->Run();
 	}
 }

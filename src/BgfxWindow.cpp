@@ -134,6 +134,11 @@ bool BgfxWindow::Create(int width, int height)
 
 	switch (bgfx::getRendererType())
 	{
+	case bgfx::RendererType::Direct3D9:
+	case bgfx::RendererType::Direct3D11:
+	case bgfx::RendererType::Direct3D12:
+		ImGui_ImplSDL2_InitForD3D(m_pWindow);
+		break;
 	case bgfx::RendererType::Vulkan:
 		ImGui_ImplSDL2_InitForVulkan(m_pWindow);
 		break;
@@ -265,7 +270,8 @@ void BgfxWindow::fatal(const char* _filePath, uint16_t _line, bgfx::Fatal::Enum 
 	}
 	else
 	{
-		if (m_pWindow) {
+		if (m_pWindow)
+		{
 			SDL_DestroyWindow(m_pWindow);
 			m_pWindow = nullptr;
 		}

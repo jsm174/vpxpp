@@ -1,6 +1,7 @@
 #include "RegUtil.h"
 
 #include <fstream>
+#include <iomanip>
 
 RegUtil::RegUtil()
 {
