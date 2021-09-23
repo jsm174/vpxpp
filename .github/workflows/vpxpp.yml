@@ -61,8 +61,6 @@ jobs:
         with:
           path: deps
           key: vpxpp-deps-1
-      - run: |
-          ls -laR *
       - if: matrix.os == 'macos-latest'
         run: |
           brew install nlohmann-json sdl2 freeimage v8 cxxopts
@@ -82,7 +80,6 @@ jobs:
       - run: |
           build/Release/${{ matrix.exe }} -f tables/exampleTable.vpx --disable-player
       - run: |
-          mkdir tmp
           cp -r build/Release tmp
       - uses: actions/upload-artifact@v2
         with:

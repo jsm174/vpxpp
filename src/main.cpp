@@ -71,7 +71,7 @@ int main(int argc, char** argv)
 
 	std::string filename;
 
-	if (result.count("filename"))
+	if (result.count("file"))
 	{
 		filename = result["file"].as<std::string>();
 	}
