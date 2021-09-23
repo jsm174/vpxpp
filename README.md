@@ -37,11 +37,8 @@ cd bgfx.cmake
 git submodule update --init --recursive
 cmake -DCMAKE_INSTALL_PREFIX=./install -DBGFX_BUILD_EXAMPLES=OFF -DBGFX_BUILD_TOOLS=ON -DBGFX_INSTALL=ON -B build
 cmake --build build --target install --config Release
-cd ..
-cd ..
-set CMAKE_PREFIX_PATH=./deps/bgfx.cmake/install
-set V8_DIR=./deps/v8
-cmake -DCMAKE_TOOLCHAIN_FILE=./deps/vcpkg/scripts/buildsystems/vcpkg.cmake -B build
+cd ../..
+cmake -DCMAKE_PREFIX_PATH=./deps/bgfx.cmake/install -DV8_DIR=./deps/v8 -DCMAKE_TOOLCHAIN_FILE=./deps/vcpkg/scripts/buildsystems/vcpkg.cmake -B build
 cmake --build build --config Release
 ```
 
@@ -78,5 +75,13 @@ I've been thinking about this project for well over a decade, so realistically i
 The past few years I've contributed to [VPX-JS](https://github.com/vpdb/vpx-js), [Visual Pinball Engine](https://github.com/VisualPinball), [NetMiniZ](https://github.com/jsm174/net-miniz), [WPCEmuCS](https://github.com/jsm174/wpc-emu-cs), [PinMAME for .NET](https://github.com/vpinball/pinmame-dotnet), [PinMAME Silk](https://github.com/jsm174/pinmame-silk), and the CIs for [PinMAME](https://github.com/vpinball/pinmame) and [Visual Pinball](https://github.com/vpinball/vpinball). 
 
 So, I guess there's no time like the present!
+
+## Misc
+
+- Clang Format Style (Clang_format_style)
+
+```
+{ BasedOnStyle: LLVM, PointerAlignment: Left, UseTab: Always, IndentWidth: 4, TabWidth: 4, BreakBeforeBraces: Allman, AllowShortIfStatementsOnASingleLine: false, IndentCaseLabels: false, ColumnLimit: 0, AccessModifierOffset: -4, NamespaceIndentation: All, FixNamespaceComments: false, ColumnLimit: 120 }
+```
 
 ## License

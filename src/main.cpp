@@ -15,8 +15,7 @@ void v8_test()
 	v8::V8::Initialize();
 
 	v8::Isolate::CreateParams create_params;
-	create_params.array_buffer_allocator =
-		v8::ArrayBuffer::Allocator::NewDefaultAllocator();
+	create_params.array_buffer_allocator = v8::ArrayBuffer::Allocator::NewDefaultAllocator();
 
 	v8::Isolate* isolate = v8::Isolate::New(create_params);
 	{
@@ -33,12 +32,10 @@ void v8_test()
 
 		{
 			// Create a string containing the JavaScript source code.
-			v8::Local<v8::String> source =
-				v8::String::NewFromUtf8Literal(isolate, "'Hello' + ', World!'");
+			v8::Local<v8::String> source = v8::String::NewFromUtf8Literal(isolate, "'Hello' + ', World!'");
 
 			// Compile the source code.
-			v8::Local<v8::Script> script =
-				v8::Script::Compile(context, source).ToLocalChecked();
+			v8::Local<v8::Script> script = v8::Script::Compile(context, source).ToLocalChecked();
 
 			// Run the script to get the result.
 			v8::Local<v8::Value> result = script->Run(context).ToLocalChecked();
@@ -57,44 +54,55 @@ void v8_test()
 
 int main(int argc, char** argv)
 {
-	cxxopts::Options options("vpxpp", "Visual Pinball X Player +");
-
-	options.add_options()("f,file", "VPX file", cxxopts::value<std::string>())("disable-player", "Disable player", cxxopts::value<bool>()->default_value("false"))("h,help", "Print usage");
-
-	auto result = options.parse(argc, argv);
-
-	if (result.count("help"))
+	try
 	{
-		std::cout << options.help() << std::endl;
-		exit(0);
+		cxxopts::Options options("vpxpp", "Visual Pinball X Player +");
+
+		options.add_options()("f,file", "VPX file", cxxopts::value<std::string>())(
+			"disable-player", "Disable player", cxxopts::value<bool>()->default_value("false"))("h,help",
+																								"Print usage");
+
+		auto result = options.parse(argc, argv);
+
+		if (result.count("help"))
+		{
+			std::cout << options.help() << std::endl;
+			exit(0);
+		}
+
+		std::string filename;
+
+		if (result.count("file"))
+		{
+			filename = result["file"].as<std::string>();
+		}
+
+		// filename = "/Users/jmillard/git/vpxpp/tables/exampleTable.vpx";
+		// filename = "/Users/jmillard/git/vpxpp/tables/exampleTable.vpx";
+		// filename = "/Users/jmillard/Desktop/Pinball/Terminator 2 (Williams 1991).vpx";
+
+		if (filename.empty())
+		{
+			throw cxxopts::OptionSpecException("Option 'f' is required");
+		}
+
+		VPApp vpApp;
+		vpApp.InitInstance(filename);
+
+		if (!result["disable-player"].as<bool>())
+		{
+			vpApp.Run();
+		}
+
+		v8_test();
 	}
 
-	std::string filename;
-
-	if (result.count("file"))
+	catch (const cxxopts::OptionException& e)
 	{
-		filename = result["file"].as<std::string>();
+		std::cout << "Error parsing options: " << e.what() << std::endl;
+		std::cout << "Try --help for usage information." << std::endl << std::endl;
+		exit(1);
 	}
-
-	//filename = "/Users/jmillard/git/vpxpp/tables/exampleTable.vpx";
-	//filename = "/Users/jmillard/git/vpxpp/tables/exampleTable.vpx";
-	//filename = "/Users/jmillard/Desktop/Pinball/Terminator 2 (Williams 1991).vpx";
-
-	if (filename.empty())
-	{
-		std::cout << options.help() << std::endl;
-		exit(0);
-	}
-
-	VPApp vpApp;
-	vpApp.InitInstance(filename);
-
-	if (!result["disable-player"].as<bool>())
-	{
-		vpApp.Run();
-	}
-
-	v8_test();
 
 	return 0;
 }

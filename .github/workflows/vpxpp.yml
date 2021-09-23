@@ -69,9 +69,7 @@ jobs:
         run: |
           cp cmake/CMakeLists_${{ matrix.platform }}.txt CMakeLists.txt
           if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            CMAKE_PREFIX_PATH=./deps/bgfx.cmake/install \
-            V8_DIR=./deps/v8 \
-            cmake -DCMAKE_TOOLCHAIN_FILE=./deps/vcpkg/scripts/buildsystems/vcpkg.cmake -B build
+            cmake -DCMAKE_PREFIX_PATH=./deps/bgfx.cmake/install -DV8_DIR=./deps/v8 -DCMAKE_TOOLCHAIN_FILE=./deps/vcpkg/scripts/buildsystems/vcpkg.cmake -B build
             cmake --build build --config Release
           else
             cmake -DCMAKE_BUILD_TYPE=Release -B build/Release
