@@ -1,10 +1,10 @@
 #pragma once
 
 #include "IEditable.h"
-#include "IHaveDragPoints.h"
 #include "ISelect.h"
 
 #include "BiffReader.h"
+#include "IHaveDragPoints.h"
 
 class DragPoint : public ISelect
 {
@@ -14,6 +14,9 @@ public:
 	virtual PinTable* GetPTable();
 	virtual bool LoadToken(const int id, BiffReader* const pBiffReader);
 	virtual IEditable* GetIEditable();
+
+	HRESULT get_Y(float* pVal);
+	HRESULT get_X(float* pVal);
 
 	Vertex3Ds m_v;
 	float m_calcHeight;

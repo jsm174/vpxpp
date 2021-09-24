@@ -168,7 +168,31 @@ public:
 // TODO: #define MAX(a,b)        (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
-#define precise_divide(a, b) ((a) / (b))
+enum eObjType : unsigned char
+{
+	eNull,
+	ePoint,
+	eLineSeg,
+	eLineSegSlingshot,
+	eJoint,
+	eCircle,
+	eFlipper,
+	ePlunger,
+	eSpinner,
+	eBall,
+	e3DPoly,
+	eTriangle,
+	ePlane,
+	e3DLine,
+	eGate,
+	eTextbox,
+	eDispReel,
+	eLightSeq,
+	ePrimitive,
+	eHitTarget,
+	eTrigger,
+	eKicker,
+};
 
 enum ItemTypeEnum
 {
@@ -196,7 +220,7 @@ enum ItemTypeEnum
 	eItemRubber,
 	eItemHitTarget,
 	eItemTypeCount,
-	eItemInvalid = 0xffffffff // Force enum to be 32 bits
+	eItemInvalid = 0xffffffff
 };
 
 static const std::map<ItemTypeEnum, const char*> ITEMTYPEENUM_STRING{
@@ -458,3 +482,9 @@ typedef struct tWAVEFORMATEX
 } WAVEFORMATEX, *PWAVEFORMATEX, *LPWAVEFORMATEX;
 typedef const WAVEFORMATEX* LPCWAVEFORMATEX;
 #pragma pack(pop)
+
+#define MY_D3DFVF_TEX 0
+#define MY_D3DFVF_NOTEX2_VERTEX 1
+#define MY_D3DTRANSFORMED_NOTEX2_VERTEX 2 // TODO: DELETE?
+
+#define DISPID_SurfaceEvents_Slingshot 1101

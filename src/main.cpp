@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 		}
 
 		// filename = "/Users/jmillard/git/vpxpp/tables/exampleTable.vpx";
-		// filename = "/Users/jmillard/git/vpxpp/tables/exampleTable.vpx";
+		// filename = "C:\\tmp\\vpxpp\\tables\\exampleTable.vpx";
 		// filename = "/Users/jmillard/Desktop/Pinball/Terminator 2 (Williams 1991).vpx";
 
 		if (filename.empty())
@@ -100,7 +100,8 @@ int main(int argc, char** argv)
 	catch (const cxxopts::OptionException& e)
 	{
 		std::cout << "Error parsing options: " << e.what() << std::endl;
-		std::cout << "Try --help for usage information." << std::endl << std::endl;
+		std::cout << "Try --help for usage information." << std::endl
+				  << std::endl;
 		exit(1);
 	}
 

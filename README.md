@@ -62,26 +62,46 @@ build\Release\vpxpp.exe -f tables/blankTable.vpx
 
 ## To Do
 
-- Everything
+- Rendering
+
+## Motivation
+
+I've been thinking about this project for well over a decade. 
+
+After contributing to a few other pinball related projects -- [VPX-JS](https://github.com/vpdb/vpx-js), [Visual Pinball Engine](https://github.com/VisualPinball), [NetMiniZ](https://github.com/jsm174/net-miniz), [WPCEmuCS](https://github.com/jsm174/wpc-emu-cs), [PinMAME for .NET](https://github.com/vpinball/pinmame-dotnet), [PinMAME Silk](https://github.com/jsm174/pinmame-silk), CIs for [PinMAME](https://github.com/vpinball/pinmame) and [Visual Pinball](https://github.com/vpinball/vpinball) -- I have some more confidence to attempt this.
+
+In mid August 2021, during some VPE downtime while @freezy was [refactoring prefabs](https://github.com/freezy/VisualPinball.Engine/pull/317), I finally decided to do it. 
+
+So far, I've made more progress that I thought I would have, so I plan to keep going.
 
 ## Help
 
-- So I'm to the point where I can start working on rendering the table. I'm not a 3D guy or a physics guy. I know a little OpenGL and not much DirectX. I was looking for a cross platform rendering library and settled on [bgfx](https://github.com/bkaradzic/bgfx). Visual Pinball uses Direct3D 9, so there is a ton of work that will be required to port it to bgfx. If you are interested in contributing, I would be extremely greatful! 
+vpxpp is very close to being able to render graphics. I'm not a graphics guy. I know a little OpenGL and not much DirectX. I was looking for a cross platform rendering library and settled on [bgfx](https://github.com/bkaradzic/bgfx). Visual Pinball uses Direct3D 9, so there is a ton of work that will be required to port it to bgfx. If you are interested in contributing, any help would be appreciated!
 
-## Why work on this?
+## Third-Party
 
-I've been thinking about this project for well over a decade, so realistically it will probably go nowhere. 
+vpxpp is built on top of giants:
 
-The past few years I've contributed to [VPX-JS](https://github.com/vpdb/vpx-js), [Visual Pinball Engine](https://github.com/VisualPinball), [NetMiniZ](https://github.com/jsm174/net-miniz), [WPCEmuCS](https://github.com/jsm174/wpc-emu-cs), [PinMAME for .NET](https://github.com/vpinball/pinmame-dotnet), [PinMAME Silk](https://github.com/jsm174/pinmame-silk), and the CIs for [PinMAME](https://github.com/vpinball/pinmame) and [Visual Pinball](https://github.com/vpinball/vpinball). 
-
-So, I guess there's no time like the present!
+- [Pole](https://www.dimin.net/software/pole/)
+- [Pole 0.5.2](https://github.com/DBHeise/oless/blob/master/oless/pole.cpp)
+- [FreeImage](https://freeimage.sourceforge.io/)
+- [stb_image](https://github.com/nothings/stb)
+- [v8](https://v8.dev/)
+- [v8-builder](https://github.com/tbossi/v8-builder)
+- [nlohmann_json](https://github.com/nlohmann/json)
+- [bgfx](https://github.com/bkaradzic/bgfx)
+- [bgfx.cmake](https://github.com/bkaradzic/bgfx.cmake)
+- [imgui](https://github.com/ocornut/imgui)
+- [sdl-bgfx-imgui-starter](https://github.com/pr0g/sdl-bgfx-imgui-starter)
+- [SDL](https://www.libsdl.org/)
+- [cxxopts](https://github.com/jarro2783/cxxopts)
 
 ## Misc
 
-- Clang Format Style (Clang_format_style)
+Clang Format Style (Clang_format_style)
 
-```
-{ BasedOnStyle: LLVM, PointerAlignment: Left, UseTab: Always, IndentWidth: 4, TabWidth: 4, BreakBeforeBraces: Allman, AllowShortIfStatementsOnASingleLine: false, IndentCaseLabels: false, ColumnLimit: 0, AccessModifierOffset: -4, NamespaceIndentation: All, FixNamespaceComments: false, ColumnLimit: 120 }
-```
+`{ BasedOnStyle: LLVM, PointerAlignment: Left, UseTab: Always, IndentWidth: 4, TabWidth: 4, BreakBeforeBraces: Allman, AllowShortIfStatementsOnASingleLine: false, IndentCaseLabels: false, ColumnLimit: 0, AccessModifierOffset: -4, NamespaceIndentation: All, FixNamespaceComments: false }`
 
 ## License
+
+TBD 

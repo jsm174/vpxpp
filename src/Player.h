@@ -22,6 +22,7 @@ public:
 
 	PinTable* m_ptable;
 	Pin3D m_pin3d;
+	uint32_t m_time_msec;
 
 	std::vector<AnimObject*> m_vanimate;
 

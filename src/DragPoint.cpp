@@ -1,5 +1,4 @@
 #include "DragPoint.h"
-#include "IHaveDragPoints.h"
 
 void DragPoint::Init(IHaveDragPoints* pihdp, const float x, const float y, const float z, const bool smooth)
 {
@@ -54,4 +53,17 @@ bool DragPoint::LoadToken(const int id, BiffReader* const pBiffReader)
 IEditable* DragPoint::GetIEditable()
 {
 	return m_pihdp->GetIEditable();
+}
+
+/* TODO: STDMETHODIMP*/ HRESULT DragPoint::get_Y(float* pVal)
+{
+	*pVal = m_v.y;
+
+	return S_OK;
+}
+
+/* TODO: STDMETHODIMP*/ HRESULT DragPoint::get_X(float* pVal)
+{
+	*pVal = m_v.x;
+	return S_OK;
 }

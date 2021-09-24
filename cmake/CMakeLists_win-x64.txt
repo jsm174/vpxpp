@@ -19,7 +19,6 @@ find_package(nlohmann_json REQUIRED)
 find_package(FreeImage REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(bgfx REQUIRED)
-find_package(cxxopts REQUIRED)
 find_package(V8 REQUIRED)
 find_package(cxxopts REQUIRED)
 
@@ -62,6 +61,18 @@ add_executable(vpxpp
 	math/Short2.h
 	math/Short2.cpp
 
+	math/FRect.h
+	math/FRect.cpp
+
+	math/FRect3D.h
+	math/FRect3D.cpp
+
+	src/mesh.h
+	src/CollisionEvent.h
+
+	src/Ball.h
+	src/Ball.cpp
+
 	src/Inlines.h
 
 	src/AnimObject.h
@@ -72,6 +83,9 @@ add_executable(vpxpp
 	
 	src/LightSeqAnimObject.h
 	src/LightSeqAnimObject.cpp
+	
+	src/SlingshotAnimObject.h
+	src/SlingshotAnimObject.cpp
 	
 	src/VertexBuffer.h
 	src/VertexBuffer.cpp
@@ -118,6 +132,9 @@ add_executable(vpxpp
 	src/ISelect.h
 	src/ISelect.cpp
 
+	src/IFireEvents.h
+	src/IFireEvents.cpp
+
 	src/IScriptable.h
 	src/IScriptable.cpp
 
@@ -161,6 +178,12 @@ add_executable(vpxpp
 
 	src/Texture.h
 	src/Texture.cpp
+
+	src/LineSeg.h
+	src/LineSeg.cpp
+
+	src/LineSegSlingshot.h
+	src/LineSegSlingshot.cpp
 
 	src/Bumper.h
 	src/Bumper.cpp
@@ -249,15 +272,15 @@ target_link_libraries(vpxpp PRIVATE
 	bgfx::bgfx
 	bgfx::bx
 	FreeImage::FreeImage
-	V8::V8
+	V8::V8 
 	cxxopts::cxxopts
 )
 
-add_custom_command(TARGET vpxpp POST_BUILD 
+add_custom_command(TARGET vpxpp POST_BUILD
 	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/v8.dll" "$<TARGET_FILE_DIR:vpxpp>"
 	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/v8_libplatform.dll" "$<TARGET_FILE_DIR:vpxpp>"
-	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/v8_libbase.dll" "$<TARGET_FILE_DIR:vpxpp>"  
-	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/icui18n.dll" "$<TARGET_FILE_DIR:vpxpp>" 
-	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/icuuc.dll" "$<TARGET_FILE_DIR:vpxpp>" 
-	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/zlib.dll" "$<TARGET_FILE_DIR:vpxpp>" 
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/v8_libbase.dll" "$<TARGET_FILE_DIR:vpxpp>"
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/icui18n.dll" "$<TARGET_FILE_DIR:vpxpp>"
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/icuuc.dll" "$<TARGET_FILE_DIR:vpxpp>"
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/deps/v8/windows/zlib.dll" "$<TARGET_FILE_DIR:vpxpp>"
 )

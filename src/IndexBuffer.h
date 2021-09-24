@@ -1,5 +1,7 @@
 #pragma once
 
+#include "misc.h"
+
 class IndexBuffer // TODO: public public IDirect3DIndexBuffer9
 {
 public:
@@ -16,7 +18,7 @@ public:
 					   // TODO: DISCARD = D3DLOCK_DISCARD           // discard previous contents; only works with dynamic VBs
 	};
 
-	void lock(const unsigned int offsetToLock, const unsigned int sizeToLock, void** dataBuffer, const unsigned int flags);
+	void lock(const unsigned int offsetToLock, const unsigned int sizeToLock, void** dataBuffer, const DWORD flags);
 
 	void unlock();
 	void release();

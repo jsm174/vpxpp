@@ -126,6 +126,8 @@ void Player::InitStatic()
 		IHitable* const pHitable = m_vhitables[i];
 		pHitable->RenderSetup();
 	}
+
+	m_pin3d.InitPlayfieldGraphics();
 }
 
 void Player::Render()

@@ -14,6 +14,8 @@
 #include "RenderDevice.h"
 #include "Timer.h"
 
+#include "LineSegSlingshot.h"
+
 class SurfaceData : public BaseProperty
 {
 public:
@@ -54,6 +56,9 @@ public:
 	static const int CursorID;
 	static const unsigned AllowedViews;
 
+	static const WORD rgiSlingshot[24];
+	static IndexBuffer* slingIBuffer;
+
 	static Surface* COMCreate();
 	static IEditable* COMCreateEditable();
 	static IEditable* COMCreateAndInit(PinTable* ptable, float x, float y);
@@ -84,15 +89,27 @@ public:
 	virtual void GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D);
 
 	SurfaceData m_d;
+	bool m_disabled;
 
 private:
+	void PrepareWallsAtHeight();
+	void PrepareSlingshots();
+	void GenerateMesh(std::vector<Vertex3D_NoTex2>& topBuf, std::vector<Vertex3D_NoTex2>& sideBuf, std::vector<WORD>& topBottomIndices, std::vector<WORD>& sideIndices);
+
 	PinTable* m_ptable;
+
+	std::vector<LineSegSlingshot*> m_vlinesling;
+
+	unsigned int m_numVertices;
+	unsigned int m_numPolys;
 
 	VertexBuffer* m_slingshotVBuffer;
 	VertexBuffer* m_VBuffer;
 	IndexBuffer* m_IBuffer;
 
 	// TODO: PropertyPane* m_propPhysics;
+
+	bool m_isDynamic;
 
 	bool m_isWall;
 };

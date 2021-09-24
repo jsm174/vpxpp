@@ -14,6 +14,8 @@
 #undef max
 #endif
 
+#define precise_divide(a, b) ((a) / (b))
+
 __forceinline float min(const float x, const float y)
 {
 	return x < y ? x : y;
@@ -119,4 +121,31 @@ __forceinline float dequantizeUnsignedPercent(const unsigned int i)
 		N = 100
 	};
 	return min(precise_divide((float)i, (float)N), 1.f);
+}
+
+__forceinline int float_as_int(const float x)
+{
+	union
+	{
+		float f;
+		int i;
+	} uc;
+	uc.f = x;
+	return uc.i;
+}
+
+__forceinline float int_as_float(const int i)
+{
+	union
+	{
+		int i;
+		float f;
+	} iaf;
+	iaf.i = i;
+	return iaf.f;
+}
+
+__forceinline bool infNaN(const float a)
+{
+	return ((float_as_int(a) & 0x7F800000) == 0x7F800000);
 }

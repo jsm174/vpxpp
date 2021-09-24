@@ -15,7 +15,7 @@ add_compile_definitions(
 	V8_COMPRESS_POINTERS
 )
 
-find_package(nlohmann_json 3.2.0 REQUIRED)
+find_package(nlohmann_json REQUIRED)
 find_package(FreeImage REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(bgfx REQUIRED)
@@ -61,6 +61,18 @@ add_executable(vpxpp
 	math/Short2.h
 	math/Short2.cpp
 
+	math/FRect.h
+	math/FRect.cpp
+
+	math/FRect3D.h
+	math/FRect3D.cpp
+
+	src/mesh.h
+	src/CollisionEvent.h
+
+	src/Ball.h
+	src/Ball.cpp
+
 	src/Inlines.h
 
 	src/AnimObject.h
@@ -71,6 +83,9 @@ add_executable(vpxpp
 	
 	src/LightSeqAnimObject.h
 	src/LightSeqAnimObject.cpp
+	
+	src/SlingshotAnimObject.h
+	src/SlingshotAnimObject.cpp
 	
 	src/VertexBuffer.h
 	src/VertexBuffer.cpp
@@ -117,6 +132,9 @@ add_executable(vpxpp
 	src/ISelect.h
 	src/ISelect.cpp
 
+	src/IFireEvents.h
+	src/IFireEvents.cpp
+
 	src/IScriptable.h
 	src/IScriptable.cpp
 
@@ -160,6 +178,12 @@ add_executable(vpxpp
 
 	src/Texture.h
 	src/Texture.cpp
+
+	src/LineSeg.h
+	src/LineSeg.cpp
+
+	src/LineSegSlingshot.h
+	src/LineSegSlingshot.cpp
 
 	src/Bumper.h
 	src/Bumper.cpp
@@ -248,6 +272,6 @@ target_link_libraries(vpxpp PRIVATE
 	bgfx::bgfx
 	bgfx::bx
 	FreeImage::FreeImage
-	V8::V8
+	V8::V8 
 	cxxopts::cxxopts
 )

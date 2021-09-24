@@ -1,13 +1,20 @@
 #include "Surface.h"
 #include "RegUtil.h"
 
+#include "DragPoint.h"
 #include "Inlines.h"
+#include "Player.h"
+#include "extern.h"
+#include "mesh.h"
 
 const ItemTypeEnum Surface::ItemType = eItemSurface;
 const int Surface::TypeNameID = 104;
 const int Surface::ToolID = 110;
 const int Surface::CursorID = 138;
 const unsigned Surface::AllowedViews = 1;
+
+const WORD Surface::rgiSlingshot[24] = {0, 4, 3, 0, 1, 4, 1, 2, 5, 1, 5, 4, 4, 8, 5, 4, 7, 8, 3, 7, 4, 3, 6, 7};
+IndexBuffer* Surface::slingIBuffer = NULL;
 
 Surface* Surface::COMCreate()
 {
@@ -64,7 +71,7 @@ HRESULT Surface::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 	const float width = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Wall", "Width", 50.f) : 50.f;
 	const float length = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Wall", "Length", 50.f) : 50.f;
 
-	// CComObject<DragPoint>* pdp;
+	// TODO: CComObject<DragPoint>* pdp;
 	// CComObject<DragPoint>::CreateInstance(&pdp);
 	// if (pdp)
 	// {
@@ -130,73 +137,71 @@ HRESULT Surface::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int
 
 	if (!m_d.m_inner)
 	{
-		// TODO: const size_t cvertex = m_vdpoint.size();
+		const size_t cvertex = m_vdpoint.size();
 
-		// float miny = FLT_MAX;
-		// size_t minyindex = 0;
+		float miny = FLT_MAX;
+		size_t minyindex = 0;
 
-		// // Find smallest y point - use it to connect with surrounding border
-		// for (size_t i = 0; i < cvertex; i++)
-		// {
-		// 	float y;
-		// 	m_vdpoint[i]->get_Y(&y);
-		// 	if (y < miny)
-		// 	{
-		// 		miny = y;
-		// 		minyindex = i;
-		// 	}
-		// }
+		for (size_t i = 0; i < cvertex; i++)
+		{
+			float y;
+			m_vdpoint[i]->get_Y(&y);
+			if (y < miny)
+			{
+				miny = y;
+				minyindex = i;
+			}
+		}
 
-		// float tmpx;
-		// m_vdpoint[minyindex]->get_X(&tmpx);
-		// const float tmpy = miny /*- 1.0f*/; // put tiny gap in to avoid errors
+		float tmpx;
+		m_vdpoint[minyindex]->get_X(&tmpx);
+		const float tmpy = miny;
 
-		// // swap list around
-		// std::reverse(m_vdpoint.begin(), m_vdpoint.end());
+		std::reverse(m_vdpoint.begin(), m_vdpoint.end());
 
-		// CComObject<DragPoint>* pdp;
-		// CComObject<DragPoint>::CreateInstance(&pdp);
-		// if (pdp)
-		// {
-		// 	pdp->AddRef();
-		// 	pdp->Init(this, m_ptable->m_left, m_ptable->m_top, 0.f, false);
-		// 	m_vdpoint.insert(m_vdpoint.begin() + (cvertex - minyindex - 1), pdp);
-		// }
-		// CComObject<DragPoint>::CreateInstance(&pdp);
-		// if (pdp)
-		// {
-		// 	pdp->AddRef();
-		// 	pdp->Init(this, m_ptable->m_right, m_ptable->m_top, 0.f, false);
-		// 	m_vdpoint.insert(m_vdpoint.begin() + (cvertex - minyindex - 1), pdp);
-		// }
-		// CComObject<DragPoint>::CreateInstance(&pdp);
-		// if (pdp)
-		// {
-		// 	pdp->AddRef();
-		// 	pdp->Init(this, m_ptable->m_right + 1.0f, m_ptable->m_bottom, 0.f, false); //!!! +1 needed for whatever reason (triangulation screwed up)
-		// 	m_vdpoint.insert(m_vdpoint.begin() + (cvertex - minyindex - 1), pdp);
-		// }
-		// CComObject<DragPoint>::CreateInstance(&pdp);
-		// if (pdp)
-		// {
-		// 	pdp->AddRef();
-		// 	pdp->Init(this, m_ptable->m_left, m_ptable->m_bottom, 0.f, false);
-		// 	m_vdpoint.insert(m_vdpoint.begin() + (cvertex - minyindex - 1), pdp);
-		// }
-		// CComObject<DragPoint>::CreateInstance(&pdp);
-		// if (pdp)
-		// {
-		// 	pdp->AddRef();
-		// 	pdp->Init(this, m_ptable->m_left - 1.0f, m_ptable->m_top, 0.f, false); //!!! -1 needed for whatever reason (triangulation screwed up)
-		// 	m_vdpoint.insert(m_vdpoint.begin() + (cvertex - minyindex - 1), pdp);
-		// }
-		// CComObject<DragPoint>::CreateInstance(&pdp);
-		// if (pdp)
-		// {
-		// 	pdp->AddRef();
-		// 	pdp->Init(this, tmpx, tmpy, 0.f, false);
-		// 	m_vdpoint.insert(m_vdpoint.begin() + (cvertex - minyindex - 1), pdp);
-		// }
+		/* TODO:		CComObject<DragPoint>* pdp;
+		CComObject<DragPoint>::CreateInstance(&pdp);
+		if (pdp)
+		{
+			pdp->AddRef();
+			pdp->Init(this, m_ptable->m_left, m_ptable->m_top, 0.f, false);
+			m_vdpoint.insert(m_vdpoint.begin() + (cvertex - minyindex - 1), pdp);
+		}
+		CComObject<DragPoint>::CreateInstance(&pdp);
+		if (pdp)
+		{
+			pdp->AddRef();
+			pdp->Init(this, m_ptable->m_right, m_ptable->m_top, 0.f, false);
+			m_vdpoint.insert(m_vdpoint.begin() + (cvertex - minyindex - 1), pdp);
+		}
+		CComObject<DragPoint>::CreateInstance(&pdp);
+		if (pdp)
+		{
+			pdp->AddRef();
+			pdp->Init(this, m_ptable->m_right + 1.0f, m_ptable->m_bottom, 0.f, false); //!!! +1 needed for whatever reason (triangulation screwed up)
+			m_vdpoint.insert(m_vdpoint.begin() + (cvertex - minyindex - 1), pdp);
+		}
+		CComObject<DragPoint>::CreateInstance(&pdp);
+		if (pdp)
+		{
+			pdp->AddRef();
+			pdp->Init(this, m_ptable->m_left, m_ptable->m_bottom, 0.f, false);
+			m_vdpoint.insert(m_vdpoint.begin() + (cvertex - minyindex - 1), pdp);
+		}
+		CComObject<DragPoint>::CreateInstance(&pdp);
+		if (pdp)
+		{
+			pdp->AddRef();
+			pdp->Init(this, m_ptable->m_left - 1.0f, m_ptable->m_top, 0.f, false); //!!! -1 needed for whatever reason (triangulation screwed up)
+			m_vdpoint.insert(m_vdpoint.begin() + (cvertex - minyindex - 1), pdp);
+		}
+		CComObject<DragPoint>::CreateInstance(&pdp);
+		if (pdp)
+		{
+			pdp->AddRef();
+			pdp->Init(this, tmpx, tmpy, 0.f, false);
+			m_vdpoint.insert(m_vdpoint.begin() + (cvertex - minyindex - 1), pdp);
+		} */
 
 		m_d.m_inner = true;
 	}
@@ -450,8 +455,354 @@ void Surface::RenderDynamic()
 {
 }
 
+//
+// license:GPLv3+
+// Ported at: VisualPinball.Engine/VPT/Surface/SurfaceMeshGenerator.cs
+//
+
+void Surface::GenerateMesh(std::vector<Vertex3D_NoTex2>& topBuf, std::vector<Vertex3D_NoTex2>& sideBuf, std::vector<WORD>& topBottomIndices, std::vector<WORD>& sideIndices)
+{
+	std::vector<RenderVertex> vvertex;
+	GetRgVertex(vvertex);
+	float* rgtexcoord = NULL;
+
+	Texture* const pinSide = m_ptable->GetImage(m_d.m_szSideImage);
+	if (pinSide)
+	{
+		GetTextureCoords(vvertex, &rgtexcoord);
+	}
+
+	m_numVertices = (unsigned int)vvertex.size();
+	Vertex2D* const rgnormal = new Vertex2D[m_numVertices];
+
+	for (unsigned int i = 0; i < m_numVertices; i++)
+	{
+		const RenderVertex* const pv1 = &vvertex[i];
+		const RenderVertex* const pv2 = &vvertex[(i < m_numVertices - 1) ? (i + 1) : 0];
+		const float dx = pv1->x - pv2->x;
+		const float dy = pv1->y - pv2->y;
+
+		const float inv_len = 1.0f / sqrtf(dx * dx + dy * dy);
+
+		rgnormal[i].x = dy * inv_len;
+		rgnormal[i].y = dx * inv_len;
+	}
+
+	sideBuf.resize(m_numVertices * 4);
+	memset(sideBuf.data(), 0, sizeof(Vertex3D_NoTex2) * m_numVertices * 4);
+	Vertex3D_NoTex2* verts = sideBuf.data();
+
+	const float bottom = m_d.m_heightbottom + m_ptable->m_tableheight;
+	const float top = m_d.m_heighttop + m_ptable->m_tableheight;
+
+	int offset = 0;
+	for (unsigned int i = 0; i < m_numVertices; i++, offset += 4)
+	{
+		const RenderVertex* const pv1 = &vvertex[i];
+		const RenderVertex* const pv2 = &vvertex[(i < m_numVertices - 1) ? (i + 1) : 0];
+
+		const int a = (i == 0) ? (m_numVertices - 1) : (i - 1);
+		const int c = (i < m_numVertices - 1) ? (i + 1) : 0;
+
+		Vertex2D vnormal[2];
+		if (pv1->smooth)
+		{
+			vnormal[0].x = (rgnormal[a].x + rgnormal[i].x) * 0.5f;
+			vnormal[0].y = (rgnormal[a].y + rgnormal[i].y) * 0.5f;
+		}
+		else
+		{
+			vnormal[0].x = rgnormal[i].x;
+			vnormal[0].y = rgnormal[i].y;
+		}
+
+		if (pv2->smooth)
+		{
+			vnormal[1].x = (rgnormal[i].x + rgnormal[c].x) * 0.5f;
+			vnormal[1].y = (rgnormal[i].y + rgnormal[c].y) * 0.5f;
+		}
+		else
+		{
+			vnormal[1].x = rgnormal[i].x;
+			vnormal[1].y = rgnormal[i].y;
+		}
+
+		vnormal[0].Normalize();
+		vnormal[1].Normalize();
+
+		{
+			verts[offset].x = pv1->x;
+			verts[offset].y = pv1->y;
+			verts[offset].z = bottom;
+			verts[offset + 1].x = pv1->x;
+			verts[offset + 1].y = pv1->y;
+			verts[offset + 1].z = top;
+			verts[offset + 2].x = pv2->x;
+			verts[offset + 2].y = pv2->y;
+			verts[offset + 2].z = top;
+			verts[offset + 3].x = pv2->x;
+			verts[offset + 3].y = pv2->y;
+			verts[offset + 3].z = bottom;
+			if (pinSide)
+			{
+				verts[offset].tu = rgtexcoord[i];
+				verts[offset].tv = 1.0f;
+
+				verts[offset + 1].tu = rgtexcoord[i];
+				verts[offset + 1].tv = 0;
+
+				verts[offset + 2].tu = rgtexcoord[c];
+				verts[offset + 2].tv = 0;
+
+				verts[offset + 3].tu = rgtexcoord[c];
+				verts[offset + 3].tv = 1.0f;
+			}
+
+			verts[offset].nx = vnormal[0].x;
+			verts[offset].ny = -vnormal[0].y;
+			verts[offset].nz = 0;
+
+			verts[offset + 1].nx = vnormal[0].x;
+			verts[offset + 1].ny = -vnormal[0].y;
+			verts[offset + 1].nz = 0;
+
+			verts[offset + 2].nx = vnormal[1].x;
+			verts[offset + 2].ny = -vnormal[1].y;
+			verts[offset + 2].nz = 0;
+
+			verts[offset + 3].nx = vnormal[1].x;
+			verts[offset + 3].ny = -vnormal[1].y;
+			verts[offset + 3].nz = 0;
+		}
+	}
+	delete[] rgnormal;
+
+	{
+		sideIndices.resize(m_numVertices * 6);
+		int offset2 = 0;
+		for (unsigned int i = 0; i < m_numVertices; i++, offset2 += 4)
+		{
+			sideIndices[i * 6] = offset2;
+			sideIndices[i * 6 + 1] = offset2 + 1;
+			sideIndices[i * 6 + 2] = offset2 + 2;
+			sideIndices[i * 6 + 3] = offset2;
+			sideIndices[i * 6 + 4] = offset2 + 2;
+			sideIndices[i * 6 + 5] = offset2 + 3;
+		}
+	}
+
+	if (rgtexcoord)
+	{
+		delete[] rgtexcoord;
+		rgtexcoord = NULL;
+	}
+
+	{
+		topBottomIndices.clear();
+
+		{
+			std::vector<unsigned int> vpoly(m_numVertices);
+			for (unsigned int i = 0; i < m_numVertices; i++)
+			{
+				vpoly[i] = i;
+			}
+
+			PolygonToTriangles(vvertex, vpoly, topBottomIndices, false);
+		}
+
+		m_numPolys = (unsigned int)(topBottomIndices.size() / 3);
+		if (m_numPolys == 0)
+		{
+			return;
+		}
+
+		const float heightNotDropped = m_d.m_heighttop;
+		const float heightDropped = m_d.m_heightbottom + 0.1f;
+
+		const float inv_tablewidth = 1.0f / (m_ptable->m_right - m_ptable->m_left);
+		const float inv_tableheight = 1.0f / (m_ptable->m_bottom - m_ptable->m_top);
+
+		topBuf.resize(m_numVertices * 3);
+		Vertex3D_NoTex2* const vertsTop[3] = {&topBuf[0], &topBuf[m_numVertices], &topBuf[m_numVertices * 2]};
+
+		for (unsigned int i = 0; i < m_numVertices; i++)
+		{
+			const RenderVertex* const pv0 = &vvertex[i];
+
+			vertsTop[0][i].x = pv0->x;
+			vertsTop[0][i].y = pv0->y;
+			vertsTop[0][i].z = heightNotDropped + m_ptable->m_tableheight;
+			vertsTop[0][i].tu = pv0->x * inv_tablewidth;
+			vertsTop[0][i].tv = pv0->y * inv_tableheight;
+			vertsTop[0][i].nx = 0;
+			vertsTop[0][i].ny = 0;
+			vertsTop[0][i].nz = 1.0f;
+
+			vertsTop[1][i].x = pv0->x;
+			vertsTop[1][i].y = pv0->y;
+			vertsTop[1][i].z = heightDropped;
+			vertsTop[1][i].tu = pv0->x * inv_tablewidth;
+			vertsTop[1][i].tv = pv0->y * inv_tableheight;
+			vertsTop[1][i].nx = 0;
+			vertsTop[1][i].ny = 0;
+			vertsTop[1][i].nz = 1.0f;
+
+			vertsTop[2][i].x = pv0->x;
+			vertsTop[2][i].y = pv0->y;
+			vertsTop[2][i].z = m_d.m_heightbottom;
+			vertsTop[2][i].tu = pv0->x * inv_tablewidth;
+			vertsTop[2][i].tv = pv0->y * inv_tableheight;
+			vertsTop[2][i].nx = 0;
+			vertsTop[2][i].ny = 0;
+			vertsTop[2][i].nz = -1.0f;
+		}
+	}
+}
+
+//
+// end of license:GPLv3+, back to 'old MAME'-like
+//
+
+void Surface::PrepareWallsAtHeight()
+{
+	if (m_IBuffer)
+	{
+		m_IBuffer->release();
+	}
+	if (m_VBuffer)
+	{
+		m_VBuffer->release();
+	}
+
+	std::vector<Vertex3D_NoTex2> topBottomBuf;
+	std::vector<Vertex3D_NoTex2> sideBuf;
+	std::vector<WORD> topBottomIndices;
+	std::vector<WORD> sideIndices;
+	GenerateMesh(topBottomBuf, sideBuf, topBottomIndices, sideIndices);
+
+	RenderDevice* const pd3dDevice = g_pplayer->m_pin3d.m_pd3dPrimaryDevice;
+
+	/* 	TODO: pd3dDevice->CreateVertexBuffer(m_numVertices * 4 + (!topBottomBuf.empty() ? m_numVertices * 3 : 0), 0, MY_D3DFVF_NOTEX2_VERTEX, &m_VBuffer);
+
+	Vertex3D_NoTex2* verts;
+	m_VBuffer->lock(0, 0, (void**)&verts, VertexBuffer::WRITEONLY);
+	memcpy(verts, sideBuf.data(), sizeof(Vertex3D_NoTex2) * m_numVertices * 4);
+
+	if (!topBottomBuf.empty())
+	{
+		memcpy(verts + m_numVertices * 4, topBottomBuf.data(), sizeof(Vertex3D_NoTex2) * m_numVertices * 3);
+	}
+
+	m_VBuffer->unlock();
+
+	pd3dDevice->CreateIndexBuffer((unsigned int)topBottomIndices.size() + (unsigned int)sideIndices.size(), 0, IndexBuffer::FMT_INDEX16, &m_IBuffer);
+
+	WORD* buf;
+	m_IBuffer->lock(0, 0, (void**)&buf, 0);
+	memcpy(buf, sideIndices.data(), sideIndices.size() * sizeof(WORD));
+	if (!topBottomIndices.empty())
+	{
+		memcpy(buf + sideIndices.size(), topBottomIndices.data(), topBottomIndices.size() * sizeof(WORD));
+	}
+	m_IBuffer->unlock(); */
+}
+
+void Surface::PrepareSlingshots()
+{
+	const float slingbottom = (m_d.m_heighttop - m_d.m_heightbottom) * 0.2f + m_d.m_heightbottom;
+	const float slingtop = (m_d.m_heighttop - m_d.m_heightbottom) * 0.8f + m_d.m_heightbottom;
+
+	Vertex3D_NoTex2* const rgv3D = new Vertex3D_NoTex2[m_vlinesling.size() * 9];
+
+	unsigned int offset = 0;
+	for (size_t i = 0; i < m_vlinesling.size(); i++, offset += 9)
+	{
+		LineSegSlingshot* const plinesling = m_vlinesling[i];
+		plinesling->m_slingshotanim.m_animations = (m_d.m_slingshotAnimation != 0);
+
+		rgv3D[offset].x = plinesling->v1.x;
+		rgv3D[offset].y = plinesling->v1.y;
+		rgv3D[offset].z = slingbottom + m_ptable->m_tableheight;
+
+		rgv3D[offset + 1].x = (plinesling->v1.x + plinesling->v2.x) * 0.5f + plinesling->normal.x * (m_d.m_slingshotforce * 0.25f);
+		rgv3D[offset + 1].y = (plinesling->v1.y + plinesling->v2.y) * 0.5f + plinesling->normal.y * (m_d.m_slingshotforce * 0.25f);
+		rgv3D[offset + 1].z = slingbottom + m_ptable->m_tableheight;
+
+		rgv3D[offset + 2].x = plinesling->v2.x;
+		rgv3D[offset + 2].y = plinesling->v2.y;
+		rgv3D[offset + 2].z = slingbottom + m_ptable->m_tableheight;
+
+		for (unsigned int l = 0; l < 3; l++)
+		{
+			rgv3D[l + offset + 3].x = rgv3D[l + offset].x;
+			rgv3D[l + offset + 3].y = rgv3D[l + offset].y;
+			rgv3D[l + offset + 3].z = slingtop + m_ptable->m_tableheight;
+		}
+
+		for (unsigned int l = 0; l < 3; l++)
+		{
+			rgv3D[l + offset + 6].x = rgv3D[l + offset].x - plinesling->normal.x * 5.0f;
+			rgv3D[l + offset + 6].y = rgv3D[l + offset].y - plinesling->normal.y * 5.0f;
+			rgv3D[l + offset + 6].z = slingtop + m_ptable->m_tableheight;
+		}
+
+		ComputeNormals(rgv3D + offset, 9, rgiSlingshot, 24);
+	}
+
+	if (m_slingshotVBuffer)
+	{
+		m_slingshotVBuffer->release();
+	}
+
+	RenderDevice* const pd3dDevice = g_pplayer->m_pin3d.m_pd3dPrimaryDevice;
+
+	/* TODO: pd3dDevice->CreateVertexBuffer((unsigned int)m_vlinesling.size() * 9, 0, MY_D3DFVF_NOTEX2_VERTEX, &m_slingshotVBuffer);
+
+	Vertex3D_NoTex2* buf;
+	m_slingshotVBuffer->lock(0, 0, (void**)&buf, VertexBuffer::WRITEONLY);
+	memcpy(buf, rgv3D, m_vlinesling.size() * 9 * sizeof(Vertex3D_NoTex2));
+	m_slingshotVBuffer->unlock();
+
+	delete[] rgv3D;
+
+	if (!slingIBuffer)
+	{
+		slingIBuffer = pd3dDevice->CreateAndFillIndexBuffer(24, rgiSlingshot);
+	} */
+}
+
 void Surface::RenderSetup()
 {
+	const float oldBottomHeight = m_d.m_heightbottom;
+	const float oldTopHeight = m_d.m_heighttop;
+
+	m_d.m_heightbottom *= m_ptable->m_BG_scalez[m_ptable->m_BG_current_set];
+	m_d.m_heighttop *= m_ptable->m_BG_scalez[m_ptable->m_BG_current_set];
+
+	if (!m_vlinesling.empty())
+	{
+		PrepareSlingshots();
+	}
+
+	m_isDynamic = false;
+	if (m_d.m_sideVisible)
+	{
+		if (m_ptable->GetMaterial(m_d.m_szSideMaterial)->m_bOpacityActive)
+		{
+			m_isDynamic = true;
+		}
+	}
+	if (m_d.m_topBottomVisible)
+	{
+		if (m_ptable->GetMaterial(m_d.m_szTopMaterial)->m_bOpacityActive)
+		{
+			m_isDynamic = true;
+		}
+	}
+
+	PrepareWallsAtHeight();
+	m_d.m_heightbottom = oldBottomHeight;
+	m_d.m_heighttop = oldTopHeight;
 }
 
 ItemTypeEnum Surface::HitableGetItemType() const

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 typedef float D3DVALUE;
 
@@ -49,3 +50,13 @@ public:
 };
 
 void TitleFromFilename(const std::string& szfilename, std::string& sztitle);
+
+template <typename T>
+inline int FindIndexOf(const std::vector<T>& v, const T& val)
+{
+	typename std::vector<T>::const_iterator it = std::find(v.begin(), v.end(), val);
+	if (it != v.end())
+		return (int)(it - v.begin());
+	else
+		return -1;
+}
