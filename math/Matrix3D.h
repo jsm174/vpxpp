@@ -1,6 +1,6 @@
 #pragma once
 
-#include "misc.h"
+#include "D3DX9.h"
 #include "Matrix3.h"
 
 class Matrix3D : public D3DMATRIX
@@ -29,7 +29,7 @@ public:
 
 	template <class VecIn, class VecOut>
 	void MultiplyVectorNoTranslate(const VecIn& vIn, VecOut& vOut) const;
-	
+
 	template <class VecIn, class VecOut>
 	void MultiplyVectorNoTranslateNormal(const VecIn& vIn, VecOut& vOut) const;
 
@@ -38,4 +38,3 @@ public:
 };
 
 Matrix3D ComputeLaybackTransform(float layback);
-

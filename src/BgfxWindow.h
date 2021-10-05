@@ -15,10 +15,15 @@ public:
 	BgfxWindow();
 	virtual ~BgfxWindow();
 
+	virtual void PreCreate();
+
 	bool Create(int width, int height);
 	void Run();
 
+	virtual void PreRender();
+	virtual void RenderImgGui();
 	virtual void Render() = 0;
+	virtual void PostRender();
 
 	virtual void fatal(const char* _filePath, uint16_t _line, bgfx::Fatal::Enum _code, const char* _str) override;
 	virtual void traceVargs(const char* _filePath, uint16_t _line, const char* _format, va_list _argList) override;

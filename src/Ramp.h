@@ -80,6 +80,8 @@ public:
 	virtual void RenderSetup();
 	virtual ItemTypeEnum HitableGetItemType() const;
 
+	virtual bool IsTransparent() const;
+
 	virtual void GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D);
 
 	void AssignHeightToControlPoint(const RenderVertex3D& v, const float height);

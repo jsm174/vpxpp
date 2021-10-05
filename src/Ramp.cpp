@@ -59,6 +59,11 @@ Ramp::~Ramp()
 {
 }
 
+bool Ramp::IsTransparent() const
+{
+	return m_ptable->GetMaterial(m_d.m_szMaterial)->m_bOpacityActive;
+}
+
 HRESULT Ramp::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();

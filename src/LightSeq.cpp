@@ -1,6 +1,8 @@
 #include "LightSeq.h"
 #include "RegUtil.h"
 
+#include "extern.h"
+
 const ItemTypeEnum LightSeq::ItemType = eItemLightSeq;
 const int LightSeq::TypeNameID = 314;
 const int LightSeq::ToolID = 313;

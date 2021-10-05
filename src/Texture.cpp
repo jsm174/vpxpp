@@ -9,6 +9,9 @@
 #define STBI_NO_FAILURE_STRINGS
 #include "stb_image.h"
 
+#include <fstream>
+#include <iostream>
+
 Texture::Texture()
 {
 	m_pdsBuffer = NULL;
@@ -61,7 +64,7 @@ bool Texture::LoadToken(const int id, BiffReader* const pBiffReader)
 			FreeStuff();
 		}
 
-		m_pdsBuffer = new BaseTexture(m_width, m_height, RGBA, true);
+		m_pdsBuffer = new BaseTexture(m_width, m_height, BaseTexture::Format::RGBA, true);
 
 		SetSizeFrom(m_pdsBuffer);
 
@@ -162,7 +165,7 @@ bool Texture::LoadFromMemory(BYTE* const data, const DWORD size)
 			BaseTexture* tex = NULL;
 			try
 			{
-				tex = new BaseTexture(x, y, RGBA, channels_in_file == 4);
+				tex = new BaseTexture(x, y, BaseTexture::Format::RGBA, channels_in_file == 4);
 			}
 
 			catch (...)
@@ -231,6 +234,45 @@ void Texture::SetSizeFrom(const BaseTexture* const tex)
 	m_realHeight = tex->m_realHeight;
 }
 
+void Texture::CreateFromResource(const std::string szName)
+{
+	if (m_pdsBuffer)
+	{
+		FreeStuff();
+	}
+
+	std::ifstream stream(szName);
+	if (!stream.fail())
+	{
+		stream.seekg(0, std::ios::end);
+		size_t size = stream.tellg();
+		stream.seekg(0);
+		BYTE* data = (BYTE*)malloc(size);
+		stream.read((char*)data, size);
+		stream.close();
+
+		FIMEMORY* const hmem = FreeImage_OpenMemory(data, size);
+		if (!hmem)
+		{
+			free(data);
+			return;
+		}
+		const FREE_IMAGE_FORMAT fif = FreeImage_GetFileTypeFromMemory(hmem, 0);
+		FIBITMAP* const dib = FreeImage_LoadFromMemory(fif, hmem, 0);
+
+		FreeImage_CloseMemory(hmem);
+		free(data);
+
+		if (!dib)
+		{
+			return;
+		}
+
+		m_pdsBuffer = BaseTexture::CreateFromFreeImage(dib);
+		SetSizeFrom(m_pdsBuffer);
+	}
+}
+
 bool Texture::IsHDR() const
 {
 	if (m_pdsBuffer == NULL)
@@ -238,7 +280,7 @@ bool Texture::IsHDR() const
 		return false;
 	}
 
-	return (m_pdsBuffer->m_format == RGB_FP);
+	return (m_pdsBuffer->m_format == BaseTexture::Format::RGB_FP);
 }
 
 void Texture::DumpBaseTexture()
@@ -255,7 +297,7 @@ void Texture::DumpBaseTexture()
 
 	FIBITMAP* dib;
 
-	if (m_pdsBuffer->m_format == RGBA)
+	if (m_pdsBuffer->m_format == BaseTexture::Format::RGBA)
 	{
 		dib = FreeImage_ConvertFromRawBits(
 			(BYTE*)&m_pdsBuffer->m_data[0],

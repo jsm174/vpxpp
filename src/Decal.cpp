@@ -40,6 +40,11 @@ Decal::~Decal()
 {
 }
 
+bool Decal::IsTransparent() const
+{
+	return !m_backglass;
+}
+
 HRESULT Decal::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 {
 	m_ptable = ptable;

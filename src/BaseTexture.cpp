@@ -3,8 +3,6 @@
 
 #include "Inlines.h"
 
-#include "def.h"
-
 BaseTexture* BaseTexture::CreateFromFile(const std::string& szfile)
 {
 	if (szfile.empty())
@@ -226,7 +224,7 @@ BaseTexture::BaseTexture()
 	m_has_alpha = false;
 }
 
-BaseTexture::BaseTexture(const int w, const int h, const TextureFormat format, const bool has_alpha)
+BaseTexture::BaseTexture(const int w, const int h, const Format format, const bool has_alpha)
 {
 	m_width = w;
 	m_height = h;

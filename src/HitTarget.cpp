@@ -61,6 +61,11 @@ HitTarget::~HitTarget()
 {
 }
 
+bool HitTarget::IsTransparent() const
+{
+	return m_ptable->GetMaterial(m_d.m_szMaterial)->m_bOpacityActive;
+}
+
 HRESULT HitTarget::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 {
 	m_ptable = ptable;

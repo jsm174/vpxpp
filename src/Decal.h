@@ -63,6 +63,8 @@ public:
 	virtual void RenderSetup();
 	virtual ItemTypeEnum HitableGetItemType() const;
 
+	virtual bool IsTransparent() const;
+
 	DecalData m_d;
 
 private:

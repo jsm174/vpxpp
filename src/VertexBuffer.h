@@ -1,10 +1,16 @@
 #pragma once
 
+#include <bgfx/bgfx.h>
 #include "misc.h"
 
 class VertexBuffer // TODO: public IDirect3DVertexBuffer9
 {
 public:
+	static HRESULT Create(const unsigned int vertexCount, const DWORD fvf, VertexBuffer** vBuffer);
+
+	void CopyMemory(const void* pData, const unsigned int start, const unsigned long size);
+	void Set(const DWORD startVertex, const DWORD vertexCount);
+
 	enum LockFlags
 	{
 		WRITEONLY = 0, // in DX9, this is specified during VB creation
@@ -20,4 +26,7 @@ public:
 
 private:
 	VertexBuffer();
+
+	bgfx::DynamicVertexBufferHandle m_handle;
+	bgfx::VertexLayout m_layout;
 };

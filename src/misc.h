@@ -23,31 +23,33 @@ typedef int COLORREF;
 typedef int64_t LONGLONG;
 typedef unsigned int UINT;
 
-typedef enum _D3DTRANSFORMSTATETYPE
+typedef struct
 {
-	D3DTS_VIEW = 2,
-	D3DTS_PROJECTION = 3,
-	D3DTS_TEXTURE0 = 16,
-	D3DTS_TEXTURE1 = 17,
-	D3DTS_TEXTURE2 = 18,
-	D3DTS_TEXTURE3 = 19,
-	D3DTS_TEXTURE4 = 20,
-	D3DTS_TEXTURE5 = 21,
-	D3DTS_TEXTURE6 = 22,
-	D3DTS_TEXTURE7 = 23,
+	long left;
+	long top;
+	long right;
+	long bottom;
+} RECT;
 
-	D3DTS_FORCE_DWORD = 0x7fffffff
-} D3DTRANSFORMSTATETYPE;
-
-#define D3DTS_WORLDMATRIX(index) (D3DTRANSFORMSTATETYPE)(index + 256)
-
-#define D3DTS_WORLD D3DTS_WORLDMATRIX(0)
-
-enum TransformStateType
+enum ClearType
 {
-	TRANSFORMSTATE_WORLD = D3DTS_WORLD,
-	TRANSFORMSTATE_VIEW = D3DTS_VIEW,
-	TRANSFORMSTATE_PROJECTION = D3DTS_PROJECTION
+	ZBUFFER, // TODO: = D3DCLEAR_ZBUFFER,
+	TARGET,	 // TODO: = D3DCLEAR_TARGET
+};
+
+enum ColorFormat
+{
+	GREY8,	 // TODO: = D3DFMT_L8,
+	GREYA8,	 // TODO: = D3DFMT_A8L8,
+	RED16F,	 // TODO: = D3DFMT_R16F,
+	RG16F,	 // TODO: = D3DFMT_G16R16F,
+	RGB5,	 // TODO: = D3DFMT_R5G6B5,
+	RGB8,	 // TODO: = D3DFMT_X8R8G8B8,
+	RGBA16F, // TODO: = D3DFMT_A16B16G16R16F,
+	RGBA32F, // TODO: = D3DFMT_A32B32G32R32F,
+	RGBA8,	 // TODO: = D3DFMT_A8R8G8B8,
+	RGBA10,	 // TODO: = D3DFMT_A2R10G10B10,
+	DXT5,	 // TODO: = D3DFMT_DXT5
 };
 
 typedef union _LARGE_INTEGER
@@ -65,86 +67,13 @@ typedef union _LARGE_INTEGER
 	LONGLONG QuadPart;
 } LARGE_INTEGER, *PLARGE_INTEGER;
 
-typedef struct
-{
-	DWORD X;
-	DWORD Y;
-	DWORD Width;
-	DWORD Height;
-	float MinZ;
-	float MaxZ;
-} D3DVIEWPORT9;
-
-typedef D3DVIEWPORT9 ViewPort;
-
-typedef struct _D3DMATRIX
-{
-	union
-	{
-		struct
-		{
-			float _11, _12, _13, _14;
-			float _21, _22, _23, _24;
-			float _31, _32, _33, _34;
-			float _41, _42, _43, _44;
-		};
-		float m[4][4];
-	};
-} D3DMATRIX;
-
-typedef struct D3DXFLOAT16
-{
-	WORD Value;
-} D3DXFLOAT16, *LPD3DXFLOAT16;
-
-typedef struct D3DXMATRIX : public D3DMATRIX
-{
-public:
-	D3DXMATRIX(){};
-	D3DXMATRIX(const float*);
-	D3DXMATRIX(const D3DMATRIX&);
-	D3DXMATRIX(const D3DXFLOAT16*);
-	D3DXMATRIX(float _11, float _12, float _13, float _14,
-			   float _21, float _22, float _23, float _24,
-			   float _31, float _32, float _33, float _34,
-			   float _41, float _42, float _43, float _44);
-
-	// access grants
-	float& operator()(UINT Row, UINT Col);
-	float operator()(UINT Row, UINT Col) const;
-
-	// casting operators
-	operator float*();
-	operator const float*() const;
-
-	// assignment operators
-	D3DXMATRIX& operator*=(const D3DXMATRIX&);
-	D3DXMATRIX& operator+=(const D3DXMATRIX&);
-	D3DXMATRIX& operator-=(const D3DXMATRIX&);
-	D3DXMATRIX& operator*=(float);
-	D3DXMATRIX& operator/=(float);
-
-	// unary operators
-	D3DXMATRIX operator+() const;
-	D3DXMATRIX operator-() const;
-
-	// binary operators
-	D3DXMATRIX operator*(const D3DXMATRIX&) const;
-	D3DXMATRIX operator+(const D3DXMATRIX&) const;
-	D3DXMATRIX operator-(const D3DXMATRIX&) const;
-	D3DXMATRIX operator*(float) const;
-	D3DXMATRIX operator/(float) const;
-
-	friend D3DXMATRIX operator*(float, const D3DXMATRIX&);
-
-	bool operator==(const D3DXMATRIX&) const;
-	bool operator!=(const D3DXMATRIX&) const;
-
-} D3DXMATRIX, *LPD3DXMATRIX;
+#define STATIC_PRERENDER_ITERATIONS 64
 
 #define S_OK ((HRESULT)0L)
 #define S_FALSE ((HRESULT)1L)
 #define E_FAIL ((HRESULT)0x80004005L)
+
+#define TEXTURESET_STATE_CACHE_SIZE 5
 
 #define NUM_BG_SETS 3
 #define BG_DESKTOP 0
@@ -167,6 +96,22 @@ public:
 
 // TODO: #define MAX(a,b)        (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
+
+#define MY_D3DFVF_TEX 0
+#define MY_D3DFVF_NOTEX2_VERTEX 1
+#define MY_D3DTRANSFORMED_NOTEX2_VERTEX 2 // TODO: DELETE?
+
+#define ANGTORAD(x) ((x) * (float)(M_PI / 180.0))
+
+#define MAXNAMEBUFFER 32
+#define MAXSTRING 1024
+
+#define EDITOR_BG_WIDTH 1000
+#define EDITOR_BG_HEIGHT 750
+
+#define DEFAULT_PLAYER_WIDTH 1024
+
+#define DISPID_SurfaceEvents_Slingshot 1101
 
 enum eObjType : unsigned char
 {
@@ -453,12 +398,6 @@ typedef enum : char
 
 typedef enum
 {
-	RGBA,
-	RGB_FP
-} TextureFormat;
-
-typedef enum
-{
 	Defaults = -1,
 	Disabled = 0,
 	Fast_FXAA = 1,
@@ -482,9 +421,3 @@ typedef struct tWAVEFORMATEX
 } WAVEFORMATEX, *PWAVEFORMATEX, *LPWAVEFORMATEX;
 typedef const WAVEFORMATEX* LPCWAVEFORMATEX;
 #pragma pack(pop)
-
-#define MY_D3DFVF_TEX 0
-#define MY_D3DFVF_NOTEX2_VERTEX 1
-#define MY_D3DTRANSFORMED_NOTEX2_VERTEX 2 // TODO: DELETE?
-
-#define DISPID_SurfaceEvents_Slingshot 1101

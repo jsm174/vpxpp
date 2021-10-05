@@ -62,14 +62,20 @@ BgfxWindow::~BgfxWindow()
 {
 }
 
+void BgfxWindow::PreCreate()
+{
+}
+
 bool BgfxWindow::Create(int width, int height)
 {
+	PreCreate();
+
 	m_width = width;
 	m_height = height;
 
 	SDL_Init(SDL_INIT_VIDEO);
 
-	m_pWindow = SDL_CreateWindow("bgfx",
+	m_pWindow = SDL_CreateWindow("vpxpp",
 								 SDL_WINDOWPOS_CENTERED,
 								 SDL_WINDOWPOS_CENTERED,
 								 m_width,
@@ -121,16 +127,14 @@ bool BgfxWindow::Create(int width, int height)
 		return false;
 	}
 
-	bgfx::setDebug(BGFX_DEBUG_TEXT | BGFX_DEBUG_STATS);
+	// TODO: bgfx::setDebug(BGFX_DEBUG_STATS);
 
-	bgfx::setViewClear(
-		0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x6495EDFF, 1.0f, 0);
-	bgfx::setViewRect(0, 0, 0, width, height);
+	bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
 
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 
-	ImGui_Implbgfx_Init(0);
+	ImGui_Implbgfx_Init(255);
 
 	switch (bgfx::getRendererType())
 	{
@@ -177,7 +181,9 @@ void BgfxWindow::Run()
 			}
 		}
 
+		PreRender();
 		Render();
+		PostRender();
 	}
 
 	Destroy();
@@ -187,26 +193,40 @@ void BgfxWindow::OnInitialUpdate()
 {
 }
 
-void BgfxWindow::Render()
+void BgfxWindow::PreRender()
 {
 	ImGui_Implbgfx_NewFrame();
 	ImGui_ImplSDL2_NewFrame(m_pWindow);
 
 	ImGui::NewFrame();
-	ShowStatsWindow();
+
+	RenderImgGui();
+
 	ImGui::Render();
 
 	ImGui_Implbgfx_RenderDrawLists(ImGui::GetDrawData());
 
-	bgfx::touch(0);
+	bgfx::setViewRect(0, 0, 0, uint16_t(m_width), uint16_t(m_height));
 
+	bgfx::touch(0);
+}
+
+void BgfxWindow::RenderImgGui()
+{
+	ShowStatsWindow();
+}
+
+void BgfxWindow::Render()
+{
+}
+
+void BgfxWindow::PostRender()
+{
 	bgfx::frame();
 }
 
 void BgfxWindow::ShowStatsWindow()
 {
-	ImGui::ShowMetricsWindow();
-
 	static SampleData s_frameTime;
 	ImGui::Begin("Stats Window window");
 

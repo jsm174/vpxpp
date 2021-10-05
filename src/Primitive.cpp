@@ -67,6 +67,16 @@ Primitive::~Primitive()
 {
 }
 
+bool Primitive::IsTransparent() const
+{
+	if (m_d.m_skipRendering)
+	{
+		return false;
+	}
+
+	return m_ptable->GetMaterial(m_d.m_szMaterial)->m_bOpacityActive;
+}
+
 HRESULT Primitive::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 {
 	m_ptable = ptable;

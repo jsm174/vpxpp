@@ -61,11 +61,16 @@ public:
 	virtual ItemTypeEnum GetItemType() const;
 	virtual IEditable* GetIEditable();
 
+	bool GetDecalsEnabled() const;
+	bool GetEMReelsEnabled() const;
+
 	void Play(const bool cameraMode);
 
 	int GetDetailLevel() const;
 
 	Material* GetMaterial(const std::string& szName) const;
+	Material* GetSurfaceMaterial(const std::string& name) const;
+
 	Texture* GetImage(const std::string& szName) const;
 
 	void GetUniqueName(const ItemTypeEnum type, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;
@@ -135,6 +140,8 @@ public:
 	bool m_plungerFilter;
 
 	bool m_overridePhysicsFlipper;
+
+	bool m_tblMirrorEnabled;
 
 	float m_globalDifficulty;
 
@@ -221,6 +228,7 @@ public:
 	bool m_renderEMReels;
 	bool m_overwriteGlobalStereo3D;
 	bool m_reflectElementsOnPlayfield;
+	bool m_reflectionEnabled;
 
 private:
 	std::string m_notesText;

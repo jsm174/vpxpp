@@ -15,6 +15,8 @@ public:
 	VPinball();
 	~VPinball();
 
+	void TitleFromFilename(const std::string& szfilename, std::string& sztitle);
+
 	bool LoadFile(const bool updateEditor);
 	void LoadFileName(const std::string& szFileName, const bool updateEditor);
 

@@ -40,6 +40,9 @@ add_executable(vpxpp
 	math/Vertex3Ds.h
 	math/Vertex3Ds.cpp
 
+	math/Vertex3D_NoTex2.h
+	math/Vertex3D_TexelOnly.h
+	
 	math/Vertex4D.h
 	math/Vertex4D.cpp
 
@@ -107,9 +110,6 @@ add_executable(vpxpp
 
 	src/LZWReader.h
 	src/LZWReader.cpp
-	
-	src/def.h
-	src/def.cpp
 
 	src/extern.h
 	src/extern.cpp
@@ -123,6 +123,9 @@ add_executable(vpxpp
 
 	src/RenderDevice.h
 	src/RenderDevice.cpp
+
+	src/Shader.h
+	src/Shader.cpp
 
 	src/TextureManager.h
 	src/TextureManager.cpp
@@ -244,6 +247,9 @@ add_executable(vpxpp
 
 	src/main.cpp
 
+	src/D3DX9.h
+	src/D3DX9.cpp
+
 	ext/pole/pole.cpp
 
 	ext/stb/stb_image.h
@@ -274,4 +280,22 @@ target_link_libraries(vpxpp PRIVATE
 	FreeImage::FreeImage
 	V8::V8 
 	cxxopts::cxxopts
+)
+
+add_custom_command(TARGET vpxpp POST_BUILD
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/shaders/bin/fs_basic_without_texture_isMetal_mtl.bin" "$<TARGET_FILE_DIR:vpxpp>"
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/shaders/bin/vs_basic_without_texture_isMetal_mtl.bin" "$<TARGET_FILE_DIR:vpxpp>"
+
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/shaders/bin/fs_basic_without_texture_isNotMetal_mtl.bin" "$<TARGET_FILE_DIR:vpxpp>"
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/shaders/bin/vs_basic_without_texture_isNotMetal_mtl.bin" "$<TARGET_FILE_DIR:vpxpp>"
+
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/shaders/bin/fs_basic_with_texture_isMetal_mtl.bin" "$<TARGET_FILE_DIR:vpxpp>"
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/shaders/bin/vs_basic_with_texture_isMetal_mtl.bin" "$<TARGET_FILE_DIR:vpxpp>"
+
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/shaders/bin/fs_basic_with_texture_isNotMetal_mtl.bin" "$<TARGET_FILE_DIR:vpxpp>"
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/shaders/bin/vs_basic_with_texture_isNotMetal_mtl.bin" "$<TARGET_FILE_DIR:vpxpp>"
+
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/res/ball.bmp" "$<TARGET_FILE_DIR:vpxpp>"
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/res/ao_dither.bmp" "$<TARGET_FILE_DIR:vpxpp>"
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/res/env_map.bmp" "$<TARGET_FILE_DIR:vpxpp>"
 )

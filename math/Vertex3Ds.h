@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Vertex2D.h"
-
-#include "def.h"
+#include "Vertex3D_NoTex2.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>

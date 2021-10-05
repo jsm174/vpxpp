@@ -10,7 +10,7 @@
 #include "PinTable.h"
 #include "RenderDevice.h"
 #include "Timer.h"
-#include "def.h"
+#include "Vertex3D_TexelOnly.h"
 
 class FlasherData
 {
@@ -75,6 +75,8 @@ public:
 	virtual void RenderDynamic();
 	virtual void RenderSetup();
 	virtual ItemTypeEnum HitableGetItemType() const;
+
+	virtual bool IsTransparent() const;
 
 	FlasherData m_d;
 

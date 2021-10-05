@@ -56,6 +56,11 @@ Flasher::~Flasher()
 {
 }
 
+bool Flasher::IsTransparent() const
+{
+	return !m_d.m_isDMD;
+}
+
 HRESULT Flasher::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 {
 	m_ptable = ptable;

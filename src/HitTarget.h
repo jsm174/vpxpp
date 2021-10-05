@@ -74,6 +74,8 @@ public:
 	virtual void RenderSetup();
 	virtual ItemTypeEnum HitableGetItemType() const;
 
+	virtual bool IsTransparent() const;
+
 	HitTargetData m_d;
 
 	bool m_hitEvent;

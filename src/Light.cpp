@@ -53,6 +53,11 @@ Light::~Light()
 {
 }
 
+bool Light::IsTransparent() const
+{
+	return m_d.m_BulbLight || (m_surfaceMaterial && m_surfaceMaterial->m_bOpacityActive);
+}
+
 HRESULT Light::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 {
 	m_ptable = ptable;
@@ -345,6 +350,15 @@ void Light::RenderDynamic()
 
 void Light::RenderSetup()
 {
+	// TODO: RenderDevice* const pd3dDevice = m_backglass ? g_pplayer->m_pin3d.m_pd3dSecondaryDevice : g_pplayer->m_pin3d.m_pd3dPrimaryDevice;
+
+	// TODO: m_iblinkframe = 0;
+	// TODO: m_d.m_time_msec = g_pplayer->m_time_msec;
+	// TODO: m_updateBulbLightHeight = false;
+
+	// TODO: m_initSurfaceHeight = m_ptable->GetSurfaceHeight(m_d.m_szSurface, m_d.m_vCenter.x, m_d.m_vCenter.y) * m_ptable->m_BG_scalez[m_ptable->m_BG_current_set];
+	m_surfaceMaterial = m_ptable->GetSurfaceMaterial(m_d.m_szSurface);
+	// TODO: m_surfaceTexture = m_ptable->GetSurfaceImage(m_d.m_szSurface);
 }
 
 ItemTypeEnum Light::HitableGetItemType() const

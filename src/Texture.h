@@ -8,6 +8,8 @@
 #include "misc.h"
 #include "pole.h"
 
+#include <string>
+
 class PinTable;
 
 class Texture : public ILoadable
@@ -24,8 +26,10 @@ public:
 	void FreeStuff();
 
 	void SetSizeFrom(const BaseTexture* const tex);
+
+	void CreateFromResource(const std::string szName);
 	bool IsHDR() const;
-	
+
 	void DumpBaseTexture();
 
 	int m_width;

@@ -7,6 +7,10 @@
 #include "extern.h"
 #include "mesh.h"
 
+#include "misc.h"
+
+#include <iostream>
+
 const ItemTypeEnum Surface::ItemType = eItemSurface;
 const int Surface::TypeNameID = 104;
 const int Surface::ToolID = 110;
@@ -60,6 +64,20 @@ Surface::~Surface()
 {
 }
 
+bool Surface::IsTransparent() const
+{
+	bool result = false;
+	if (m_d.m_sideVisible)
+	{
+		result = m_ptable->GetMaterial(m_d.m_szSideMaterial)->m_bOpacityActive;
+	}
+	if (m_d.m_topBottomVisible)
+	{
+		result = result || m_ptable->GetMaterial(m_d.m_szTopMaterial)->m_bOpacityActive;
+	}
+	return result;
+}
+
 HRESULT Surface::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 {
 	RegUtil* pRegUtil = RegUtil::SharedInstance();
@@ -71,35 +89,36 @@ HRESULT Surface::Init(PinTable* ptable, float x, float y, bool fromMouseClick)
 	const float width = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Wall", "Width", 50.f) : 50.f;
 	const float length = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault("DefaultProps\\Wall", "Length", 50.f) : 50.f;
 
-	// TODO: CComObject<DragPoint>* pdp;
-	// CComObject<DragPoint>::CreateInstance(&pdp);
-	// if (pdp)
-	// {
-	// 	pdp->AddRef();
-	// 	pdp->Init(this, x - width, y - length, 0.f, false);
-	// 	m_vdpoint.push_back(pdp);
-	// }
-	// CComObject<DragPoint>::CreateInstance(&pdp);
-	// if (pdp)
-	// {
-	// 	pdp->AddRef();
-	// 	pdp->Init(this, x - width, y + length, 0.f, false);
-	// 	m_vdpoint.push_back(pdp);
-	// }
-	// CComObject<DragPoint>::CreateInstance(&pdp);
-	// if (pdp)
-	// {
-	// 	pdp->AddRef();
-	// 	pdp->Init(this, x + width, y + length, 0.f, false);
-	// 	m_vdpoint.push_back(pdp);
-	// }
-	// CComObject<DragPoint>::CreateInstance(&pdp);
-	// if (pdp)
-	// {
-	// 	pdp->AddRef();
-	// 	pdp->Init(this, x + width, y - length, 0.f, false);
-	// 	m_vdpoint.push_back(pdp);
-	// }
+	/* 	TODO:
+	CComObject<DragPoint>* pdp;
+	CComObject<DragPoint>::CreateInstance(&pdp);
+	if (pdp)
+	{
+		pdp->AddRef();
+		pdp->Init(this, x - width, y - length, 0.f, false);
+		m_vdpoint.push_back(pdp);
+	}
+	CComObject<DragPoint>::CreateInstance(&pdp);
+	if (pdp)
+	{
+		pdp->AddRef();
+		pdp->Init(this, x - width, y + length, 0.f, false);
+		m_vdpoint.push_back(pdp);
+	}
+	CComObject<DragPoint>::CreateInstance(&pdp);
+	if (pdp)
+	{
+		pdp->AddRef();
+		pdp->Init(this, x + width, y + length, 0.f, false);
+		m_vdpoint.push_back(pdp);
+	}
+	CComObject<DragPoint>::CreateInstance(&pdp);
+	if (pdp)
+	{
+		pdp->AddRef();
+		pdp->Init(this, x + width, y - length, 0.f, false);
+		m_vdpoint.push_back(pdp);
+	} */
 
 	SetDefaults(fromMouseClick);
 
@@ -159,7 +178,8 @@ HRESULT Surface::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int
 
 		std::reverse(m_vdpoint.begin(), m_vdpoint.end());
 
-		/* TODO:		CComObject<DragPoint>* pdp;
+		/* TODO:		
+		CComObject<DragPoint>* pdp;
 		CComObject<DragPoint>::CreateInstance(&pdp);
 		if (pdp)
 		{
@@ -257,7 +277,7 @@ void Surface::SetDefaults(bool fromMouseClick)
 	m_d.m_topBottomVisible = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault(strKeyName, "Visible", true) : true;
 	m_d.m_sideVisible = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault(strKeyName, "SideVisible", true) : true;
 	m_d.m_collidable = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault(strKeyName, "Collidable", true) : true;
-	m_d.m_disableLightingTop = dequantizeUnsigned<8>(fromMouseClick ? pRegUtil->LoadValueIntWithDefault(strKeyName, "DisableLighting", 0) : 0); // stored as uchar for backward compatibility
+	m_d.m_disableLightingTop = dequantizeUnsigned<8>(fromMouseClick ? pRegUtil->LoadValueIntWithDefault(strKeyName, "DisableLighting", 0) : 0);
 	m_d.m_disableLightingBelow = fromMouseClick ? pRegUtil->LoadValueFloatWithDefault(strKeyName, "DisableLightingBelow", 0.f) : 0.f;
 	m_d.m_reflectionEnabled = fromMouseClick ? pRegUtil->LoadValueBoolWithDefault(strKeyName, "ReflectionEnabled", true) : true;
 }
@@ -444,14 +464,6 @@ void Surface::GetHitShapes(std::vector<HitObject*>& pvho)
 }
 
 void Surface::GetHitShapesDebug(std::vector<HitObject*>& pvho)
-{
-}
-
-void Surface::RenderStatic()
-{
-}
-
-void Surface::RenderDynamic()
 {
 }
 
@@ -659,6 +671,24 @@ void Surface::GenerateMesh(std::vector<Vertex3D_NoTex2>& topBuf, std::vector<Ver
 	}
 }
 
+ItemTypeEnum Surface::HitableGetItemType() const
+{
+	return eItemSurface;
+}
+
+void Surface::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)
+{
+	for (int i = 0; i < 8; i++)
+	{
+		const Vertex3Ds pv(
+			(i & 1) ? m_ptable->m_right : m_ptable->m_left,
+			(i & 2) ? m_ptable->m_bottom : m_ptable->m_top,
+			(i & 4) ? m_d.m_heighttop : m_d.m_heightbottom);
+
+		pvvertex3D.push_back(pv);
+	}
+}
+
 //
 // end of license:GPLv3+, back to 'old MAME'-like
 //
@@ -682,29 +712,39 @@ void Surface::PrepareWallsAtHeight()
 
 	RenderDevice* const pd3dDevice = g_pplayer->m_pin3d.m_pd3dPrimaryDevice;
 
-	/* 	TODO: pd3dDevice->CreateVertexBuffer(m_numVertices * 4 + (!topBottomBuf.empty() ? m_numVertices * 3 : 0), 0, MY_D3DFVF_NOTEX2_VERTEX, &m_VBuffer);
+	pd3dDevice->CreateVertexBuffer(m_numVertices * 4 + (!topBottomBuf.empty() ? m_numVertices * 3 : 0), 0, MY_D3DFVF_NOTEX2_VERTEX, &m_VBuffer);
 
-	Vertex3D_NoTex2* verts;
-	m_VBuffer->lock(0, 0, (void**)&verts, VertexBuffer::WRITEONLY);
-	memcpy(verts, sideBuf.data(), sizeof(Vertex3D_NoTex2) * m_numVertices * 4);
+	// Vertex3D_NoTex2* verts;
+	// m_VBuffer->lock(0, 0, (void**)&verts, VertexBuffer::WRITEONLY);
+	// memcpy(verts, sideBuf.data(), sizeof(Vertex3D_NoTex2) * m_numVertices * 4);
+
+	m_VBuffer->CopyMemory(sideBuf.data(), 0, sizeof(Vertex3D_NoTex2) * m_numVertices * 4);
 
 	if (!topBottomBuf.empty())
 	{
-		memcpy(verts + m_numVertices * 4, topBottomBuf.data(), sizeof(Vertex3D_NoTex2) * m_numVertices * 3);
+		// memcpy(verts + m_numVertices * 4, topBottomBuf.data(), sizeof(Vertex3D_NoTex2) * m_numVertices * 3);
+
+		m_VBuffer->CopyMemory(topBottomBuf.data(), (m_numVertices * 4), (m_numVertices * 3) * sizeof(Vertex3D_NoTex2));
 	}
 
-	m_VBuffer->unlock();
+	// m_VBuffer->unlock();
 
 	pd3dDevice->CreateIndexBuffer((unsigned int)topBottomIndices.size() + (unsigned int)sideIndices.size(), 0, IndexBuffer::FMT_INDEX16, &m_IBuffer);
 
-	WORD* buf;
-	m_IBuffer->lock(0, 0, (void**)&buf, 0);
-	memcpy(buf, sideIndices.data(), sideIndices.size() * sizeof(WORD));
+	// WORD* buf;
+	// m_IBuffer->lock(0, 0, (void**)&buf, 0);
+	// memcpy(buf, sideIndices.data(), sideIndices.size() * sizeof(WORD));
+
+	m_IBuffer->CopyMemory(sideIndices.data(), 0, sideIndices.size() * sizeof(WORD));
+
 	if (!topBottomIndices.empty())
 	{
-		memcpy(buf + sideIndices.size(), topBottomIndices.data(), topBottomIndices.size() * sizeof(WORD));
+		// memcpy(buf + sideIndices.size(), topBottomIndices.data(), topBottomIndices.size() * sizeof(WORD));
+
+		m_IBuffer->CopyMemory(topBottomIndices.data(), sideIndices.size(), topBottomIndices.size() * sizeof(WORD));
 	}
-	m_IBuffer->unlock(); */
+
+	// m_IBuffer->unlock();
 }
 
 void Surface::PrepareSlingshots()
@@ -749,26 +789,29 @@ void Surface::PrepareSlingshots()
 		ComputeNormals(rgv3D + offset, 9, rgiSlingshot, 24);
 	}
 
-	if (m_slingshotVBuffer)
-	{
-		m_slingshotVBuffer->release();
-	}
+	// TODO: if (m_slingshotVBuffer)
+	// {
+	// 		m_slingshotVBuffer->release();
+	// }
 
 	RenderDevice* const pd3dDevice = g_pplayer->m_pin3d.m_pd3dPrimaryDevice;
 
-	/* TODO: pd3dDevice->CreateVertexBuffer((unsigned int)m_vlinesling.size() * 9, 0, MY_D3DFVF_NOTEX2_VERTEX, &m_slingshotVBuffer);
+	pd3dDevice->CreateVertexBuffer((unsigned int)m_vlinesling.size() * 9, 0, MY_D3DFVF_NOTEX2_VERTEX, &m_slingshotVBuffer);
 
-	Vertex3D_NoTex2* buf;
-	m_slingshotVBuffer->lock(0, 0, (void**)&buf, VertexBuffer::WRITEONLY);
-	memcpy(buf, rgv3D, m_vlinesling.size() * 9 * sizeof(Vertex3D_NoTex2));
-	m_slingshotVBuffer->unlock();
+	// Vertex3D_NoTex2* buf;
+	// m_slingshotVBuffer->lock(0, 0, (void**)&buf, VertexBuffer::WRITEONLY);
+	// memcpy(buf, rgv3D, m_vlinesling.size() * 9 * sizeof(Vertex3D_NoTex2));
+
+	m_slingshotVBuffer->CopyMemory(rgv3D, 0, m_vlinesling.size() * 9 * sizeof(Vertex3D_NoTex2));
+
+	// m_slingshotVBuffer->unlock();
 
 	delete[] rgv3D;
 
 	if (!slingIBuffer)
 	{
 		slingIBuffer = pd3dDevice->CreateAndFillIndexBuffer(24, rgiSlingshot);
-	} */
+	}
 }
 
 void Surface::RenderSetup()
@@ -805,20 +848,218 @@ void Surface::RenderSetup()
 	m_d.m_heighttop = oldTopHeight;
 }
 
-ItemTypeEnum Surface::HitableGetItemType() const
+void Surface::RenderStatic()
 {
-	return eItemSurface;
+	if (m_ptable->m_reflectionEnabled && !m_d.m_reflectionEnabled)
+	{
+		return;
+	}
+
+	RenderSlingshots();
+
+	if (!m_d.m_droppable && !m_isDynamic)
+	{
+		RenderWallsAtHeight(false);
+	}
 }
 
-void Surface::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)
+void Surface::RenderSlingshots()
 {
-	for (int i = 0; i < 8; i++)
+	if (!m_d.m_sideVisible || m_vlinesling.empty())
 	{
-		const Vertex3Ds pv(
-			(i & 1) ? m_ptable->m_right : m_ptable->m_left,
-			(i & 2) ? m_ptable->m_bottom : m_ptable->m_top,
-			(i & 4) ? m_d.m_heighttop : m_d.m_heightbottom);
+		return;
+	}
 
-		pvvertex3D.push_back(pv);
+	bool nothing_to_draw = true;
+
+	for (size_t i = 0; i < m_vlinesling.size(); i++)
+	{
+		LineSegSlingshot* const plinesling = m_vlinesling[i];
+		if (plinesling->m_slingshotanim.m_iframe || plinesling->m_doHitEvent)
+		{
+			nothing_to_draw = false;
+			break;
+		}
+	}
+
+	if (nothing_to_draw)
+	{
+		return;
+	}
+
+	RenderDevice* const pd3dDevice = g_pplayer->m_pin3d.m_pd3dPrimaryDevice;
+
+	const Material* const mat = m_ptable->GetMaterial(m_d.m_szSlingShotMaterial);
+	pd3dDevice->basicShader->SetTechnique(mat->m_bIsMetal ? "basic_without_texture_isMetal" : "basic_without_texture_isNotMetal");
+	pd3dDevice->basicShader->SetMaterial(mat);
+
+	pd3dDevice->SetRenderState(RenderDevice::DEPTHBIAS, 0);
+	pd3dDevice->SetRenderState(RenderDevice::ZWRITEENABLE, RenderDevice::RS_TRUE);
+	pd3dDevice->SetRenderState(RenderDevice::CULLMODE, RenderDevice::CULL_NONE);
+
+	for (size_t i = 0; i < m_vlinesling.size(); i++)
+	{
+		LineSegSlingshot* const plinesling = m_vlinesling[i];
+		if (!plinesling->m_slingshotanim.m_iframe && !plinesling->m_doHitEvent)
+		{
+			continue;
+		}
+		else if (plinesling->m_doHitEvent)
+		{
+			if (plinesling->m_EventTimeReset == 0)
+			{
+				plinesling->m_EventTimeReset = g_pplayer->m_time_msec + 100;
+			}
+			else if (plinesling->m_EventTimeReset < g_pplayer->m_time_msec)
+			{
+				plinesling->m_doHitEvent = false;
+				plinesling->m_EventTimeReset = 0;
+			}
+		}
+
+		pd3dDevice->basicShader->Begin(0);
+
+		pd3dDevice->DrawIndexedPrimitiveVB(RenderDevice::TRIANGLELIST,
+										   MY_D3DFVF_NOTEX2_VERTEX,
+										   m_slingshotVBuffer, (DWORD)i * 9, 9, slingIBuffer, 0, 24);
+
+		pd3dDevice->basicShader->End();
+	}
+}
+
+void Surface::RenderWallsAtHeight(const bool drop)
+{
+	if (m_ptable->m_reflectionEnabled && (m_d.m_heighttop < 0.0f))
+	{
+		return;
+	}
+
+	RenderDevice* const pd3dDevice = g_pplayer->m_pin3d.m_pd3dPrimaryDevice;
+
+	if ((m_d.m_disableLightingTop != 0.f || m_d.m_disableLightingBelow != 0.f) && (m_d.m_sideVisible || m_d.m_topBottomVisible))
+	{
+		const vec4 tmp(m_d.m_disableLightingTop, m_d.m_disableLightingBelow, 0.f, 0.f);
+		pd3dDevice->basicShader->SetDisableLighting(tmp);
+	}
+
+	if (m_d.m_sideVisible && !drop && (m_numVertices > 0))
+	{
+		const Material* const mat = m_ptable->GetMaterial(m_d.m_szSideMaterial);
+		pd3dDevice->basicShader->SetMaterial(mat);
+
+		pd3dDevice->SetRenderState(RenderDevice::DEPTHBIAS, 0);
+		pd3dDevice->SetRenderState(RenderDevice::ZWRITEENABLE, RenderDevice::RS_TRUE);
+
+		if (mat->m_bOpacityActive || !m_isDynamic)
+		{
+			pd3dDevice->SetRenderState(RenderDevice::CULLMODE, RenderDevice::CULL_NONE);
+		}
+		else
+		{
+			if (m_d.m_topBottomVisible && m_isDynamic)
+			{
+				pd3dDevice->SetRenderState(RenderDevice::CULLMODE, RenderDevice::CULL_NONE);
+			}
+			else
+			{
+				pd3dDevice->SetRenderState(RenderDevice::CULLMODE, RenderDevice::CULL_CCW);
+			}
+		}
+		Texture* const pinSide = m_ptable->GetImage(m_d.m_szSideImage);
+		if (pinSide)
+		{
+			pd3dDevice->basicShader->SetTechnique(mat->m_bIsMetal ? "basic_with_texture_isMetal" : "basic_with_texture_isNotMetal");
+			pd3dDevice->basicShader->SetTexture("Texture0", pinSide, false);
+			pd3dDevice->basicShader->SetAlphaTestValue(pinSide->m_alphaTestValue * (float)(1.0 / 255.0));
+		}
+		else
+		{
+			pd3dDevice->basicShader->SetTechnique(mat->m_bIsMetal ? "basic_without_texture_isMetal" : "basic_without_texture_isNotMetal");
+		}
+
+		pd3dDevice->basicShader->Begin(0);
+		pd3dDevice->DrawIndexedPrimitiveVB(RenderDevice::TRIANGLELIST, MY_D3DFVF_NOTEX2_VERTEX, m_VBuffer, 0, m_numVertices * 4, m_IBuffer, 0, m_numVertices * 6);
+		pd3dDevice->basicShader->End();
+	}
+
+	if (m_d.m_topBottomVisible && (m_numPolys > 0))
+	{
+		const Material* const mat = m_ptable->GetMaterial(m_d.m_szTopMaterial);
+		pd3dDevice->basicShader->SetMaterial(mat);
+
+		pd3dDevice->SetRenderState(RenderDevice::DEPTHBIAS, 0);
+		pd3dDevice->SetRenderState(RenderDevice::ZWRITEENABLE, RenderDevice::RS_TRUE);
+
+		if (mat->m_bOpacityActive || !m_isDynamic)
+		{
+			pd3dDevice->SetRenderState(RenderDevice::CULLMODE, RenderDevice::CULL_NONE);
+		}
+		else
+		{
+			pd3dDevice->SetRenderState(RenderDevice::CULLMODE, RenderDevice::CULL_CCW);
+		}
+
+		Texture* const pin = m_ptable->GetImage(m_d.m_szImage);
+		if (pin)
+		{
+			pd3dDevice->basicShader->SetTechnique(mat->m_bIsMetal ? "basic_with_texture_isMetal" : "basic_with_texture_isNotMetal");
+			pd3dDevice->basicShader->SetTexture("Texture0", pin, false);
+			pd3dDevice->basicShader->SetAlphaTestValue(pin->m_alphaTestValue * (float)(1.0 / 255.0));
+		}
+		else
+		{
+			pd3dDevice->basicShader->SetTechnique(mat->m_bIsMetal ? "basic_without_texture_isMetal" : "basic_without_texture_isNotMetal");
+		}
+
+		pd3dDevice->basicShader->Begin(0);
+		pd3dDevice->DrawIndexedPrimitiveVB(RenderDevice::TRIANGLELIST, MY_D3DFVF_NOTEX2_VERTEX, m_VBuffer, m_numVertices * 4 + (!drop ? 0 : m_numVertices), m_numVertices, m_IBuffer, m_numVertices * 6, m_numPolys * 3);
+		pd3dDevice->basicShader->End();
+
+		if (m_ptable->m_reflectionEnabled)
+		{
+			if (mat->m_bOpacityActive || !m_isDynamic)
+			{
+				pd3dDevice->SetRenderState(RenderDevice::CULLMODE, RenderDevice::CULL_NONE);
+			}
+			else
+			{
+				pd3dDevice->SetRenderState(RenderDevice::CULLMODE, RenderDevice::CULL_CW);
+			}
+
+			pd3dDevice->basicShader->Begin(0);
+			pd3dDevice->DrawIndexedPrimitiveVB(RenderDevice::TRIANGLELIST, MY_D3DFVF_NOTEX2_VERTEX, m_VBuffer, m_numVertices * 4 + m_numVertices * 2, m_numVertices, m_IBuffer, m_numVertices * 6, m_numPolys * 3);
+			pd3dDevice->basicShader->End();
+		}
+	}
+
+	if ((m_d.m_disableLightingTop != 0.f || m_d.m_disableLightingBelow != 0.f) && (m_d.m_sideVisible || m_d.m_topBottomVisible))
+	{
+		const vec4 tmp(0.f, 0.f, 0.f, 0.f);
+		pd3dDevice->basicShader->SetDisableLighting(tmp);
+	}
+}
+
+void Surface::RenderDynamic()
+{
+	if (m_ptable->m_reflectionEnabled && !m_d.m_reflectionEnabled)
+	{
+		return;
+	}
+
+	RenderSlingshots();
+
+	if (m_d.m_droppable || m_isDynamic)
+	{
+		if (!m_isDropped)
+		{
+			RenderWallsAtHeight(false);
+		}
+		else
+		{
+			if (!m_d.m_flipbook)
+			{
+				RenderWallsAtHeight(true);
+			}
+		}
 	}
 }

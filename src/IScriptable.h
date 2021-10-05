@@ -1,6 +1,6 @@
 #pragma once
 
-#include "def.h"
+#include "misc.h"
 
 class IScriptable
 {

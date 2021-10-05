@@ -10,13 +10,19 @@
 class BaseTexture
 {
 public:
+	enum Format
+	{
+		RGBA,
+		RGB_FP
+	};
+
 	// TODO: static BaseTexture* CreateFromHBitmap(const HBITMAP hbm);
 	static BaseTexture* CreateFromFile(const std::string& filename);
 	static BaseTexture* CreateFromFreeImage(FIBITMAP* dib);
 	static BaseTexture* CreateFromData(const void* data, const size_t size);
 
 	BaseTexture();
-	BaseTexture(const int w, const int h, const TextureFormat format, const bool has_alpha);
+	BaseTexture(const int w, const int h, const Format format, const bool has_alpha);
 
 	int width() const;
 	int height() const;
@@ -26,7 +32,7 @@ public:
 	std::vector<BYTE> m_data;
 	int m_realWidth;
 	int m_realHeight;
-	TextureFormat m_format;
+	Format m_format;
 	bool m_has_alpha;
 
 private:

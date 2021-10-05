@@ -9,6 +9,7 @@
 #include "Vertex2D.h"
 
 #include "BiffReader.h"
+#include "Material.h"
 #include "PinTable.h"
 #include "RenderDevice.h"
 #include "Timer.h"
@@ -84,6 +85,8 @@ public:
 	virtual void RenderSetup();
 	virtual ItemTypeEnum HitableGetItemType() const;
 
+	virtual bool IsTransparent() const;
+
 	LightData m_d;
 
 	LightState m_inPlayState;
@@ -93,6 +96,8 @@ public:
 
 private:
 	PinTable* m_ptable;
+
+	Material* m_surfaceMaterial;
 
 	VertexBuffer* m_customMoverVBuffer;
 	IndexBuffer* m_customMoverIBuffer;

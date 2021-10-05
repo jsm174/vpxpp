@@ -1,13 +1,13 @@
 #include "PinTable.h"
-#include "RegUtil.h"
-
-#include "Inlines.h"
-
 #include "Collection.h"
 #include "EditableRegistry.h"
-
 #include "Player.h"
+#include "Ramp.h"
+#include "RegUtil.h"
+#include "Surface.h"
 #include "extern.h"
+
+#include "Inlines.h"
 
 #include <assert.h>
 #include <iostream>
@@ -18,6 +18,8 @@ PinTable::PinTable(VPinball* pVPinball)
 
 	m_renderDecals = true;
 	m_renderEMReels = true;
+
+	m_reflectionEnabled = false;
 
 	m_overridePhysics = 0;
 	m_overridePhysicsFlipper = false;
@@ -63,7 +65,11 @@ PinTable::PinTable(VPinball* pVPinball)
 	m_pCodeViewer = new CodeViewer();
 
 	m_globalEmissionScale = 1.0f;
+
 	m_pbTempScreenshot = NULL;
+
+	m_tblMirrorEnabled = false;
+
 	m_numMaterials = 0;
 
 	m_3DZPD = 0.5f;
@@ -836,6 +842,36 @@ Material* PinTable::GetMaterial(const std::string& szName) const
 	return &m_vpinball->m_dummyMaterial;
 }
 
+Material* PinTable::GetSurfaceMaterial(const std::string& name) const
+{
+	if (!name.empty())
+	{
+		for (size_t i = 0; i < m_vedit.size(); i++)
+		{
+			IEditable* const item = m_vedit[i];
+			if (item->GetItemType() == eItemSurface || item->GetItemType() == eItemRamp)
+			{
+
+				// TODO: CComBSTR bstr;
+				// TODO: item->GetScriptable()->get_Name(&bstr);
+				// TODO: if (!WzSzStrCmp(bstr, name.c_str()))
+				{
+					if (item->GetItemType() == eItemSurface)
+					{
+						return GetMaterial(((Surface*)item)->m_d.m_szTopMaterial);
+					}
+					else
+					{
+						return GetMaterial(((Ramp*)item)->m_d.m_szMaterial);
+					}
+				}
+			}
+		}
+	}
+
+	return GetMaterial(m_playfieldMaterial);
+}
+
 Texture* PinTable::GetImage(const std::string& szName) const
 {
 	if (szName.empty())
@@ -1468,6 +1504,16 @@ void PinTable::visit(int indent, POLE::Storage* storage, std::string path)
 			visit(indent + 1, storage, fullname + "/");
 		}
 	}
+}
+
+bool PinTable::GetDecalsEnabled() const
+{
+	return m_renderDecals;
+}
+
+bool PinTable::GetEMReelsEnabled() const
+{
+	return m_renderEMReels;
 }
 
 void PinTable::Play(const bool cameraMode)

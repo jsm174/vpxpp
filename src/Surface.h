@@ -86,7 +86,12 @@ public:
 	virtual void RenderSetup();
 	virtual ItemTypeEnum HitableGetItemType() const;
 
+	virtual bool IsTransparent() const;
+
 	virtual void GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D);
+
+	void RenderSlingshots();
+	void RenderWallsAtHeight(const bool drop);
 
 	SurfaceData m_d;
 	bool m_disabled;
@@ -112,4 +117,7 @@ private:
 	bool m_isDynamic;
 
 	bool m_isWall;
+	bool m_isDropped;
+
+	int64_t m_timeOffset;
 };

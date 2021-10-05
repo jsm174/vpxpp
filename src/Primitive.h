@@ -89,6 +89,8 @@ public:
 	virtual void RenderSetup();
 	virtual ItemTypeEnum HitableGetItemType() const;
 
+	virtual bool IsTransparent() const;
+
 	PrimitiveData m_d;
 
 	bool m_lockedByLS;
