@@ -88,19 +88,11 @@ HRESULT Rubber::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			GetPTable()->GetUniqueName(eItemRubber, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
-			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
-		}
+		GetPTable()->GetUniqueName(eItemRubber, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
 	InitScript();
 	return ((HRESULT)0L);
-}
-
-PinTable* Rubber::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Rubber::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -260,9 +252,14 @@ bool Rubber::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Rubber::GetItemType() const
+PinTable* Rubber::GetPTable()
 {
-	return eItemRubber;
+	return m_ptable;
+}
+
+const PinTable* Rubber::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Rubber::GetIEditable()
@@ -270,9 +267,34 @@ IEditable* Rubber::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Rubber::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Rubber::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Rubber::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Rubber::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Rubber::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Rubber::GetItemType() const
+{
+	return eItemRubber;
 }
 
 void Rubber::WriteRegDefaults()
@@ -325,6 +347,16 @@ void Rubber::RenderSetup()
 ItemTypeEnum Rubber::HitableGetItemType() const
 {
 	return eItemRubber;
+}
+
+IScriptable* Rubber::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Rubber::get_Name()
+{
+	return m_wzName;
 }
 
 void Rubber::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)

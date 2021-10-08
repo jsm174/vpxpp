@@ -98,19 +98,11 @@ HRESULT Primitive::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			GetPTable()->GetUniqueName(eItemPrimitive, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
-			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
-		}
+		GetPTable()->GetUniqueName(eItemPrimitive, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
 	InitScript();
 	return ((HRESULT)0L);
-}
-
-PinTable* Primitive::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Primitive::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -521,9 +513,14 @@ bool Primitive::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Primitive::GetItemType() const
+PinTable* Primitive::GetPTable()
 {
-	return eItemPrimitive;
+	return m_ptable;
+}
+
+const PinTable* Primitive::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Primitive::GetIEditable()
@@ -531,9 +528,34 @@ IEditable* Primitive::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Primitive::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Primitive::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Primitive::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Primitive::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Primitive::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Primitive::GetItemType() const
+{
+	return eItemPrimitive;
 }
 
 void Primitive::WriteRegDefaults()
@@ -609,4 +631,14 @@ void Primitive::RenderSetup()
 ItemTypeEnum Primitive::HitableGetItemType() const
 {
 	return eItemPrimitive;
+}
+
+IScriptable* Primitive::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Primitive::get_Name()
+{
+	return m_wzName;
 }

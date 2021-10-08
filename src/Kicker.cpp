@@ -66,19 +66,11 @@ HRESULT Kicker::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			GetPTable()->GetUniqueName(eItemKicker, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
-			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
-		}
+		GetPTable()->GetUniqueName(eItemKicker, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
 	InitScript();
 	return ((HRESULT)0L);
-}
-
-PinTable* Kicker::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Kicker::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -202,9 +194,14 @@ bool Kicker::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Kicker::GetItemType() const
+PinTable* Kicker::GetPTable()
 {
-	return eItemKicker;
+	return m_ptable;
+}
+
+const PinTable* Kicker::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Kicker::GetIEditable()
@@ -212,9 +209,34 @@ IEditable* Kicker::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Kicker::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Kicker::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Kicker::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Kicker::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Kicker::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Kicker::GetItemType() const
+{
+	return eItemKicker;
 }
 
 void Kicker::WriteRegDefaults()
@@ -262,4 +284,14 @@ void Kicker::RenderSetup()
 ItemTypeEnum Kicker::HitableGetItemType() const
 {
 	return eItemKicker;
+}
+
+IScriptable* Kicker::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Kicker::get_Name()
+{
+	return m_wzName;
 }

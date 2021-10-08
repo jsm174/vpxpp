@@ -11,6 +11,7 @@
 
 #include <assert.h>
 #include <iostream>
+#include <wchar.h>
 
 PinTable::PinTable(VPinball* pVPinball)
 {
@@ -325,7 +326,7 @@ HRESULT PinTable::LoadGameFromStorage(POLE::Storage* pStorage)
 							Collection* pCollection = new Collection();
 							pCollection->LoadData(pCollectionStream, this, loadFileVersion);
 							m_vcollection.push_back(pCollection);
-							// m_pcv->AddItem((IScriptable*)pcol, false);
+							m_pCodeViewer->AddItem((IScriptable*)pCollection, false);
 
 							delete pCollectionStream;
 							pCollectionStream = NULL;
@@ -851,10 +852,9 @@ Material* PinTable::GetSurfaceMaterial(const std::string& name) const
 			IEditable* const item = m_vedit[i];
 			if (item->GetItemType() == eItemSurface || item->GetItemType() == eItemRamp)
 			{
+				std::wstring wsTmp(name.begin(), name.end());
 
-				// TODO: CComBSTR bstr;
-				// TODO: item->GetScriptable()->get_Name(&bstr);
-				// TODO: if (!WzSzStrCmp(bstr, name.c_str()))
+				if (!wcscmp(item->GetScriptable()->get_Name(), wsTmp.c_str()))
 				{
 					if (item->GetItemType() == eItemSurface)
 					{
@@ -905,11 +905,6 @@ Texture* PinTable::GetImage(const std::string& szName) const
 HRESULT PinTable::InitVBA(bool fNew, int id, wchar_t* const wzName)
 {
 	return S_OK;
-}
-
-PinTable* PinTable::GetPTable()
-{
-	return this;
 }
 
 HRESULT PinTable::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -1290,10 +1285,8 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 		break;
 	case FID(CODE):
 	{
-		// if the script is protected then we pass in the proper cryptokey into the code loadstream
 		// TODO: const bool script_protected = (((m_protectionData.flags & DISABLE_EVERYTHING) == DISABLE_EVERYTHING) ||
 		//    ((m_protectionData.flags & DISABLE_SCRIPT_EDITING) == DISABLE_SCRIPT_EDITING));
-
 		m_pCodeViewer->LoadFromStream(pBiffReader->m_pStream);
 		break;
 	}
@@ -1392,13 +1385,13 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 		{
 			bool found = true;
 			Material* pmat = GetMaterial(mats[i].szName);
-			/*TODO: if (pmat == &m_vpinball->m_dummyMaterial)
-				{
-					assert(!"SaveMaterial not found");
-					pmat = new Material();
-					pmat->m_szName = mats[i].szName;
-					found = false;
-				}*/
+			if (pmat == &m_vpinball->m_dummyMaterial)
+			{
+				assert(!"SaveMaterial not found");
+				pmat = new Material();
+				pmat->m_szName = mats[i].szName;
+				found = false;
+			}
 			pmat->m_fElasticity = mats[i].fElasticity;
 			pmat->m_fElasticityFalloff = mats[i].fElasticityFallOff;
 			pmat->m_fFriction = mats[i].fFriction;
@@ -1415,14 +1408,54 @@ bool PinTable::LoadToken(const int id, BiffReader* pBiffReader)
 	return true;
 }
 
-ItemTypeEnum PinTable::GetItemType() const
+PinTable* PinTable::GetPTable()
 {
-	return eItemTable;
+	return this;
+}
+
+const PinTable* PinTable::GetPTable() const
+{
+	return this;
 }
 
 IEditable* PinTable::GetIEditable()
 {
 	return (IEditable*)this;
+}
+
+const IEditable* PinTable::GetIEditable() const
+{
+	return (const IEditable*)this;
+}
+
+ISelect* PinTable::GetISelect()
+{
+	return (ISelect*)this;
+}
+
+const ISelect* PinTable::GetISelect() const
+{
+	return (const ISelect*)this;
+}
+
+ItemTypeEnum PinTable::GetItemType() const
+{
+	return eItemTable;
+}
+
+IScriptable* PinTable::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* PinTable::get_Name()
+{
+	return m_wzName;
+}
+
+bool PinTable::IsNameUnique(const wchar_t* const wzName) const
+{
+	return true; // TODO: m_pCodeViewer->m_vcvd.GetSortedIndex(wzName) == -1;
 }
 
 void PinTable::GetUniqueName(const ItemTypeEnum type, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const
@@ -1434,29 +1467,29 @@ void PinTable::GetUniqueName(const ItemTypeEnum type, wchar_t* const wzUniqueNam
 
 void PinTable::GetUniqueName(const wchar_t* const wzRoot, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const
 {
-	/*int suffix = 1;
-   bool found = false;
-   wchar_t * const wzName = new wchar_t[wzUniqueName_maxlength];
-   wchar_t wzSuffix[4];
+	int suffix = 1;
+	bool found = false;
+	wchar_t* const wzName = new wchar_t[wzUniqueName_maxlength];
+	wchar_t wzSuffix[4];
 
-   while (!found)
-   {
-      WideStrNCopy(wzRoot, wzName, wzUniqueName_maxlength-3);
-      _itow_s(suffix, wzSuffix, sizeof(wzSuffix)/sizeof(wzSuffix[0]), 10);
-      if(suffix < 10)
-         WideStrCat(L"0", wzName, wzUniqueName_maxlength);
-      if(suffix < 100)
-         WideStrCat(L"0", wzName, wzUniqueName_maxlength);
-      WideStrCat(wzSuffix, wzName, wzUniqueName_maxlength);
+	while (!found)
+	{
+		wcsncpy(wzName, wzRoot, wzUniqueName_maxlength - 3);
+		swprintf(wzSuffix, 4, L"%03d", suffix);
+		wcsncat(wzName, wzSuffix, wzUniqueName_maxlength);
 
-      if (IsNameUnique(wzName) || suffix == 999)
-         found = true;
-      else
-         suffix++;
-   }
+		if (IsNameUnique(wzName) || suffix == 999)
+		{
+			found = true;
+		}
+		else
+		{
+			suffix++;
+		}
+	}
+	wcsncpy(wzUniqueName, wzName, wzUniqueName_maxlength);
 
-   WideStrNCopy(wzName, wzUniqueName, wzUniqueName_maxlength);
-   delete[] wzName;*/
+	delete[] wzName;
 }
 
 PinBinary* PinTable::GetImageLinkBinary(const int id)

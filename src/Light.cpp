@@ -81,19 +81,11 @@ HRESULT Light::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			GetPTable()->GetUniqueName(eItemLight, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
-			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
-		}
+		GetPTable()->GetUniqueName(eItemLight, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
 	InitScript();
 	return ((HRESULT)0L);
-}
-
-PinTable* Light::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Light::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -288,9 +280,14 @@ bool Light::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Light::GetItemType() const
+PinTable* Light::GetPTable()
 {
-	return eItemLight;
+	return m_ptable;
+}
+
+const PinTable* Light::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Light::GetIEditable()
@@ -298,9 +295,34 @@ IEditable* Light::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Light::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Light::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Light::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Light::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Light::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Light::GetItemType() const
+{
+	return eItemLight;
 }
 
 void Light::WriteRegDefaults()
@@ -364,4 +386,14 @@ void Light::RenderSetup()
 ItemTypeEnum Light::HitableGetItemType() const
 {
 	return eItemLight;
+}
+
+IScriptable* Light::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Light::get_Name()
+{
+	return m_wzName;
 }

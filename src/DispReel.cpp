@@ -60,18 +60,11 @@ HRESULT DispReel::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			//GetPTable()->GetUniqueName(eItemDispReel, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t *)m_wzName, sizeof(m_wzName)/sizeof(m_wzName[0]));/*lstrcpyW((WCHAR *)m_wzName, wzUniqueName);*/
-		}
+		GetPTable()->GetUniqueName(eItemDispReel, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
-	//InitScript();
+	InitScript();
 	return S_OK;
-}
-
-PinTable* DispReel::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT DispReel::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -235,9 +228,14 @@ bool DispReel::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum DispReel::GetItemType() const
+PinTable* DispReel::GetPTable()
 {
-	return eItemDispReel;
+	return m_ptable;
+}
+
+const PinTable* DispReel::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* DispReel::GetIEditable()
@@ -245,9 +243,34 @@ IEditable* DispReel::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* DispReel::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* DispReel::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* DispReel::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* DispReel::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* DispReel::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum DispReel::GetItemType() const
+{
+	return eItemDispReel;
 }
 
 void DispReel::WriteRegDefaults()
@@ -295,6 +318,16 @@ void DispReel::RenderSetup()
 ItemTypeEnum DispReel::HitableGetItemType() const
 {
 	return eItemDispReel;
+}
+
+IScriptable* DispReel::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* DispReel::get_Name()
+{
+	return m_wzName;
 }
 
 float DispReel::getBoxWidth() const

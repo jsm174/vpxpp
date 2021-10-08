@@ -52,14 +52,20 @@ public:
 	void ReadInfoValue(POLE::Storage* pstg, const char* pName, char** pszValue);
 
 	virtual HRESULT InitVBA(bool fNew, int id, wchar_t* const wzName);
-	virtual PinTable* GetPTable();
 	virtual HRESULT InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version);
 	virtual HRESULT InitPostLoad();
 	virtual void SetDefaults(bool fromMouseClick);
 	virtual void SetDefaultPhysics(bool fromMouseClick);
 	virtual bool LoadToken(const int id, BiffReader* pBiffReader);
-	virtual ItemTypeEnum GetItemType() const;
+	virtual PinTable* GetPTable();
+	virtual const PinTable* GetPTable() const;
 	virtual IEditable* GetIEditable();
+	virtual const IEditable* GetIEditable() const;
+	virtual ISelect* GetISelect();
+	virtual const ISelect* GetISelect() const;
+	virtual IScriptable* GetScriptable();
+	virtual ItemTypeEnum GetItemType() const;
+	virtual wchar_t* get_Name();
 
 	bool GetDecalsEnabled() const;
 	bool GetEMReelsEnabled() const;
@@ -73,6 +79,7 @@ public:
 
 	Texture* GetImage(const std::string& szName) const;
 
+	bool IsNameUnique(const wchar_t* const wzName) const;
 	void GetUniqueName(const ItemTypeEnum type, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;
 	void GetUniqueName(const wchar_t* const prefix, wchar_t* const wzUniqueName, const unsigned int wzUniqueName_maxlength) const;
 

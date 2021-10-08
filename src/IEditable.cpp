@@ -1,4 +1,8 @@
 #include "IEditable.h"
+#include "IScriptable.h"
+#include "PinTable.h"
+
+#include <wchar.h>
 
 IEditable::IEditable()
 {
@@ -10,17 +14,25 @@ IEditable::~IEditable()
 
 void IEditable::InitScript()
 {
-	/*if (!GetScriptable())
-      return;
+	if (!GetScriptable())
+	{
+		return;
+	}
 
-   if (GetScriptable()->m_wzName[0] == '\0')
-      // Just in case something screws up - not good having a NULL script name
-      swprintf_s(GetScriptable()->m_wzName, L"%d", (long)this);
+	if (GetScriptable()->m_wzName[0] == '\0')
+	{
+		swprintf(GetScriptable()->m_wzName, MAXNAMEBUFFER, L"%p", (void*)this);
+	}
 
-   GetPTable()->m_pcv->AddItem(GetScriptable(), false);*/
+	GetPTable()->m_pCodeViewer->AddItem(GetScriptable(), false);
 }
 
 IHitable* IEditable::GetIHitable()
+{
+	return NULL;
+};
+
+const IHitable* IEditable::GetIHitable() const
 {
 	return NULL;
 };

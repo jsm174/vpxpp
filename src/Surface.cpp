@@ -130,19 +130,11 @@ HRESULT Surface::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			GetPTable()->GetUniqueName(eItemSurface, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
-			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
-		}
+		GetPTable()->GetUniqueName(eItemSurface, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
 	InitScript();
 	return ((HRESULT)0L);
-}
-
-PinTable* Surface::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Surface::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -410,9 +402,14 @@ bool Surface::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Surface::GetItemType() const
+PinTable* Surface::GetPTable()
 {
-	return eItemSurface;
+	return m_ptable;
+}
+
+const PinTable* Surface::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Surface::GetIEditable()
@@ -420,9 +417,34 @@ IEditable* Surface::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Surface::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Surface::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Surface::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Surface::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Surface::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Surface::GetItemType() const
+{
+	return eItemSurface;
 }
 
 void Surface::WriteRegDefaults()
@@ -674,6 +696,16 @@ void Surface::GenerateMesh(std::vector<Vertex3D_NoTex2>& topBuf, std::vector<Ver
 ItemTypeEnum Surface::HitableGetItemType() const
 {
 	return eItemSurface;
+}
+
+IScriptable* Surface::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Surface::get_Name()
+{
+	return m_wzName;
 }
 
 void Surface::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)

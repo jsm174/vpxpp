@@ -245,6 +245,9 @@ add_executable(vpxpp
 	src/BgfxWindow.h
 	src/BgfxWindow.cpp
 
+	src/BgfxTestView.h
+	src/BgfxTestView.cpp
+
 	src/main.cpp
 
 	src/D3DX9.h
@@ -298,4 +301,7 @@ add_custom_command(TARGET vpxpp POST_BUILD
 	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/res/ball.bmp" "$<TARGET_FILE_DIR:vpxpp>"
 	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/res/ao_dither.bmp" "$<TARGET_FILE_DIR:vpxpp>"
 	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/res/env_map.bmp" "$<TARGET_FILE_DIR:vpxpp>"
+
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/tables/blankTable.vpx" "$<TARGET_FILE_DIR:vpxpp>"
+	COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/tables/exampleTable.vpx" "$<TARGET_FILE_DIR:vpxpp>"
 )

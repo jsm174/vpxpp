@@ -71,18 +71,11 @@ HRESULT Gate::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			//GetPTable()->GetUniqueName(eItemGate, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t *)m_wzName, sizeof(m_wzName)/sizeof(m_wzName[0]));/*lstrcpyW((WCHAR *)m_wzName, wzUniqueName);*/
-		}
+		GetPTable()->GetUniqueName(eItemGate, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
-	//InitScript();
+	InitScript();
 	return S_OK;
-}
-
-PinTable* Gate::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Gate::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -224,9 +217,14 @@ bool Gate::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Gate::GetItemType() const
+PinTable* Gate::GetPTable()
 {
-	return eItemGate;
+	return m_ptable;
+}
+
+const PinTable* Gate::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Gate::GetIEditable()
@@ -234,9 +232,34 @@ IEditable* Gate::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Gate::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Gate::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Gate::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Gate::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Gate::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Gate::GetItemType() const
+{
+	return eItemGate;
 }
 
 void Gate::WriteRegDefaults()
@@ -286,4 +309,14 @@ void Gate::RenderSetup()
 ItemTypeEnum Gate::HitableGetItemType() const
 {
 	return eItemGate;
+}
+
+IScriptable* Gate::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Gate::get_Name()
+{
+	return m_wzName;
 }

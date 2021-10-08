@@ -77,8 +77,8 @@ int main(int argc, char** argv)
 			filename = result["file"].as<std::string>();
 		}
 
-		filename = "/Users/jmillard/git/vpxpp/tables/exampleTable.vpx";
-		// filename = "C:\\tmp\\vpxpp\\tables\\exampleTable.vpx";
+		// filename = "exampleTable.vpx";
+		// filename = "blankTable.vpx";
 		// filename = "/Users/jmillard/Desktop/Pinball/Terminator 2 (Williams 1991).vpx";
 
 		if (filename.empty())

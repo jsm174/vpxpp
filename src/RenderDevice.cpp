@@ -55,11 +55,35 @@ RenderDevice::RenderDevice(/* TODO: const HWND hwnd,*/ const int width, const in
 
 void RenderDevice::SetTransform(const TransformStateType p1, const D3DMATRIX* p2)
 {
-	// TODO: CHECKD3D(m_pD3DDevice->SetTransform((D3DTRANSFORMSTATETYPE)p1, p2));
+	if (p1 == TransformStateType::TRANSFORMSTATE_WORLD)
+	{
+		m_matWorld = D3DMATRIX(*p2);
+	}
+	else if (p1 == TransformStateType::TRANSFORMSTATE_VIEW)
+	{
+		m_matView = D3DMATRIX(*p2);
+	}
+	else if (p1 == TransformStateType::TRANSFORMSTATE_PROJECTION)
+	{
+		m_matProj = D3DMATRIX(*p2);
+	}
 }
 
 void RenderDevice::GetTransform(const TransformStateType p1, D3DMATRIX* p2)
 {
+	if (p1 == TransformStateType::TRANSFORMSTATE_WORLD)
+	{
+		p2 = &m_matWorld;
+	}
+	else if (p1 == TransformStateType::TRANSFORMSTATE_VIEW)
+	{
+		p2 = &m_matView;
+	}
+	else if (p1 == TransformStateType::TRANSFORMSTATE_PROJECTION)
+	{
+		p2 = &m_matProj;
+	}
+
 	// TODO: CHECKD3D(m_pD3DDevice->GetTransform((D3DTRANSFORMSTATETYPE)p1, p2));
 }
 
@@ -221,7 +245,56 @@ IndexBuffer* RenderDevice::CreateAndFillIndexBuffer(const std::vector<unsigned i
 
 bgfx::TextureHandle RenderDevice::CreateSystemTexture(BaseTexture* const surf, const bool linearRGB)
 {
+	const int texwidth = surf->width();
+	const int texheight = surf->height();
+	const BaseTexture::Format basetexformat = surf->m_format;
+
 	return BGFX_INVALID_HANDLE;
+
+	// const colorFormat texformat = (m_compress_textures && ((texwidth & 3) == 0) && ((texheight & 3) == 0) && (texwidth > 256) && (texheight > 256) && (basetexformat != BaseTexture::RGB_FP)) ? colorFormat::DXT5 : ((basetexformat == BaseTexture::RGB_FP) ? colorFormat::RGBA32F : colorFormat::RGBA8);
+
+	// IDirect3DTexture9* sysTex;
+	// HRESULT hr;
+	// hr = m_pD3DDevice->CreateTexture(texwidth, texheight, (texformat != colorFormat::DXT5 && m_autogen_mipmap) ? 1 : 0, 0, (D3DFORMAT)texformat, (D3DPOOL)memoryPool::SYSTEM, &sysTex, NULL);
+	// if (FAILED(hr))
+	// {
+	// 	ReportError("Fatal Error: unable to create texture!", hr, __FILE__, __LINE__);
+	// }
+
+	// if (texformat == colorFormat::RGBA32F)
+	// {
+	// 	D3DLOCKED_RECT locked;
+	// 	CHECKD3D(sysTex->LockRect(0, &locked, NULL, 0));
+
+	// 	float* const __restrict pdest = (float*)locked.pBits;
+	// 	const float* const __restrict psrc = (float*)(surf->data());
+	// 	for (int i = 0; i < texwidth * texheight; ++i)
+	// 	{
+	// 		pdest[i * 4] = psrc[i * 3];
+	// 		pdest[i * 4 + 1] = psrc[i * 3 + 1];
+	// 		pdest[i * 4 + 2] = psrc[i * 3 + 2];
+	// 		pdest[i * 4 + 3] = 1.f;
+	// 	}
+
+	// 	CHECKD3D(sysTex->UnlockRect(0));
+	// }
+	// else
+	// {
+	// 	IDirect3DSurface9* sysSurf;
+	// 	CHECKD3D(sysTex->GetSurfaceLevel(0, &sysSurf));
+	// 	RECT sysRect;
+	// 	sysRect.top = 0;
+	// 	sysRect.left = 0;
+	// 	sysRect.right = texwidth;
+	// 	sysRect.bottom = texheight;
+	// 	CHECKD3D(D3DXLoadSurfaceFromMemory(sysSurf, NULL, NULL, surf->data(), (D3DFORMAT)colorFormat::RGBA8, surf->pitch(), NULL, &sysRect, D3DX_FILTER_NONE, 0));
+	// 	SAFE_RELEASE_NO_RCC(sysSurf);
+	// }
+
+	// if (!(texformat != colorFormat::DXT5 && m_autogen_mipmap))
+	// 	CHECKD3D(D3DXFilterTexture(sysTex, NULL, D3DX_DEFAULT, (texformat == colorFormat::RGBA32F || linearRGB) ? D3DX_FILTER_TRIANGLE : (D3DX_FILTER_TRIANGLE | D3DX_FILTER_SRGB)));
+
+	//return sysTex;
 }
 
 void RenderDevice::UpdateTexture(bgfx::TextureHandle, BaseTexture* const surf, const bool linearRGB)

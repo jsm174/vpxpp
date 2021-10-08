@@ -56,19 +56,11 @@ HRESULT Timer::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			GetPTable()->GetUniqueName(eItemTimer, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
-			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
-		}
+		GetPTable()->GetUniqueName(eItemTimer, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
 	InitScript();
 	return ((HRESULT)0L);
-}
-
-PinTable* Timer::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Timer::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -125,9 +117,14 @@ bool Timer::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Timer::GetItemType() const
+PinTable* Timer::GetPTable()
 {
-	return eItemTimer;
+	return m_ptable;
+}
+
+const PinTable* Timer::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Timer::GetIEditable()
@@ -135,9 +132,34 @@ IEditable* Timer::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Timer::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Timer::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Timer::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Timer::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Timer::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Timer::GetItemType() const
+{
+	return eItemTimer;
 }
 
 void Timer::WriteRegDefaults()
@@ -171,4 +193,14 @@ void Timer::RenderSetup()
 ItemTypeEnum Timer::HitableGetItemType() const
 {
 	return eItemTimer;
+}
+
+IScriptable* Timer::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Timer::get_Name()
+{
+	return m_wzName;
 }

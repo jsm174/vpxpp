@@ -104,19 +104,11 @@ HRESULT Ramp::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			GetPTable()->GetUniqueName(eItemRamp, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
-			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
-		}
+		GetPTable()->GetUniqueName(eItemRamp, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
 	InitScript();
 	return ((HRESULT)0L);
-}
-
-PinTable* Ramp::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Ramp::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -295,9 +287,14 @@ bool Ramp::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Ramp::GetItemType() const
+PinTable* Ramp::GetPTable()
 {
-	return eItemRamp;
+	return m_ptable;
+}
+
+const PinTable* Ramp::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Ramp::GetIEditable()
@@ -305,9 +302,34 @@ IEditable* Ramp::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Ramp::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Ramp::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Ramp::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Ramp::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Ramp::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Ramp::GetItemType() const
+{
+	return eItemRamp;
 }
 
 void Ramp::WriteRegDefaults()
@@ -366,6 +388,16 @@ void Ramp::RenderSetup()
 ItemTypeEnum Ramp::HitableGetItemType() const
 {
 	return eItemRamp;
+}
+
+IScriptable* Ramp::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Ramp::get_Name()
+{
+	return m_wzName;
 }
 
 void Ramp::GetBoundingVertices(std::vector<Vertex3Ds>& pvvertex3D)

@@ -35,3 +35,33 @@ void CodeViewer::LoadFromStream(POLE::Stream* pStream)
 
 	delete[] pText;
 }
+
+HRESULT CodeViewer::AddItem(IScriptable* const piscript, const bool global)
+{
+	// TODO: CodeViewDispatch* const pcvd = new CodeViewDispatch();
+
+	// CComBSTR bstr;
+	// piscript->get_Name(&bstr);
+
+	// pcvd->m_wName = bstr;
+	// pcvd->m_pdisp = piscript->GetDispatch();
+	// pcvd->m_pdisp->QueryInterface(IID_IUnknown, (void**)&pcvd->m_punk);
+	// pcvd->m_punk->Release();
+	// pcvd->m_piscript = piscript;
+	// pcvd->m_global = global;
+
+	// if (m_vcvd.GetSortedIndex(pcvd) != -1)
+	// {
+	// 	delete pcvd;
+	// 	return E_FAIL;
+	// }
+
+	// m_vcvd.AddSortedString(pcvd);
+
+	// char szT[MAXNAMEBUFFER * 2];
+	// WideCharToMultiByteNull(CP_ACP, 0, pcvd->m_wName.c_str(), -1, szT, sizeof(szT), NULL, NULL);
+	// const size_t index = SendMessage(m_hwndItemList, CB_ADDSTRING, 0, (size_t)szT);
+	// SendMessage(m_hwndItemList, CB_SETITEMDATA, index, (size_t)piscript);
+
+	return S_OK;
+}

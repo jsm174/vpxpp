@@ -88,18 +88,11 @@ HRESULT Flasher::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			//GetPTable()->GetUniqueName(eItemFlasher, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t *)m_wzName, sizeof(m_wzName)/sizeof(m_wzName[0]));/*lstrcpyW((WCHAR *)m_wzName, wzUniqueName);*/
-		}
+		GetPTable()->GetUniqueName(eItemFlasher, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
-	//InitScript();
+	InitScript();
 	return S_OK;
-}
-
-PinTable* Flasher::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Flasher::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -251,9 +244,14 @@ bool Flasher::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Flasher::GetItemType() const
+PinTable* Flasher::GetPTable()
 {
-	return eItemFlasher;
+	return m_ptable;
+}
+
+const PinTable* Flasher::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Flasher::GetIEditable()
@@ -261,9 +259,34 @@ IEditable* Flasher::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Flasher::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Flasher::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Flasher::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Flasher::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Flasher::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Flasher::GetItemType() const
+{
+	return eItemFlasher;
 }
 
 void Flasher::WriteRegDefaults()
@@ -313,4 +336,14 @@ void Flasher::RenderSetup()
 ItemTypeEnum Flasher::HitableGetItemType() const
 {
 	return eItemFlasher;
+}
+
+IScriptable* Flasher::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Flasher::get_Name()
+{
+	return m_wzName;
 }

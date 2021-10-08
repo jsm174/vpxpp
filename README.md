@@ -96,11 +96,41 @@ vpxpp is built on top of giants:
 - [SDL](https://www.libsdl.org/)
 - [cxxopts](https://github.com/jarro2783/cxxopts)
 
-## Misc
+## Macros
+
+Many of the game item header files use macros. I dislike macros because it makes it difficult to figure out what is implemented where. I came across [this](https://dennisbabkin.com/blog/?t=macro-wizardry-in-visual-studio-useful-macros-for-debugging-your-code) great article about expanding macros.
+
+In `ieditable.h` I was able to log the macros during compile using the following: 
+
+```
+#ifndef _CRT_STRINGIZE
+#define _CRT_STRINGIZE_(x) #x
+#define _CRT_STRINGIZE(x) _CRT_STRINGIZE_(x)
+#endif
+
+#define EXPAND_MACRO(x) __pragma(message(__FILE__ _CRT_STRINGIZE((__LINE__): \nmacro\t)#x" expands to:\n" _CRT_STRINGIZE(x)))
+
+#define STANDARD_EDITABLE_DECLARES(T, ItemType, ResName, AllowedViews) EXPAND_MACRO(STANDARD_EDITABLE_DECLARES1(T, ItemType, ResName, AllowedViews)) STANDARD_EDITABLE_DECLARES1(T, ItemType, ResName, AllowedViews)
+#define STANDARD_EDITABLE_DECLARES1(T, ItemType, ResName, AllowedViews) \
+.
+.
+
+#define STANDARD_NOSCRIPT_EDITABLE_DECLARES(T, ItemType, ResName, AllowedViews) EXPAND_MACRO(STANDARD_NOSCRIPT_EDITABLE_DECLARES1(T, ItemType, ResName, AllowedViews)) STANDARD_NOSCRIPT_EDITABLE_DECLARES1(T, ItemType, ResName, AllowedViews)
+#define STANDARD_NOSCRIPT_EDITABLE_DECLARES1(T, ItemType, ResName, AllowedViews) \
+.
+.
+```
+
+## Code Formatting
 
 Clang Format Style (Clang_format_style)
 
 `{ BasedOnStyle: LLVM, PointerAlignment: Left, UseTab: Always, IndentWidth: 4, TabWidth: 4, BreakBeforeBraces: Allman, AllowShortIfStatementsOnASingleLine: false, IndentCaseLabels: false, ColumnLimit: 0, AccessModifierOffset: -4, NamespaceIndentation: All, FixNamespaceComments: false }`
+
+
+
+
+
 
 ## License
 

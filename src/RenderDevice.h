@@ -165,6 +165,10 @@ private:
 	VertexBuffer* m_curVertexBuffer;
 	IndexBuffer* m_curIndexBuffer;
 
+	D3DMATRIX m_matProj;
+	D3DMATRIX m_matView;
+	D3DMATRIX m_matWorld;
+
 	std::map<RenderStates, DWORD> renderStateCache;
 
 	Material currentMaterial;

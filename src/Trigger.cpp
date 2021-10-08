@@ -77,19 +77,11 @@ HRESULT Trigger::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			GetPTable()->GetUniqueName(eItemTrigger, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
-			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
-		}
+		GetPTable()->GetUniqueName(eItemTrigger, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
 	InitScript();
 	return ((HRESULT)0L);
-}
-
-PinTable* Trigger::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Trigger::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -206,9 +198,14 @@ bool Trigger::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Trigger::GetItemType() const
+PinTable* Trigger::GetPTable()
 {
-	return eItemTrigger;
+	return m_ptable;
+}
+
+const PinTable* Trigger::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Trigger::GetIEditable()
@@ -216,9 +213,34 @@ IEditable* Trigger::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Trigger::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Trigger::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Trigger::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Trigger::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Trigger::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Trigger::GetItemType() const
+{
+	return eItemTrigger;
 }
 
 void Trigger::WriteRegDefaults()
@@ -264,4 +286,14 @@ void Trigger::RenderSetup()
 ItemTypeEnum Trigger::HitableGetItemType() const
 {
 	return eItemTrigger;
+}
+
+IScriptable* Trigger::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Trigger::get_Name()
+{
+	return m_wzName;
 }

@@ -463,46 +463,6 @@ void Pin3D::InitLayout(const bool FSS_mode, const float xpixoff, const float ypi
 	m_pd3dPrimaryDevice->SetTransform(RenderDevice::TransformStateType::TRANSFORMSTATE_VIEW, &m_proj.m_matView);
 	m_pd3dPrimaryDevice->SetTransform(RenderDevice::TransformStateType::TRANSFORMSTATE_WORLD, &m_proj.m_matWorld);
 
-	// Set view and projection matrix for view 1.
-
-	float tmpView[16];
-	tmpView[0] = m_proj.m_matView.m[0][1];
-	tmpView[1] = m_proj.m_matView.m[0][1];
-	tmpView[2] = m_proj.m_matView.m[0][2];
-	tmpView[3] = m_proj.m_matView.m[0][3];
-	tmpView[4] = m_proj.m_matView.m[1][0];
-	tmpView[5] = m_proj.m_matView.m[1][1];
-	tmpView[6] = m_proj.m_matView.m[1][2];
-	tmpView[7] = m_proj.m_matView.m[1][3];
-	tmpView[8] = m_proj.m_matView.m[2][0];
-	tmpView[9] = m_proj.m_matView.m[2][1];
-	tmpView[10] = m_proj.m_matView.m[2][2];
-	tmpView[11] = m_proj.m_matView.m[2][3];
-	tmpView[12] = m_proj.m_matView.m[3][0];
-	tmpView[13] = m_proj.m_matView.m[3][1];
-	tmpView[14] = m_proj.m_matView.m[3][2];
-	tmpView[15] = m_proj.m_matView.m[3][3];
-
-	float tmpProj[16];
-	tmpProj[0] = m_proj.m_matProj.m[0][0];
-	tmpProj[1] = m_proj.m_matProj.m[0][1];
-	tmpProj[2] = m_proj.m_matProj.m[0][2];
-	tmpProj[3] = m_proj.m_matProj.m[0][3];
-	tmpProj[4] = m_proj.m_matProj.m[1][0];
-	tmpProj[5] = m_proj.m_matProj.m[1][1];
-	tmpProj[6] = m_proj.m_matProj.m[1][2];
-	tmpProj[7] = m_proj.m_matProj.m[1][3];
-	tmpProj[8] = m_proj.m_matProj.m[2][0];
-	tmpProj[9] = m_proj.m_matProj.m[2][1];
-	tmpProj[10] = m_proj.m_matProj.m[2][2];
-	tmpProj[11] = m_proj.m_matProj.m[2][3];
-	tmpProj[12] = m_proj.m_matProj.m[3][0];
-	tmpProj[13] = m_proj.m_matProj.m[3][1];
-	tmpProj[14] = m_proj.m_matProj.m[3][2];
-	tmpProj[15] = m_proj.m_matProj.m[3][3];
-
-	//TODO: bgfx::setViewTransform(0, tmpView, tmpProj);
-
 	m_proj.CacheTransform();
 
 	// TODO: InitLights();

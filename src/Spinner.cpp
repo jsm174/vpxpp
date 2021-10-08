@@ -65,19 +65,11 @@ HRESULT Spinner::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			GetPTable()->GetUniqueName(eItemSpinner, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
-			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
-		}
+		GetPTable()->GetUniqueName(eItemSpinner, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
 	InitScript();
 	return ((HRESULT)0L);
-}
-
-PinTable* Spinner::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Spinner::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -198,9 +190,14 @@ bool Spinner::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Spinner::GetItemType() const
+PinTable* Spinner::GetPTable()
 {
-	return eItemSpinner;
+	return m_ptable;
+}
+
+const PinTable* Spinner::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Spinner::GetIEditable()
@@ -208,9 +205,34 @@ IEditable* Spinner::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Spinner::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Spinner::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Spinner::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Spinner::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Spinner::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Spinner::GetItemType() const
+{
+	return eItemSpinner;
 }
 
 void Spinner::WriteRegDefaults()
@@ -257,4 +279,14 @@ void Spinner::RenderSetup()
 ItemTypeEnum Spinner::HitableGetItemType() const
 {
 	return eItemSpinner;
+}
+
+IScriptable* Spinner::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Spinner::get_Name()
+{
+	return m_wzName;
 }

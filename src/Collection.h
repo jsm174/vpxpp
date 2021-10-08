@@ -3,6 +3,7 @@
 #include "BiffReader.h"
 #include "ILoadable.h"
 #include "IScriptable.h"
+#include "ISelect.h"
 
 #include "pole.h"
 
@@ -16,6 +17,11 @@ public:
 
 	virtual HRESULT LoadData(POLE::Stream* pStream, PinTable* pPinTable, int version);
 	virtual bool LoadToken(const int id, BiffReader* const pBiffReader);
+	virtual ISelect* GetISelect();
+	virtual const ISelect* GetISelect() const;
+	virtual wchar_t* get_Name();
+
+	// TODO: VectorProtected<ISelect> m_visel;
 
 	bool m_fireEvents;
 	bool m_stopSingleEvents;

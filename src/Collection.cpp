@@ -50,20 +50,35 @@ bool Collection::LoadToken(const int id, BiffReader* const pBiffReader)
 
 		for (size_t i = 0; i < pPinTable->m_vedit.size(); ++i)
 		{
-			// TODO: IScriptable* const piscript = pPinTable->m_vedit[i]->GetScriptable();
-			// if (piscript) // skip decals
-			// {
-			// 	if (!WideStrCmp(piscript->m_wzName, wzT))
-			// 	{
-			// 		piscript->GetISelect()->GetIEditable()->m_vCollection.push_back(this);
-			// 		piscript->GetISelect()->GetIEditable()->m_viCollection.push_back(m_visel.size());
-			// 		m_visel.push_back(piscript->GetISelect());
-			// 		return true;
-			// 	}
-			// }
+			IScriptable* const pIScriptable = pPinTable->m_vedit[i]->GetScriptable();
+			if (pIScriptable)
+			{
+				if (!wcscmp(pIScriptable->m_wzName, wzT))
+				{
+					pIScriptable->GetISelect()->GetIEditable()->m_vCollection.push_back(this);
+					// TODO: pIScriptable->GetISelect()->GetIEditable()->m_viCollection.push_back(m_visel.size());
+					// TODO: m_visel.push_back(pIScriptable->GetISelect());
+					return true;
+				}
+			}
 		}
 		break;
 	}
 	}
 	return true;
+}
+
+ISelect* Collection::GetISelect()
+{
+	return NULL;
+}
+
+const ISelect* Collection::GetISelect() const
+{
+	return NULL;
+}
+
+wchar_t* Collection::get_Name()
+{
+	return m_wzName;
 }

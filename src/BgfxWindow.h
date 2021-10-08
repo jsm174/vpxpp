@@ -1,7 +1,8 @@
 #pragma once
 
-#include <SDL2/SDL.h>
+#include "BgfxTestView.h"
 
+#include <SDL2/SDL.h>
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 #include <bimg/bimg.h>
@@ -48,4 +49,6 @@ private:
 	int m_height;
 
 	SDL_Window* m_pWindow;
+
+	BgfxTestView* m_pTestView;
 };

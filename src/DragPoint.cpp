@@ -16,11 +16,6 @@ void DragPoint::Init(IHaveDragPoints* pihdp, const float x, const float y, const
 	// TODO: m_menuid = (pihdp->GetIEditable()->GetItemType() == eItemRubber) ? IDR_POINTMENU_SMOOTH : IDR_POINTMENU;
 }
 
-PinTable* DragPoint::GetPTable()
-{
-	return m_pihdp->GetIEditable()->GetPTable();
-}
-
 bool DragPoint::LoadToken(const int id, BiffReader* const pBiffReader)
 {
 	switch (id)
@@ -50,7 +45,22 @@ bool DragPoint::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
+PinTable* DragPoint::GetPTable()
+{
+	return m_pihdp->GetIEditable()->GetPTable();
+}
+
+const PinTable* DragPoint::GetPTable() const
+{
+	return m_pihdp->GetIEditable()->GetPTable();
+}
+
 IEditable* DragPoint::GetIEditable()
+{
+	return m_pihdp->GetIEditable();
+}
+
+const IEditable* DragPoint::GetIEditable() const
 {
 	return m_pihdp->GetIEditable();
 }

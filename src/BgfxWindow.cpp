@@ -158,6 +158,8 @@ bool BgfxWindow::Create(int width, int height)
 
 	OnInitialUpdate();
 
+	m_pTestView = new BgfxTestView();
+
 	return true;
 }
 
@@ -209,6 +211,8 @@ void BgfxWindow::PreRender()
 	bgfx::setViewRect(0, 0, 0, uint16_t(m_width), uint16_t(m_height));
 
 	bgfx::touch(0);
+
+	m_pTestView->Update(m_width, m_height);
 }
 
 void BgfxWindow::RenderImgGui()

@@ -79,19 +79,11 @@ HRESULT Bumper::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			GetPTable()->GetUniqueName(eItemBumper, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
-			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
-		}
+		GetPTable()->GetUniqueName(eItemBumper, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
 	InitScript();
 	return ((HRESULT)0L);
-}
-
-PinTable* Bumper::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Bumper::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -249,9 +241,14 @@ bool Bumper::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Bumper::GetItemType() const
+PinTable* Bumper::GetPTable()
 {
-	return eItemBumper;
+	return m_ptable;
+}
+
+const PinTable* Bumper::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Bumper::GetIEditable()
@@ -259,9 +256,34 @@ IEditable* Bumper::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Bumper::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Bumper::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Bumper::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Bumper::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Bumper::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Bumper::GetItemType() const
+{
+	return eItemBumper;
 }
 
 void Bumper::WriteRegDefaults()
@@ -308,4 +330,14 @@ void Bumper::RenderSetup()
 ItemTypeEnum Bumper::HitableGetItemType() const
 {
 	return eItemBumper;
+}
+
+IScriptable* Bumper::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Bumper::get_Name()
+{
+	return m_wzName;
 }

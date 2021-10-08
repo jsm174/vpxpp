@@ -1,8 +1,8 @@
 #pragma once
 
-#include "BiffReader.h"
 #include "IEditable.h"
 
+#include "BiffReader.h"
 #include "RenderVertex.h"
 #include "RenderVertex3D.h"
 
@@ -16,10 +16,10 @@ public:
 	IHaveDragPoints();
 	virtual ~IHaveDragPoints();
 
+	virtual void LoadPointToken(int id, BiffReader* pBiffReader, int version);
+
 	virtual IEditable* GetIEditable() = 0;
 	virtual PinTable* GetPTable() = 0;
-
-	virtual void LoadPointToken(int id, BiffReader* pBiffReader, int version);
 
 	void GetTextureCoords(const std::vector<RenderVertex>& vv, float** ppcoords);
 

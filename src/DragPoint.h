@@ -11,9 +11,12 @@ class DragPoint : public ISelect
 public:
 	void Init(IHaveDragPoints* pihdp, const float x, const float y, const float z, const bool smooth);
 
-	virtual PinTable* GetPTable();
 	virtual bool LoadToken(const int id, BiffReader* const pBiffReader);
+
+	virtual PinTable* GetPTable();
+	virtual const PinTable* GetPTable() const;
 	virtual IEditable* GetIEditable();
+	virtual const IEditable* GetIEditable() const;
 
 	HRESULT get_Y(float* pVal);
 	HRESULT get_X(float* pVal);

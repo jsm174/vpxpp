@@ -66,18 +66,11 @@ HRESULT Decal::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			//GetPTable()->GetUniqueName(eItemDecal, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t *)m_wzName, sizeof(m_wzName)/sizeof(m_wzName[0]));/*lstrcpyW((WCHAR *)m_wzName, wzUniqueName);*/
-		}
+		GetPTable()->GetUniqueName(eItemDecal, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
-	//InitScript();
+	InitScript();
 	return S_OK;
-}
-
-PinTable* Decal::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Decal::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -241,9 +234,14 @@ bool Decal::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Decal::GetItemType() const
+PinTable* Decal::GetPTable()
 {
-	return eItemDecal;
+	return m_ptable;
+}
+
+const PinTable* Decal::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Decal::GetIEditable()
@@ -251,9 +249,34 @@ IEditable* Decal::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Decal::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Decal::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Decal::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Decal::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Decal::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Decal::GetItemType() const
+{
+	return eItemDecal;
 }
 
 void Decal::WriteRegDefaults()
@@ -324,4 +347,14 @@ void Decal::RenderSetup()
 ItemTypeEnum Decal::HitableGetItemType() const
 {
 	return eItemDecal;
+}
+
+IScriptable* Decal::GetScriptable()
+{
+	return NULL;
+}
+
+wchar_t* Decal::get_Name()
+{
+	return NULL;
 }

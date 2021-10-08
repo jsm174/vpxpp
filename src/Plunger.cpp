@@ -60,19 +60,11 @@ HRESULT Plunger::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			GetPTable()->GetUniqueName(eItemPlunger, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t*)m_wzName,
-			//             sizeof(m_wzName) / sizeof(m_wzName[0]));
-		}
+		GetPTable()->GetUniqueName(eItemPlunger, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
 	InitScript();
 	return ((HRESULT)0L);
-}
-
-PinTable* Plunger::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Plunger::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -266,9 +258,14 @@ bool Plunger::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Plunger::GetItemType() const
+PinTable* Plunger::GetPTable()
 {
-	return eItemPlunger;
+	return m_ptable;
+}
+
+const PinTable* Plunger::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Plunger::GetIEditable()
@@ -276,9 +273,34 @@ IEditable* Plunger::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Plunger::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Plunger::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Plunger::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Plunger::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Plunger::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Plunger::GetItemType() const
+{
+	return eItemPlunger;
 }
 
 void Plunger::WriteRegDefaults()
@@ -340,4 +362,14 @@ void Plunger::RenderSetup()
 ItemTypeEnum Plunger::HitableGetItemType() const
 {
 	return eItemPlunger;
+}
+
+IScriptable* Plunger::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Plunger::get_Name()
+{
+	return m_wzName;
 }

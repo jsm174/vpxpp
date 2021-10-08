@@ -76,7 +76,8 @@ jobs:
             cmake --build build/Release
           fi
       - run: |
-          build/Release/${{ matrix.exe }} -f tables/exampleTable.vpx --disable-player
+          cd build/Release
+          ./${{ matrix.exe }} -f exampleTable.vpx --disable-player
       - run: |
           cp -r build/Release tmp
       - uses: actions/upload-artifact@v2

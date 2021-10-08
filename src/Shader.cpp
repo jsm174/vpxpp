@@ -141,6 +141,8 @@ void Shader::Unload()
 
 void Shader::SetTexture(const D3DXHANDLE texelName, Texture* texel, const bool linearRGB)
 {
+	return;
+
 	const unsigned int idx = texelName[strlen(texelName) - 1] - '0';
 	assert(idx < TEXTURESET_STATE_CACHE_SIZE);
 
@@ -149,6 +151,34 @@ void Shader::SetTexture(const D3DXHANDLE texelName, Texture* texel, const bool l
 		currentTexture[idx] = NULL;
 
 		std::cout << "Setting Texture NULL: " << texelName << std::endl;
+
+		bgfx::UniformHandle handle;
+
+		if (!strcmp(texelName, "Texture0"))
+		{
+			handle = bgfx::createUniform("texSampler0", bgfx::UniformType::Sampler);
+			bgfx::setTexture(0, handle, BGFX_INVALID_HANDLE);
+		}
+		else if (!strcmp(texelName, "Texture1"))
+		{
+			handle = bgfx::createUniform("texSampler1", bgfx::UniformType::Sampler);
+			bgfx::setTexture(1, handle, BGFX_INVALID_HANDLE);
+		}
+		else if (!strcmp(texelName, "Texture2"))
+		{
+			handle = bgfx::createUniform("texSampler2", bgfx::UniformType::Sampler);
+			bgfx::setTexture(2, handle, BGFX_INVALID_HANDLE);
+		}
+		else if (!strcmp(texelName, "Texture3"))
+		{
+			handle = bgfx::createUniform("texSamplerBL", bgfx::UniformType::Sampler);
+			bgfx::setTexture(3, handle, BGFX_INVALID_HANDLE);
+		}
+		else if (!strcmp(texelName, "Texture4"))
+		{
+			handle = bgfx::createUniform("texSamplerN", bgfx::UniformType::Sampler);
+			bgfx::setTexture(4, handle, BGFX_INVALID_HANDLE);
+		}
 
 		// TODO: CHECKD3D(m_shader->SetTexture(texelName, NULL));
 
@@ -163,10 +193,35 @@ void Shader::SetTexture(const D3DXHANDLE texelName, Texture* texel, const bool l
 
 		std::cout << "Setting Texture: " << texelName << std::endl;
 
-		// TODO: CHECKD3D(m_shader->SetTexture(texelName, m_renderDevice->m_texMan.LoadTexture(texel->m_pdsBuffer, linearRGB)));
+		bgfx::UniformHandle handle;
 
-		bgfx::UniformHandle handle = bgfx::createUniform(texelName, bgfx::UniformType::Sampler);
-		bgfx::setTexture(0, handle, m_renderDevice->m_texMan.LoadTexture(texel->m_pdsBuffer, linearRGB));
+		if (!strcmp(texelName, "Texture0"))
+		{
+			handle = bgfx::createUniform("texSampler0", bgfx::UniformType::Sampler);
+			bgfx::setTexture(0, handle, m_renderDevice->m_texMan.LoadTexture(texel->m_pdsBuffer, linearRGB));
+		}
+		else if (!strcmp(texelName, "Texture1"))
+		{
+			handle = bgfx::createUniform("texSampler1", bgfx::UniformType::Sampler);
+			bgfx::setTexture(1, handle, m_renderDevice->m_texMan.LoadTexture(texel->m_pdsBuffer, linearRGB));
+		}
+		else if (!strcmp(texelName, "Texture2"))
+		{
+			handle = bgfx::createUniform("texSampler2", bgfx::UniformType::Sampler);
+			bgfx::setTexture(2, handle, m_renderDevice->m_texMan.LoadTexture(texel->m_pdsBuffer, linearRGB));
+		}
+		else if (!strcmp(texelName, "Texture3"))
+		{
+			handle = bgfx::createUniform("texSamplerBL", bgfx::UniformType::Sampler);
+			bgfx::setTexture(3, handle, m_renderDevice->m_texMan.LoadTexture(texel->m_pdsBuffer, linearRGB));
+		}
+		else if (!strcmp(texelName, "Texture4"))
+		{
+			handle = bgfx::createUniform("texSamplerN", bgfx::UniformType::Sampler);
+			bgfx::setTexture(4, handle, m_renderDevice->m_texMan.LoadTexture(texel->m_pdsBuffer, linearRGB));
+		}
+
+		// TODO: CHECKD3D(m_shader->SetTexture(texelName, m_renderDevice->m_texMan.LoadTexture(texel->m_pdsBuffer, linearRGB)));
 
 		m_renderDevice->m_curTextureChanges++;
 	}

@@ -63,18 +63,11 @@ HRESULT Flipper::InitVBA(bool fNew, int id, wchar_t* const wzName)
 	wchar_t wzUniqueName[128];
 	if (fNew && !wzName)
 	{
-		{
-			//GetPTable()->GetUniqueName(eItemFlipper, wzUniqueName, 128);
-			//WideStrNCopy(wzUniqueName, (wchar_t *)m_wzName, sizeof(m_wzName)/sizeof(m_wzName[0]));/*lstrcpyW((WCHAR *)m_wzName, wzUniqueName);*/
-		}
+		GetPTable()->GetUniqueName(eItemFlipper, wzUniqueName, 128);
+		wcsncpy(m_wzName, wzUniqueName, MAXNAMEBUFFER);
 	}
-	//InitScript();
+	InitScript();
 	return S_OK;
-}
-
-PinTable* Flipper::GetPTable()
-{
-	return m_ptable;
 }
 
 HRESULT Flipper::InitLoad(POLE::Stream* pStream, PinTable* pTable, int* pId, int version)
@@ -314,9 +307,14 @@ bool Flipper::LoadToken(const int id, BiffReader* const pBiffReader)
 	return true;
 }
 
-ItemTypeEnum Flipper::GetItemType() const
+PinTable* Flipper::GetPTable()
 {
-	return eItemFlipper;
+	return m_ptable;
+}
+
+const PinTable* Flipper::GetPTable() const
+{
+	return m_ptable;
 }
 
 IEditable* Flipper::GetIEditable()
@@ -324,9 +322,34 @@ IEditable* Flipper::GetIEditable()
 	return static_cast<IEditable*>(this);
 }
 
+const IEditable* Flipper::GetIEditable() const
+{
+	return static_cast<const IEditable*>(this);
+}
+
+ISelect* Flipper::GetISelect()
+{
+	return static_cast<ISelect*>(this);
+}
+
+const ISelect* Flipper::GetISelect() const
+{
+	return static_cast<const ISelect*>(this);
+}
+
 IHitable* Flipper::GetIHitable()
 {
 	return static_cast<IHitable*>(this);
+}
+
+const IHitable* Flipper::GetIHitable() const
+{
+	return static_cast<const IHitable*>(this);
+}
+
+ItemTypeEnum Flipper::GetItemType() const
+{
+	return eItemFlipper;
 }
 
 void Flipper::WriteRegDefaults()
@@ -388,4 +411,14 @@ void Flipper::RenderSetup()
 ItemTypeEnum Flipper::HitableGetItemType() const
 {
 	return eItemFlipper;
+}
+
+IScriptable* Flipper::GetScriptable()
+{
+	return (IScriptable*)this;
+}
+
+wchar_t* Flipper::get_Name()
+{
+	return m_wzName;
 }
